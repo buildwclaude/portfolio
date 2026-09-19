@@ -117,9 +117,8 @@ export function initHeroCards() {
   document.addEventListener('visibilitychange', onVisibilityChange);
 
   // Drag logic
-  let maxZ = 10;
   
-  cards.forEach((card, i) => {
+  cards.forEach((card, _i) => {
     const img = card.querySelector('.hero-card__img') as HTMLElement;
     img.addEventListener('dragstart', e => e.preventDefault());
   });

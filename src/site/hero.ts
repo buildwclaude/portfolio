@@ -7,8 +7,7 @@ import { site } from '../content/site';
  * line or a note needs no change here.
  */
 export function hero() {
-  const { eyebrow, lines, intro, notes, cards } = site.hero;
-  const shown = notes.filter((note) => note.value);
+  const { eyebrow, lines, intro } = site.hero;
 
   return html`
     <section class="hero shell grid" aria-labelledby="hero-title">
