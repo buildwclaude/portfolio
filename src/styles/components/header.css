@@ -1,0 +1,177 @@
+/* ==========================================================================
+   Header / navigation
+   ========================================================================== */
+
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-mid) var(--ease-out),
+    border-color var(--dur-mid) var(--ease-out);
+}
+
+/* Once the page leaves the top the header takes the paper with it, so
+   type never runs underneath the navigation. */
+.header[data-scrolled] {
+  background-color: var(--paper);
+  border-bottom-color: var(--rule-soft);
+}
+
+/* The open menu needs the same opaque ground as the panel below it. */
+[data-menu-open] .header {
+  background-color: var(--paper);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+}
+
+.header__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.004em;
+}
+
+/* The personal mark: minimal shape */
+.header__seal {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent);
+  border-radius: var(--radius-pill);
+  transition: transform var(--dur-mid) var(--ease-out), background-color var(--dur-mid) var(--ease-out);
+}
+
+.header__mark:hover .header__seal,
+.header__mark:focus-visible .header__seal {
+  transform: scale(1.1);
+  background-color: var(--ink);
+}
+
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 2.4vw, 2.75rem);
+}
+
+.nav__link {
+  position: relative;
+  display: inline-block;
+  padding-block: 0.35rem;
+  font-size: var(--text-small);
+  color: var(--ink-secondary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.1rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+.nav__link:hover,
+.nav__link:focus-visible,
+.nav__link[data-current] {
+  color: var(--ink);
+}
+
+.nav__link:hover::after,
+.nav__link:focus-visible::after,
+.nav__link[data-current]::after {
+  transform: scaleX(1);
+}
+
+.nav__toggle {
+  display: none;
+  font-size: var(--text-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: var(--space-8) 0 var(--space-8) var(--space-16);
+}
+
+/* --- Mobile -------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .nav__toggle {
+    display: block;
+  }
+
+  .nav__list {
+    position: fixed;
+    inset: var(--header-height) 0 auto 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: var(--space-8) var(--shell-margin) var(--space-32);
+    background-color: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-0.75rem);
+    transition:
+      opacity var(--dur-mid) var(--ease-out),
+      transform var(--dur-mid) var(--ease-out),
+      visibility var(--dur-mid);
+  }
+
+  [data-menu-open] .nav__list {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav__item + .nav__item {
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .nav__link {
+    display: block;
+    padding-block: var(--space-16);
+    font-size: var(--text-lead);
+    color: var(--ink);
+    letter-spacing: -0.008em;
+  }
+
+  .nav__link::after {
+    display: none;
+  }
+
+  .nav__link[data-current] {
+    color: var(--ink-muted);
+  }
+}
+
+.nav__theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink-secondary);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.nav__theme-btn:hover,
+.nav__theme-btn:focus-visible {
+  color: var(--ink);
+}

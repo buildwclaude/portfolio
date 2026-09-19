@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Helix Carousel — a spiral staircase of cards, winding upward forever.
+
+   Everything that moves is `transform` and `opacity`, so the whole thing
+   stays on the compositor. The stage owns the perspective; the helix owns
+   the 3D space; the cards do nothing but sit where JavaScript puts them.
+   ========================================================================== */
+
+.helix {
+  position: relative;
+  overflow: hidden;
+  perspective: var(--helix-perspective, 1000px);
+  width: 100%;
+  height: var(--helix-height, 600px);
+}
+
+.helix__stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.helix__card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--helix-card-w, 220px);
+  height: var(--helix-card-h, 140px);
+  /* Centred on the axis by margin, so the transform string stays purely
+     rotate → push out → lift, with nothing else composed into it. */
+  margin-top: calc(var(--helix-card-h, 140px) / -2);
+  margin-left: calc(var(--helix-card-w, 220px) / -2);
+  border-radius: var(--helix-card-radius, 12px);
+  overflow: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.helix__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The image never animates; only its card does. */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* A still helix for anyone who asked for less motion. The cards are already
+   laid out by the first frame, so there is nothing to suppress but the loop. */
+@media (prefers-reduced-motion: reduce) {
+  .helix__card {
+    will-change: auto;
+  }
+}

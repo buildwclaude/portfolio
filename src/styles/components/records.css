@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Records — experience, recognition, and everything else.
+
+   Deliberately the archive row again: same hairline, same grid positions,
+   same mono metadata. A second list style would have been a second design.
+   ========================================================================== */
+
+.records {
+  grid-column: 1 / -1;
+  margin-top: clamp(4rem, 9vw, 7rem);
+}
+
+.records__group + .records__group {
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.records__label {
+  margin-bottom: var(--space-16);
+}
+
+.records__list {
+  border-top: 1px solid var(--rule);
+}
+
+.records__row {
+  border-bottom: 1px solid var(--rule-soft);
+  transition: border-color var(--dur-mid) var(--ease-out);
+}
+
+.records__row:hover {
+  border-bottom-color: var(--rule);
+}
+
+.records__inner {
+  align-items: baseline;
+  padding-block: var(--space-16);
+  row-gap: var(--space-4);
+}
+
+.records__title {
+  grid-column: 1 / span 3;
+  letter-spacing: -0.004em;
+}
+
+.records__title-text {
+  position: relative;
+  display: inline-block;
+}
+
+.records__title-text::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.1em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-mid) var(--ease-out);
+}
+
+a.records__inner:hover .records__title-text::after,
+a.records__inner:focus-visible .records__title-text::after {
+  transform: scaleX(1);
+}
+
+.records__meta {
+  grid-column: 4 / span 7;
+  font-size: var(--text-small);
+  color: var(--ink-secondary);
+  max-width: 62ch;
+}
+
+.records__year {
+  grid-column: 11 / span 2;
+  text-align: right;
+}
+
+@media (max-width: 1100px) {
+  .records__title {
+    grid-column: 1 / span 4;
+  }
+
+  .records__meta {
+    grid-column: 5 / span 6;
+  }
+}
+
+@media (max-width: 860px) {
+  .records__title {
+    grid-column: 1 / span 4;
+    grid-row: 1;
+  }
+
+  .records__year {
+    grid-column: 5 / -1;
+    grid-row: 1;
+  }
+
+  .records__meta {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .records__title {
+    grid-column: 1 / span 3;
+  }
+
+  .records__year {
+    grid-column: 4 / -1;
+  }
+}

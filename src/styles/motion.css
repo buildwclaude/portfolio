@@ -1,0 +1,55 @@
+/* ==========================================================================
+   Motion.
+
+   Entrances are one-shot, slow and small. Everything on this page is
+   readable before any of it runs — the classes below only ever remove a
+   starting offset.
+   ========================================================================== */
+
+[data-reveal] {
+  transition:
+    opacity var(--dur-reveal) var(--ease-reveal),
+    transform var(--dur-reveal) var(--ease-reveal);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* `pre-reveal` is set by a tiny inline script in the document head, so the
+   starting state is applied before first paint rather than after it. The
+   same script removes the class if the main bundle never boots, which is
+   why a JavaScript failure cannot leave the page blank. */
+.pre-reveal [data-reveal]:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(0.875rem);
+}
+
+.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Reduced motion ------------------------------------------------------
+   No entrances, no drawn lines, no drifting field: the finished page,
+   immediately. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pre-reveal [data-reveal]:not(.is-revealed) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero__line-inner {
+    animation: none;
+  }
+}

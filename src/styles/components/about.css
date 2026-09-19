@@ -1,0 +1,57 @@
+/* ==========================================================================
+   About — typography and space, no container.
+   ========================================================================== */
+
+.about__text {
+  grid-column: 1 / span 6;
+}
+
+.about__columns {
+  grid-column: 8 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  --reveal-delay: 120ms;
+}
+
+.about__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding-top: var(--space-16);
+  border-top: 1px solid var(--ink);
+}
+
+.about__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--ink-secondary);
+}
+
+@media (max-width: 1100px) {
+  .about__text {
+    grid-column: 1 / span 7;
+  }
+}
+
+@media (max-width: 860px) {
+  .about__text {
+    grid-column: 1 / -1;
+  }
+
+  .about__columns {
+    grid-column: 1 / -1;
+    margin-top: var(--space-48);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-32) var(--grid-gutter);
+  }
+}
+
+@media (max-width: 520px) {
+  .about__columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

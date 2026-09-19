@@ -1,0 +1,61 @@
+/* ==========================================================================
+   Kodama — the companion.
+
+   Fixed under the header on the right, aligned to the page margin so it
+   sits on the grid like everything else. No frame, no label, no motion of
+   our own: the clip is left exactly as it was made.
+   ========================================================================== */
+
+.kodama {
+  /* The clip is drawn on white rather than alpha, so `multiply` keys the
+     background out against the paper. Set to `normal` for a clip that
+     already has an alpha channel. */
+  --kodama-blend: multiply;
+
+  position: fixed;
+  top: calc(var(--header-height) + clamp(0.75rem, 2vw, 1.5rem));
+  right: var(--shell-margin);
+  z-index: 15;
+  /* Sized by height: the creature is portrait, and the brief is about how
+     tall it sits, not how wide. */
+  height: clamp(44px, 5.2vw, 68px);
+  width: auto;
+  pointer-events: none;
+  /* The blend has to sit on this element, not the video: `position: fixed`
+     plus `z-index` makes this an isolated stacking context, so a blend on a
+     child would have nothing but transparency behind it. Here it blends
+     against the page. */
+  mix-blend-mode: var(--kodama-blend);
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out) 400ms;
+}
+
+.kodama[data-ready] {
+  opacity: 1;
+}
+
+/* Without scripting there is nothing to mark it ready, and the video plays
+   on its own — so it simply starts visible. */
+@media (scripting: none) {
+  .kodama {
+    opacity: 1;
+  }
+}
+
+.kodama__video {
+  height: 100%;
+  width: auto;
+}
+
+/* It never competes with the open menu. */
+[data-menu-open] .kodama {
+  opacity: 0;
+  transition-delay: 0ms;
+}
+
+@media (max-width: 520px) {
+  .kodama {
+    height: 44px;
+    top: calc(var(--header-height) + 0.75rem);
+  }
+}
