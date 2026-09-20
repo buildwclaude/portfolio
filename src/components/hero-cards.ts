@@ -105,7 +105,7 @@ export function initHeroCards() {
   window.addEventListener('blur', onPointerLeave);
 
   const observer = new IntersectionObserver(([entry]) => {
-    isVisible = entry.isIntersecting;
+    isVisible = entry?.isIntersecting ?? false;
     if (isVisible) startLoop();
   });
   observer.observe(container);
@@ -139,6 +139,7 @@ export function initHeroCards() {
 
     for (let i = 0; i < state.length; i++) {
       const s = state[i];
+      if (!s) continue;
       if (!s.isDragging) {
         // Continuous wobble like spencergaborwork
         const timeOffX = Math.sin(now * 0.001 + i * 2) * 12;

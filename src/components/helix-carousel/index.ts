@@ -235,7 +235,7 @@ export function createHelixCarousel(options: HelixOptions = {}) {
   let isVisible = false;
 
   const observer = new IntersectionObserver(([entry]) => {
-    isVisible = entry.isIntersecting;
+    isVisible = entry?.isIntersecting ?? false;
     if (isVisible && !frame) {
       lastTime = performance.now();
       frame = requestAnimationFrame(tick);

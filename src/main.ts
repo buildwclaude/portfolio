@@ -91,7 +91,10 @@ function mountHelix() {
           const images = site.helix.images;
           const helix = createHelixCarousel({
             // Repeated to fill the spiral; it reads as rhythm, not padding.
-            images: Array.from({ length: 15 }, (_, i) => images[i % images.length]!.src),
+            images: Array.from({ length: 15 }, (_, i) => {
+              const src = images[i % images.length]!.src;
+              return src.startsWith('/') ? import.meta.env.BASE_URL + src.slice(1) : src;
+            }),
             alt: (i) => images[i % images.length]!.alt,
             speed: 0.45,
             radius: 357, // Extra 0.5mm gap (radius up from 353)
