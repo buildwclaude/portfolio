@@ -5,6 +5,8 @@ import './styles/components/header.css';
 import './styles/components/kodama.css';
 import './styles/components/hero.css';
 import './styles/components/work.css';
+import './styles/components/warp.css';
+import './styles/components/playground.css';
 import './styles/components/about.css';
 import './styles/components/records.css';
 import './styles/components/experiments.css';
@@ -62,7 +64,7 @@ import { initHeroCards } from './components/hero-cards';
 
 initThemeToggle();
 initNav();
-initKodama(reducedMotion);
+
 mountHelix();
 initHeroCards();
 
@@ -136,3 +138,52 @@ function requestIdleCallbackShim(callback: () => void) {
   if (typeof requestIdleCallback === 'function') requestIdleCallback(callback);
   else setTimeout(callback, 200);
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+═════════════════════════════════════════════════════════
+   PLAYGROUND
+   ══════════════════════════════════════════════════════════════════════ */
+
+import { closeDetail, detailOpen } from './lib/playground/panel.js';
+
+const HASH = '#playground';
+let loading: Promise<any> | null = null;
+let room: any = null;
+
+async function enterPlayground() {
+  document.body.classList.add('pg-open');
+  document.getElementById('pg')?.setAttribute('aria-hidden', 'false');
+  if (location.hash !== HASH) history.pushState(null, '', HASH);
+
+  if (!room) {
+    loading ??= import('./lib/playground/index.js').then((m) => m.createPlayground());
+    room = await loading;
+  }
+  if (document.body.classList.contains('pg-open')) room.start();
+}
+
+function exitPlayground() {
+  document.body.classList.remove('pg-open');
+  document.getElementById('pg')?.setAttribute('aria-hidden', 'true');
+  room?.stop();
+  if (location.hash === HASH) history.pushState(null, '', location.pathname);
+}
+
+document.getElementById('enter-pg')?.addEventListener('click', enterPlayground);
+document.getElementById('pg-close')?.addEventListener('click', exitPlayground);
+
+window.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (detailOpen()) closeDetail();
+  else if (document.body.classList.contains('pg-open')) exitPlayground();
+});
+
+window.addEventListener('popstate', () => {
+  if (location.hash === HASH) enterPlayground();
+  else exitPlayground();
+});
+
+if (location.hash === HASH) enterPlayground();
+
+

@@ -7,21 +7,32 @@ import { site } from '../content/site';
  * line or a note needs no change here.
  */
 export function hero() {
-  const { eyebrow, lines, intro } = site.hero;
+  const { eyebrow, lines, intro, notes, cards } = site.hero;
 
   return html`
     <section class="hero shell grid" aria-labelledby="hero-title">
-      <div class="hero-spline" aria-hidden="true" data-reveal>
-        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.3/build/spline-viewer.js"></script>
-        <spline-viewer url="https://prod.spline.design/qgOVv8VbJCdHQsjX/scene.splinecode"></spline-viewer>
+      <div class="hero-cards" aria-hidden="true" data-reveal data-mounted="true">
+        ${cards.map(
+          (card, i) => html`
+            <div class="hero-card" style="--delay:${i}">
+              <div class="hero-card__shadow"></div>
+              <img class="hero-card__img" src="${card.src}" width="${card.width}" height="${card.height}" alt="" />
+            </div>
+          `
+        )}
       </div>
-      <p class="hero__eyebrow meta" data-reveal>${eyebrow}</p>
+      
+      <p class="hero__eyebrow" data-reveal>${eyebrow}</p>
 
       <h1 class="hero__display display" id="hero-title">
         ${lines.map(
           (line, i) => html`
             <span class="hero__line" data-reveal-line style="--line-index:${i}">
-              <span class="hero__line-inner">${line}</span>
+              <span class="hero__line-inner" style="display: inline-block; position: relative;">
+                ${line}
+                ${i === 0 ? html`<img class="hero__avatar" src="/avatar.png" alt="" aria-hidden="true" />` : ''}
+                ${i === 1 ? html`<img class="hero__doodles" src="/vines.png?v=2" alt="" aria-hidden="true" />` : ''}
+              </span>
             </span>
           `,
         )}
@@ -32,10 +43,21 @@ export function hero() {
         <div class="hero__intro-corner hero__intro-corner--bl" aria-hidden="true"></div>
         <p>${raw(intro)}</p>
       </div>
+      
+      <dl class="hero__notes" data-reveal>
+        ${notes.map(
+          (note) =>
+            note.value &&
+            html`
+              <div class="hero__note">
+                <dt>${note.label}</dt>
+                <dd>${note.value}</dd>
+              </div>
+            `,
+        )}
+      </dl>
 
-      <div class="hero__image-wrapper" data-reveal>
-        <img class="hero__image" src="/sofa.jpg" alt="Editorial interior" />
-      </div>
+
 
       <a class="hero__scroll meta" href="#work">
         <span>${site.work.title}</span>

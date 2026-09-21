@@ -3,7 +3,7 @@ import { site } from '../content/site';
 import { header } from './header';
 import { kodama } from './kodama';
 import { hero } from './hero';
-import { work } from './work';
+import { inlinePlayground } from './inline-playground';
 import { about } from './about';
 import { experiments } from './experiments';
 import { footer } from './footer';
@@ -14,46 +14,34 @@ import { footer } from './footer';
  */
 export function renderPage(): string {
   const cards = site.hero.cards;
-  const notes = site.hero.notes;
-  const shown = notes.filter((note) => note.value);
 
   return html`
     <a class="skip-link" href="#main">Skip to content</a>
 
     <span id="top" class="visually-hidden"></span>
-    ${header()} ${kodama()}
+    ${header()} 
 
     <main class="page" id="main" tabindex="-1">
       ${hero()}
-      <div class="plant-wrapper shell grid" aria-hidden="true">
-        <div class="hero-cards plant-cards" aria-hidden="true" data-mounted="false">
-          ${cards.map((c, i) => html`
-            <div class="hero-card" style="--i:${i}; --delay:${i}">
-              <div class="hero-card__shadow"></div>
-              <img class="hero-card__img" src="${c.src}" width="${c.width}" height="${c.height}"
-                   alt="" draggable="false" loading="eager" decoding="async"
-                   ${i === 0 ? 'fetchpriority="high"' : ''}>
-            </div>
-          `)}
-        </div>
-        <img src="/plant.png" alt="Plant" class="plant-image" />
-        
-        ${shown.length > 0 && html`
-          <dl class="plant-notes">
-            ${shown.map((note) => html`
-              <div class="hero__note">
-                <dt class="meta">${note.label}</dt>
-                <dd>${note.value}</dd>
-              </div>
-            `)}
-          </dl>
-        `}
-      </div>
-      ${work()}
+      ${inlinePlayground()}
       ${about()}
       ${experiments()}
     </main>
 
     ${footer()}
+
+    <!-- DETAIL PANEL -->
+    <aside class="sheet panel" id="panel" aria-hidden="true">
+      <div class="sheet-head">
+        <span id="panel-meta">Tag · 2024</span>
+        <button class="icon-btn" id="panel-close" type="button" aria-label="Close project"></button>
+      </div>
+      <h2 id="panel-title">Title</h2>
+      <span class="panel-role" id="panel-role">Role</span>
+      <p id="panel-desc">Description.</p>
+      <a class="panel-link" id="panel-link" href="#" target="_blank" rel="noopener">Visit project</a>
+    </aside>
+
+    <div class="scrim" id="scrim"></div>
   `.__html;
 }
