@@ -11,7 +11,7 @@ export function hero() {
 
   return html`
     <section class="hero shell grid" aria-labelledby="hero-title">
-      <div class="hero-cards" aria-hidden="true" data-reveal data-mounted="true">
+      <div class="hero-cards" aria-hidden="true" data-reveal data-mounted="true" style="transform: translateX(20%) !important;">
         ${cards.map(
           (card, i) => html`
             <div class="hero-card" style="--delay:${i}">
@@ -30,8 +30,8 @@ export function hero() {
             <span class="hero__line" data-reveal-line style="--line-index:${i}">
               <span class="hero__line-inner" style="display: inline-block; position: relative;">
                 ${line}
-                ${i === 0 ? html`<img class="hero__avatar" src="/avatar.png" alt="" aria-hidden="true" />` : ''}
-                ${i === 1 ? html`<img class="hero__doodles" src="/vines.png?v=2" alt="" aria-hidden="true" />` : ''}
+                ${i === 0 ? html`<img class="hero__avatar" src="/avatar.png" alt="" aria-hidden="true" style="position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 20px;" />` : ''}
+                ${i === 1 ? html`<img class="hero__doodles" src="/vines.png?v=2" alt="" aria-hidden="true" style="position: absolute; left: 0; top: 60.2%; transform: translateY(-50%) scaleX(1.05); transform-origin: left center; z-index: 10; pointer-events: none; width: 100%;" />` : ''}
               </span>
             </span>
           `,
