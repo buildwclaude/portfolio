@@ -124,8 +124,8 @@ async function enhance() {
 
   // The media planes want scroll velocity, so they are built first and the
   // scroll layer is handed their sink.
-  const media = await import('./lib/media-gl')
-    .then(({ initMediaGl }) => initMediaGl())
+  const media = await import('./lib/warp-gl')
+    .then(({ initWarpGl }) => initWarpGl())
     .catch(() => null);
 
   await initScrollMotion({ onVelocity: media?.setVelocity }).catch(() => undefined);

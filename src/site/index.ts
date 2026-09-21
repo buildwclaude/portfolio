@@ -3,7 +3,7 @@ import { site } from '../content/site';
 import { header } from './header';
 import { kodama } from './kodama';
 import { hero } from './hero';
-import { work } from './work';
+import { warp } from './warp';
 import { about } from './about';
 import { experiments } from './experiments';
 import { footer } from './footer';
@@ -23,7 +23,7 @@ export function renderPage(): string {
 
     <main class="page" id="main" tabindex="-1">
       ${hero()}
-      ${work()}
+      ${warp()}
       ${about()}
       ${experiments()}
     </main>
