@@ -6,6 +6,7 @@ import './styles/components/kodama.css';
 import './styles/components/hero.css';
 import './styles/components/work.css';
 import './styles/components/warp.css';
+import './styles/components/warp-detail.css';
 import './styles/components/playground.css';
 import './styles/components/about.css';
 import './styles/components/records.css';
@@ -127,6 +128,8 @@ async function enhance() {
   const media = await import('./lib/warp-gl')
     .then(({ initWarpGl }) => initWarpGl())
     .catch(() => null);
+
+  import('./lib/warp-detail').then(({ initWarpDetail }) => initWarpDetail());
 
   await initScrollMotion({ onVelocity: media?.setVelocity }).catch(() => undefined);
 }

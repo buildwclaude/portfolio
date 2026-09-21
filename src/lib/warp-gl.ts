@@ -77,7 +77,11 @@ export async function initWarpGl() {
   const loadTexture = (img: HTMLImageElement): Promise<THREE.Texture> => new Promise(res => {
     const done = (t: THREE.Texture) => { t.colorSpace = THREE.SRGBColorSpace; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; res(t); };
     loader.load(img.getAttribute('src') || '', done, undefined,
-      () => done(new THREE.CanvasTexture(generate(img.dataset.fallback || 'field'))));
+      () => {
+        const cv = generate(img.dataset.fallback || 'field');
+        img.src = cv.toDataURL(); // Fix the underlying DOM image so the detail panel works!
+        done(new THREE.CanvasTexture(cv));
+      });
   });
 
   const PERSPECTIVE = 1000;
@@ -162,7 +166,7 @@ export async function initWarpGl() {
       p.material.uniforms.uVelocity.value = v;
       p.material.uniforms.uEnter.value = p.enter;
       p.material.uniforms.uHover.value = p.hover;
-      p.mesh.visible = r.bottom > -200 && r.top < vp.h + 200;
+      p.mesh.visible = r.bottom > -200 && r.top < vp.h + 200 && !p.el.closest('.warp-card')?.classList.contains('is-lifting');
     }
 
     renderer.render(scene, camera);

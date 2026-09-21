@@ -54,6 +54,24 @@ export function renderPage(): string {
       <a class="panel-link" id="panel-link" href="#" target="_blank" rel="noopener">Visit project</a>
     </aside>
 
+    <div class="detail" id="warp-detail" hidden>
+      <div class="detail__scrim" data-detail-close></div>
+      <div class="detail__panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <button class="detail__close" type="button" data-detail-close data-cursor-label="Close">
+          <span aria-hidden="true">✕</span><span class="visually-hidden">Close</span>
+        </button>
+        <figure class="detail__figure">
+          <img id="detail-img" src="" alt="" decoding="async" />
+        </figure>
+        <div class="detail__body">
+          <p class="detail__num" id="detail-num"></p>
+          <h2 class="detail__title" id="detail-title"></h2>
+          <p class="detail__meta" id="detail-meta"></p>
+          <p class="detail__note" id="detail-note"></p>
+        </div>
+      </div>
+    </div>
+
     <div class="scrim" id="scrim"></div>
   `.__html;
 }

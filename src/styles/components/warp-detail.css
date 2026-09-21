@@ -1,0 +1,69 @@
+.detail { position: fixed; inset: 0; z-index: 80; }
+.detail[hidden] { display: none; }
+.detail__scrim {
+  position: absolute; inset: 0;
+  background: rgba(3, 20, 56, 0.82);
+  opacity: 0;
+  cursor: pointer;
+}
+.detail__panel {
+  position: absolute;
+  inset: clamp(0.75rem, 3.5vh, 3.2rem) clamp(0.75rem, 4vw, 4.5rem);
+  display: flex;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 60px 140px -40px rgba(1, 14, 44, 0.8);
+  overflow: hidden;
+  opacity: 0;
+}
+.detail__figure {
+  margin: 0;
+  flex: 0 0 auto;
+  height: 100%;
+  aspect-ratio: 4 / 5;
+  max-width: 52%;
+  overflow: hidden;
+  background: var(--paper-sunk);
+  transform-origin: top left;
+}
+.detail__figure img { width: 100%; height: 100%; object-fit: cover; }
+
+.detail__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(2rem, 4.5vw, 4.5rem) clamp(1.5rem, 4vw, 4.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.detail__num {
+  margin: 0 0 0.9rem;
+  font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent);
+}
+.detail__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.7rem;
+}
+.detail__meta {
+  margin: 0 0 1.6rem;
+  font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-secondary);
+}
+.detail__note { margin: 0 0 2rem; color: var(--ink-secondary); max-width: 44ch; }
+.warp-card.is-lifting { opacity: 0; }
+
+.detail__close {
+  position: absolute; top: 0; right: 0; z-index: 3;
+  width: clamp(3rem, 4vw, 4rem); height: clamp(3rem, 4vw, 4rem);
+  border: 0; border-left: 1px solid rgba(20, 23, 31, 0.14); border-bottom: 1px solid rgba(20, 23, 31, 0.14);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.35s, color 0.35s;
+}
+.detail__close:hover { background: var(--accent); color: var(--paper); }
