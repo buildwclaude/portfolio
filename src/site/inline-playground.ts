@@ -3,11 +3,11 @@ import { site } from '../content/site';
 
 export function inlinePlayground() {
   return html`
-    <section class="section" id="work" aria-labelledby="work-title">
+    <section class="section" id="playground" aria-labelledby="playground-title">
       <div class="shell grid">
         <div class="section__rule" aria-hidden="true"></div>
         <div class="section__head">
-          <h2 class="section__title" id="work-title">Selected Work</h2>
+          <h2 class="section__title" id="playground-title">Playground</h2>
           <span class="section__index meta">01 — 12</span>
         </div>
       </div>

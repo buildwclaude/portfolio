@@ -3,7 +3,7 @@ import { site } from '../content/site';
 import { header } from './header';
 import { kodama } from './kodama';
 import { hero } from './hero';
-import { inlinePlayground } from './inline-playground';
+import { work } from './work';
 import { about } from './about';
 import { experiments } from './experiments';
 import { footer } from './footer';
@@ -23,12 +23,24 @@ export function renderPage(): string {
 
     <main class="page" id="main" tabindex="-1">
       ${hero()}
-      ${inlinePlayground()}
+      ${work()}
       ${about()}
       ${experiments()}
     </main>
 
     ${footer()}
+
+    <div class="pg" id="pg" aria-hidden="true">
+      <canvas id="gl"></canvas>
+      <div class="hud tl pg-only"><b id="pg-name">${site.meta.shortName}</b><span>Playground</span></div>
+      <div class="hud bl pg-only" id="coord" aria-hidden="true">0000 · 0000</div>
+      <button class="hud tr pg-close" id="pg-close" type="button">
+        <span>Close</span><span class="pg-esc">Esc</span>
+      </button>
+      <div class="label" id="label" aria-hidden="true"></div>
+      <div class="pg-hint" id="pg-hint">Drag to wander · click a piece to open it</div>
+      <div class="pg-loading" id="pg-loading">Building the room…</div>
+    </div>
 
     <!-- DETAIL PANEL -->
     <aside class="sheet panel" id="panel" aria-hidden="true">

@@ -184,6 +184,11 @@ window.addEventListener('popstate', () => {
   else exitPlayground();
 });
 
+window.addEventListener('hashchange', () => {
+  if (location.hash === HASH) enterPlayground();
+  else exitPlayground();
+});
+
 if (location.hash === HASH) enterPlayground();
 
 

@@ -59,8 +59,8 @@ export function hero() {
 
 
 
-      <a class="hero__scroll meta" href="#work">
-        <span>${site.work.title}</span>
+      <a class="hero__scroll meta" href="#playground">
+        <span>Playground</span>
         <span class="hero__scroll-rule" aria-hidden="true"></span>
       </a>
     </section>

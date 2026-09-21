@@ -63,6 +63,7 @@ export const site = {
 
   /* ------------------------------------------------------------ navigation */
   nav: [
+    { label: 'Playground', href: '#playground' },
     { label: 'Work', href: '#work' },
     { label: 'About', href: '#about' },
     { label: 'Experiments', href: '#experiments' },

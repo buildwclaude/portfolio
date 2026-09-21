@@ -254,6 +254,7 @@
   touch-action: none;
   contain: layout style;
   margin-right: clamp(1rem, 2vw, 2rem);
+  transform: translateX(-5vw);
   z-index: 10;
 }
 
