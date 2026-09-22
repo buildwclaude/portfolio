@@ -12,6 +12,7 @@ import './styles/components/about.css';
 import './styles/components/records.css';
 import './styles/components/experiments.css';
 import './styles/components/footer.css';
+import './styles/components/rail.css';
 import './styles/motion.css';
 
 import { site } from './content/site';
@@ -62,9 +63,11 @@ function initThemeToggle() {
 }
 
 import { initHeroCards } from './components/hero-cards';
+import { initRail } from './lib/rail';
 
 initThemeToggle();
 initNav();
+initRail();
 
 mountHelix();
 initHeroCards();

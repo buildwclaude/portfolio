@@ -1,0 +1,57 @@
+/* --- Rail ----------------------------------------------------------------
+   A vertical progress line that shows how far the user has scrolled. */
+.rail {
+  position: fixed;
+  left: clamp(10px, 1.5vw, 24px); /* Responsive offset */
+  top: 50%;
+  transform: translateY(-50%);
+  height: min(42vh, 380px);
+  width: 9px;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.rail__track,
+.rail__fill {
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.rail__track {
+  background: var(--rule);
+}
+
+.rail__fill {
+  background: var(--ink); /* use dark ink color for fill */
+  transform-origin: top center;
+  transform: scaleY(0);
+}
+
+@media (max-width: 860px) {
+  .rail {
+    left: 8px;
+    height: 28vh;
+  }
+}
+
+.rail__tick {
+  position: absolute;
+  left: 1.5px;
+  top: calc(var(--at) * 100%);
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border: 1px solid var(--ink-muted);
+  border-radius: 50%;
+  background: var(--paper);
+  transition: background-color 0.4s, border-color 0.4s, transform 0.4s;
+}
+
+.rail__tick.is-past {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.15);
+}

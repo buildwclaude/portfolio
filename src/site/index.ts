@@ -22,6 +22,11 @@ export function renderPage(): string {
     ${header()} 
 
     <main class="page" id="main" tabindex="-1">
+      <!-- reading progress -->
+      <div class="rail" aria-hidden="true">
+        <span class="rail__track"></span>
+        <span class="rail__fill"></span>
+      </div>
       ${hero()}
       ${warp()}
       ${about()}
@@ -69,6 +74,12 @@ export function renderPage(): string {
     <div class="detail" id="warp-detail" hidden>
       <div class="detail__scrim" data-detail-close></div>
       <div class="detail__panel" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <!-- reading progress -->
+        <div class="detail-rail" aria-hidden="true">
+          <span class="detail-rail__track"></span>
+          <span class="detail-rail__fill"></span>
+        </div>
+        
         <button class="detail__close" type="button" data-detail-close data-cursor-label="Close">
           <span aria-hidden="true">✕</span><span class="visually-hidden">Close</span>
         </button>

@@ -23,6 +23,21 @@ export function initWarpDetail() {
     });
   });
 
+  const railFill = root.querySelector('.detail-rail__fill') as HTMLElement;
+  if (panel && railFill) {
+    panel.addEventListener('scroll', () => {
+      const st = panel.scrollTop;
+      const sh = panel.scrollHeight - panel.clientHeight;
+      const p = sh > 0 ? Math.min(1, Math.max(0, st / sh)) : 0;
+      gsap.set(railFill, { scaleY: p });
+      if (p > 0.05) {
+        panel.classList.add('is-scrolled');
+      } else {
+        panel.classList.remove('is-scrolled');
+      }
+    }, { passive: true });
+  }
+
   root.querySelectorAll('[data-detail-close]').forEach((el) => {
     el.addEventListener('click', () => closeCard());
   });
@@ -75,7 +90,7 @@ export function initWarpDetail() {
       }
       
       if (itemData.detail.sections) {
-        html += itemData.detail.sections.map(sec => {
+        html += itemData.detail.sections.map((sec: any) => {
           if (sec.type === 'text') {
             return `
               <div class="panel-section" style="margin-top: 40px;">
@@ -85,7 +100,7 @@ export function initWarpDetail() {
             `;
           }
           if (sec.type === 'stats') {
-            const stats = sec.items.map(stat => `
+            const stats = sec.items.map((stat: any) => `
               <div class="stat-item">
                 <h4 style="font-size: 36px; font-weight: bold; color: var(--accent); margin-bottom: 8px;">${stat.value}</h4>
                 <span style="color: var(--ink-secondary);">${stat.label}</span>
@@ -95,7 +110,7 @@ export function initWarpDetail() {
           }
           if (sec.type === 'image') {
             return `
-              <div class="panel-section" style="margin-top: 40px; text-align: center;">
+              <div class="panel-section" style="margin: 40px 0; text-align: center;">
                 <img src="${sec.src}" alt="Case study image" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);" />
               </div>
             `;
@@ -118,9 +133,11 @@ export function initWarpDetail() {
     // Reset scroll position so it's always at the top when opening
     if (panel) {
       panel.scrollTop = 0;
+      panel.classList.remove('is-scrolled');
     }
-
-    
+    if (railFill) {
+      gsap.set(railFill, { scaleY: 0 });
+    }
 
     tl?.kill();
     tl = gsap.timeline({
