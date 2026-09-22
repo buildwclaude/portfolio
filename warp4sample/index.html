@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arun Thapa — Creative Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <!-- WebGL canvas: fills the viewport, sits behind the DOM text -->
+  <canvas id="gl"></canvas>
+
+  <!-- Fixed chrome -->
+  <div class="hud hud--tl"><b>Arun Thapa</b>Creative developer</div>
+  <nav class="hud hud--tr">
+    <a href="#work">Work</a><a href="#contact">Contact</a>
+  </nav>
+  <div class="hud hud--bl"><span id="clock">--:--:--</span> Kathmandu</div>
+  <div class="hud hud--br">
+    <div class="meter">
+      <svg width="86" height="26" viewBox="0 0 86 26" aria-hidden="true">
+        <rect class="frame" x="0.5" y="0.5" width="85" height="25" />
+        <polyline id="trace" points="" />
+      </svg>
+      <span>vel <span class="val" id="vel">0.00</span></span>
+    </div>
+  </div>
+
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Portfolio <span>/</span> 2019 — 2026 <span>/</span> Kathmandu, NP</p>
+      <h1>Interfaces<br /><span class="thin">that</span> move</h1>
+      <p class="scrollcue">Scroll <i>↓</i></p>
+    </header>
+
+    <section class="work" id="work">
+      <div class="sectionbar"><b>Selected work</b><span>06 pieces</span></div>
+
+      <!--
+        Every <figure data-gl> is a LAYOUT PROXY.
+        The <img> inside is hidden; three.js reads the figure's
+        getBoundingClientRect() every frame and parks a textured
+        plane in exactly that spot. Lay out with plain CSS —
+        the WebGL follows.
+
+        data-speed  → extra parallax drift (px per px scrolled)
+      -->
+      <div class="grid">
+        <div class="col">
+          <a class="card" href="#" data-speed="0.06">
+            <figure class="media media--tall" data-gl>
+              <img src="/img/01.jpg" alt="Tidal Index" data-fallback="field" />
+            </figure>
+            <div class="meta"><span class="title">Tidal Index</span><span class="idx">01</span></div>
+            <div class="meta"><span>WebGL · Editorial</span><span>2026</span></div>
+          </a>
+
+          <a class="card" href="#" data-speed="0.06">
+            <figure class="media media--wide" data-gl>
+              <img src="/img/02.jpg" alt="Moiré Records" data-fallback="moire" />
+            </figure>
+            <div class="meta"><span class="title">Moiré Records</span><span class="idx">02</span></div>
+            <div class="meta"><span>Identity · Shop</span><span>2025</span></div>
+          </a>
+
+          <a class="card" href="#" data-speed="0.06">
+            <figure class="media media--tall" data-gl>
+              <img src="/img/03.jpg" alt="Longwave Atlas" data-fallback="rings" />
+            </figure>
+            <div class="meta"><span class="title">Longwave Atlas</span><span class="idx">03</span></div>
+            <div class="meta"><span>Data · Interactive</span><span>2025</span></div>
+          </a>
+        </div>
+
+        <div class="col col--offset">
+          <a class="card" href="#" data-speed="-0.05">
+            <figure class="media media--wide" data-gl>
+              <img src="/img/04.jpg" alt="Strata Studio" data-fallback="strata" />
+            </figure>
+            <div class="meta"><span class="title">Strata Studio</span><span class="idx">04</span></div>
+            <div class="meta"><span>Architecture · Site</span><span>2024</span></div>
+          </a>
+
+          <a class="card" href="#" data-speed="-0.05">
+            <figure class="media media--tall" data-gl>
+              <img src="/img/05.jpg" alt="Nightshift FM" data-fallback="dots" />
+            </figure>
+            <div class="meta"><span class="title">Nightshift FM</span><span class="idx">05</span></div>
+            <div class="meta"><span>Audio · Toy</span><span>2023</span></div>
+          </a>
+
+          <a class="card" href="#" data-speed="-0.05">
+            <figure class="media media--tall" data-gl>
+              <img src="/img/06.jpg" alt="Paper Terminal" data-fallback="grid" />
+            </figure>
+            <div class="meta"><span class="title">Paper Terminal</span><span class="idx">06</span></div>
+            <div class="meta"><span>Type · Experiment</span><span>2022</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <h2>Available for<br />work in <a href="mailto:hello@example.com">2026</a></h2>
+      <ul>
+        <li><a href="mailto:hello@example.com">Email</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">GitHub</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

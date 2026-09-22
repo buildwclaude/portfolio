@@ -207,3 +207,68 @@ body.sheet-open .scrim { opacity: .5; pointer-events: auto; }
 .panel-link.hidden { display: none; }
 body.pg-open .page { opacity: 0; pointer-events: none; filter: blur(6px); transition: opacity var(--dur-slow), filter var(--dur-slow); }
 .page { transition: opacity var(--dur-slow) var(--ease-out), filter var(--dur-slow) var(--ease-out); }
+
+/* ── Room toggle ─────────────────────────────────────────────── */
+.room-toggle {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  margin-top: 10px;
+  pointer-events: auto;
+  width: max-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.room-tab {
+  position: relative;
+  z-index: 2;
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+  transition: color var(--dur-fast);
+  flex: 1;
+  text-align: center;
+  min-width: 80px;
+}
+
+.room-tab:hover {
+  color: var(--ink);
+}
+
+.room-tab.active {
+  color: var(--paper);
+  pointer-events: none;
+}
+
+.room-slider {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  background: var(--ink);
+  border-radius: var(--radius-pill);
+  transition: transform var(--dur-fast) var(--ease-out);
+  z-index: 1;
+}
+
+.room-toggle[data-room="art"] .room-slider {
+  transform: translateX(100%);
+}
+
+/* ── Room switching cross-fade ───────────────────────────────── */
+.pg.room-switching #gl {
+  opacity: 0 !important;
+  transition: opacity 0.35s var(--ease-out);
+}

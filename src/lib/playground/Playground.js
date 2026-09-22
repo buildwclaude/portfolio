@@ -54,14 +54,37 @@ export default class Playground {
     this.camera.updateProjectionMatrix();
   }
 
-  async init() {
-    const rows = Math.ceil(ITEMS.length / COLS);
+  async init(initialItems) {
+    this.currentItems = initialItems;
+    await this._buildTiles(initialItems);
+  }
+
+  async setItems(items) {
+    // Dispose old tiles
+    for (const t of this.tiles) {
+      this.scene.remove(t.mesh);
+      t.material.dispose();
+      if (t.material.uniforms.uTexture.value) {
+        t.material.uniforms.uTexture.value.dispose();
+      }
+      t.mesh.geometry.dispose();
+    }
+    this.tiles = [];
+    this.currentItems = items;
+    await this._buildTiles(items);
+  }
+
+  async _buildTiles(items) {
+    const rows = Math.ceil(items.length / COLS);
+    this.world = { w: COLS * CELL_W, h: rows * CELL_H };
+    this.radius = Math.max(this.world.w, this.world.h) * 0.62;
+    
     const rand = seeded(9);
     const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
 
     // lay the grid out first (synchronously, so the seeded jitter is stable
     // regardless of which texture resolves first), then fill in the art
-    const bases = ITEMS.map((item, i) => {
+    const bases = items.map((item, i) => {
       const col = i % COLS;
       const row = Math.floor(i / COLS);
 
@@ -80,7 +103,7 @@ export default class Playground {
     });
 
     this.tiles = await Promise.all(
-      ITEMS.map(async (item, i) => {
+      items.map(async (item, i) => {
         const texture = await loadTexture(item);
         texture.anisotropy = maxAniso;
         const tile = new Tile(item, texture, bases[i]);

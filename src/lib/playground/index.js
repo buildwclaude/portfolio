@@ -9,6 +9,7 @@
 import * as THREE from 'three';
 import Playground from './Playground.js';
 import { openDetail, closeDetail, detailOpen } from './panel.js';
+import { PROJECT_ITEMS, ART_ITEMS } from './items.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,8 +25,52 @@ export async function createPlayground() {
   const hint   = $('pg-hint');
 
   const pg = new Playground(canvas);
-  await pg.init();
+  await pg.init(PROJECT_ITEMS);
   root.classList.add('ready');
+
+  let currentRoom = 'projects';
+  const roomScrolls = {
+    projects: { x: 0, y: 0 },
+    art:      { x: 0, y: 0 },
+  };
+
+  async function switchRoom(roomName) {
+    if (roomName === currentRoom) return;
+
+    roomScrolls[currentRoom] = { x: target.x, y: target.y };
+
+    root.classList.add('room-switching');
+    await new Promise(r => setTimeout(r, 380));
+
+    const items = roomName === 'art' ? ART_ITEMS : PROJECT_ITEMS;
+    await pg.setItems(items);
+
+    const saved = roomScrolls[roomName];
+    target.x = saved.x;
+    target.y = saved.y;
+    scroll.x = saved.x;
+    scroll.y = saved.y;
+    flick = { x: 0, y: 0 };
+
+    currentRoom = roomName;
+
+    updateRoomToggle();
+    root.classList.remove('room-switching');
+  }
+
+  function updateRoomToggle() {
+    const projBtn = document.getElementById('room-projects');
+    const artBtn  = document.getElementById('room-art');
+    const toggleContainer = document.getElementById('room-toggle');
+    if (!projBtn || !artBtn || !toggleContainer) return;
+    projBtn.classList.toggle('active', currentRoom === 'projects');
+    artBtn.classList.toggle('active', currentRoom === 'art');
+    toggleContainer.setAttribute('data-room', currentRoom);
+  }
+
+  document.getElementById('room-projects')?.addEventListener('click', () => switchRoom('projects'));
+  document.getElementById('room-art')?.addEventListener('click', () => switchRoom('art'));
+  updateRoomToggle();
 
   /* ---- movement ---------------------------------------------------- */
   /* target  = where you've asked to go                                 */
@@ -219,6 +264,7 @@ const onWheel = (e) => {
       document.body.classList.remove('grabbing', 'hovering');
       label.classList.remove('on');
       closeDetail();
-    }
+    },
+    switchRoom
   };
 }

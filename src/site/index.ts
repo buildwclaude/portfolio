@@ -32,7 +32,14 @@ export function renderPage(): string {
 
     <div class="pg" id="pg" aria-hidden="true">
       <canvas id="gl"></canvas>
-      <div class="hud tl pg-only"><b id="pg-name">${site.meta.shortName}</b><span>Playground</span></div>
+      <div class="hud tl pg-only">
+        <b id="pg-name">${site.meta.shortName}</b>
+        <div class="room-toggle" id="room-toggle" role="tablist" aria-label="Room" data-room="projects">
+          <div class="room-slider"></div>
+          <button class="room-tab active" id="room-projects" role="tab" aria-selected="true" type="button">Projects</button>
+          <button class="room-tab" id="room-art" role="tab" aria-selected="false" type="button">Art</button>
+        </div>
+      </div>
       <div class="hud bl pg-only" id="coord" aria-hidden="true">0000 · 0000</div>
       <button class="hud tr pg-close" id="pg-close" type="button">
         <span>Close</span><span class="pg-esc">Esc</span>

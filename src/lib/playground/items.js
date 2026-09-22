@@ -30,66 +30,69 @@
 
 export const ITEMS = [
   {
-    title: 'Tidal Index', tag: 'WebGL', year: 2026, role: 'Design + Build',
+    title: 'Tidal Index', tag: 'WebGL', year: 2026, role: 'Design + Build', type: 'project',
     desc: 'An interactive shoreline that redraws itself from live tide data. Built with Three.js and a custom flow-field shader.',
     url: 'https://example.com', src: '/img/01.jpg', featured: true, fallback: 'field', ratio: 0.78,
   },
   {
-    title: 'Moiré Records', tag: 'Identity', year: 2025, role: 'Art Direction',
+    title: 'Moiré Records', tag: 'Identity', year: 2025, role: 'Art Direction', type: 'project',
     desc: 'Visual identity and sleeve system for an independent record label. The logo shimmers as it moves — a printed moiré you can feel.',
     url: 'https://example.com', src: '/img/02.jpg', featured: true, fallback: 'moire', ratio: 1.42,
   },
   {
-    title: 'Longwave Atlas', tag: 'Data', year: 2025, role: 'Design + Build',
+    title: 'Longwave Atlas', tag: 'Data', year: 2025, role: 'Design + Build', type: 'project',
     desc: 'A radio-astronomy dashboard turning decades of signal into a navigable map. Shortlisted, Information is Beautiful Awards.',
     url: 'https://example.com', src: '/img/03.jpg', featured: true, fallback: 'rings', ratio: 0.78,
   },
   {
-    title: 'Strata Studio', tag: 'Website', year: 2024, role: 'Design + Build',
+    title: 'Strata Studio', tag: 'Website', year: 2024, role: 'Design + Build', type: 'project',
     desc: 'Portfolio site for an architecture practice — the page peels back in geological layers as you scroll.',
     url: 'https://example.com', src: '/img/04.jpg', featured: true, fallback: 'strata', ratio: 1.42,
   },
   {
-    title: 'Nightshift FM', tag: 'Audio', year: 2023, role: 'Creative Dev',
+    title: 'Nightshift FM', tag: 'Audio', year: 2023, role: 'Creative Dev', type: 'project',
     desc: 'A generative late-night radio station. The visuals breathe with the music via the Web Audio API.',
     url: 'https://example.com', src: '/img/05.jpg', fallback: 'dots', ratio: 0.78,
   },
   {
-    title: 'Paper Terminal', tag: 'Type', year: 2022, role: 'Type + Code',
+    title: 'Paper Terminal', tag: 'Type', year: 2022, role: 'Type + Code', type: 'project',
     desc: 'A monospace typeface and terminal theme designed to feel like warm paper instead of cold glass.',
     url: 'https://example.com', src: '/img/06.jpg', fallback: 'grid', ratio: 1.0,
   },
   {
-    title: 'Kernel Garden', tag: 'Generative', year: 2024, role: 'Solo Project',
+    title: 'Kernel Garden', tag: 'Generative', year: 2024, role: 'Solo Project', type: 'art',
     desc: 'An ever-growing garden of cellular automata. No two visits bloom the same way.',
     url: 'https://example.com', src: '/img/07.jpg', fallback: 'field', ratio: 1.0,
   },
   {
-    title: 'Slow Signal', tag: 'Installation', year: 2023, role: 'Concept + Build',
+    title: 'Slow Signal', tag: 'Installation', year: 2023, role: 'Concept + Build', type: 'art',
     desc: 'A gallery installation translating the room\'s ambient sound into slow ripples of light across a 4-metre wall.',
     url: 'https://example.com', src: '/img/08.jpg', fallback: 'rings', ratio: 1.42,
   },
   {
-    title: 'Dust Protocol', tag: 'Toy', year: 2022, role: 'Solo Project',
+    title: 'Dust Protocol', tag: 'Toy', year: 2022, role: 'Solo Project', type: 'art',
     desc: 'A tiny falling-sand playground for the browser. Pure procrastination, lovingly optimised.',
     url: 'https://example.com', src: '/img/09.jpg', fallback: 'dots', ratio: 0.78,
   },
   {
-    title: 'Half Light', tag: 'Film', year: 2021, role: 'Title Design',
+    title: 'Half Light', tag: 'Film', year: 2021, role: 'Title Design', type: 'art',
     desc: 'Opening titles for a short film — hand-drawn frames composited over volumetric fog.',
     url: 'https://example.com', src: '/img/10.jpg', fallback: 'strata', ratio: 1.42,
   },
   {
-    title: 'Verso', tag: 'Editorial', year: 2021, role: 'Design',
+    title: 'Verso', tag: 'Editorial', year: 2021, role: 'Design', type: 'art',
     desc: 'A digital reading experience for long-form essays that respects the reader\'s attention above all else.',
     url: 'https://example.com', src: '/img/11.jpg', fallback: 'moire', ratio: 0.78,
   },
   {
-    title: 'Cold Open', tag: 'Motion', year: 2020, role: 'Motion Design',
+    title: 'Cold Open', tag: 'Motion', year: 2020, role: 'Motion Design', type: 'art',
     desc: 'A broadcast title package built around a single unbroken camera move through paper sets.',
     url: 'https://example.com', src: '/img/12.jpg', fallback: 'grid', ratio: 1.0,
   },
 ];
+
+export const PROJECT_ITEMS = ITEMS.filter(i => i.type === 'project');
+export const ART_ITEMS = ITEMS.filter(i => i.type === 'art');
 
 // ─────────────────────────────────────────────────────────────────────
 // YOU  — shown in the corners and the intro card. Edit these.
