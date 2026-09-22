@@ -8,10 +8,10 @@ export function warp() {
         <div class="warp-col">
           <a class="warp-card" href="#" data-speed="0.06">
             <figure class="media media--tall" data-gl>
-              <img src="/img/01.jpg" alt="Tidal Index" data-fallback="field" />
+              <img src="/img/01.jpg" alt="Yatri Hub" data-fallback="field" />
             </figure>
-            <div class="meta"><span class="title">Tidal Index</span><span class="idx">01</span></div>
-            <div class="meta"><span>WebGL · Editorial</span><span>2026</span></div>
+            <div class="meta"><span class="title">Yatri Hub</span><span class="idx">01</span></div>
+            <div class="meta"><span>Product Design · UX Research</span><span>2025</span></div>
           </a>
 
           <a class="warp-card" href="#" data-speed="0.06">

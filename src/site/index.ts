@@ -58,23 +58,26 @@ export function renderPage(): string {
       <h2 id="panel-title">Title</h2>
       <span class="panel-role" id="panel-role">Role</span>
       <p id="panel-desc">Description.</p>
+      
+      <div id="panel-hero" class="panel-hero" hidden></div>
+      <div id="panel-meta-grid" class="panel-meta-grid" hidden></div>
+      <div id="panel-content" class="panel-content" hidden></div>
+
       <a class="panel-link" id="panel-link" href="#" target="_blank" rel="noopener">Visit project</a>
     </aside>
 
     <div class="detail" id="warp-detail" hidden>
       <div class="detail__scrim" data-detail-close></div>
-      <div class="detail__panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="detail__panel" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="detail-title">
         <button class="detail__close" type="button" data-detail-close data-cursor-label="Close">
           <span aria-hidden="true">✕</span><span class="visually-hidden">Close</span>
         </button>
-        <figure class="detail__figure">
-          <img id="detail-img" src="" alt="" decoding="async" />
-        </figure>
         <div class="detail__body">
           <p class="detail__num" id="detail-num"></p>
           <h2 class="detail__title" id="detail-title"></h2>
           <p class="detail__meta" id="detail-meta"></p>
           <p class="detail__note" id="detail-note"></p>
+          <div id="detail-rich-content" class="detail__rich_content"></div>
         </div>
       </div>
     </div>

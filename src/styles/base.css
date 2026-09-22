@@ -254,3 +254,8 @@ button {
 .link--underlined:focus-visible::after {
   background: currentColor;
 }
+
+/* Lock scroll when overlay is open */
+html.is-locked, html.is-locked body {
+  overflow: hidden !important;
+}
