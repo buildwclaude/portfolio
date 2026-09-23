@@ -12,6 +12,22 @@ body.pg-open { overflow: hidden; }
 }
 body.pg-open .pg { opacity: 1; visibility: visible; pointer-events: auto; }
 
+/* The art room is hung on the same white the sketches were flattened onto
+   (#fbfaf6, in public/art/), so each paper sits flush with the wall. It stays
+   light in dark mode too — the sketches are drawn on white — so the ink
+   switches back with it. */
+.pg[data-room='art'] {
+  --paper: #fbfaf6;
+  --paper-raised: #ffffff;
+  --paper-sunk: #f1efe8;
+  --ink: #111111;
+  --ink-secondary: #555555;
+  --ink-muted: #888888;
+  --rule: rgba(0, 0, 0, 0.12);
+  --rule-soft: rgba(0, 0, 0, 0.06);
+}
+.pg { transition: opacity 0.65s var(--ease-out), visibility 0.65s var(--ease-out), background-color 0.5s var(--ease-out); }
+
 #gl {
   position: absolute;
   inset: 0;

@@ -66,6 +66,8 @@ export async function createPlayground() {
     projBtn.classList.toggle('active', currentRoom === 'projects');
     artBtn.classList.toggle('active', currentRoom === 'art');
     toggleContainer.setAttribute('data-room', currentRoom);
+    // The art room takes on the paper colour of the sketches (see playground.css).
+    root.dataset.room = currentRoom;
   }
 
   document.getElementById('room-projects')?.addEventListener('click', () => switchRoom('projects'));

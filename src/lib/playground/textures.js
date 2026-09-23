@@ -7,7 +7,10 @@ const loader = new THREE.TextureLoader();
 export function loadTexture(item) {
   return new Promise((resolve) => {
     const done = (t) => {
-      t.colorSpace = THREE.SRGBColorSpace;
+      // Left as raw sRGB on purpose: the tile shader is a plain ShaderMaterial
+      // that never re-encodes its output, so decoding here would darken every
+      // image (and the art room's paper would stop matching its wall).
+      t.colorSpace = THREE.NoColorSpace;
       t.minFilter = THREE.LinearFilter;
       t.generateMipmaps = false;
       resolve(t);
