@@ -5,6 +5,8 @@
 
 .rail {
   --rail-h: min(46vh, 420px);
+  /* The ink blue of the hero's hand-drawn doodles. */
+  --rail-accent: #3d42c8;
   position: fixed;
   left: clamp(12px, 1.6vw, 26px);
   top: 50%;
@@ -67,6 +69,7 @@
   transition: width var(--dur-mid) var(--ease-out);
 }
 .rail__tick.is-past { color: var(--ink); }
+.rail__tick.is-current { color: var(--rail-accent); }
 .rail__tick.is-current::before { width: 13px; }
 
 /* The name appears on hover, set on a paper chip so it reads over content. */
@@ -101,7 +104,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--rail-accent);
   box-shadow: 0 0 0 3px var(--paper);
 }
 /* The readout sits below the ruler, like the dial of a gauge. */
@@ -114,6 +117,8 @@
   white-space: nowrap;
 }
 .rail__readout::after { content: ' %'; opacity: 0.6; }
+
+[data-theme='dark'] .rail { --rail-accent: #8f94ff; }
 
 @media (max-width: 860px) {
   .rail {

@@ -43,6 +43,8 @@ export function renderPage(): string {
         <span class="rail__marker"></span>
         <span class="rail__readout">000</span>
       </div>
+      <!-- a halftone branch printed off the right edge of the first screen -->
+      <div class="floral" aria-hidden="true"></div>
       ${hero()}
       ${warp()}
       ${about()}

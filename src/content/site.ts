@@ -48,7 +48,12 @@ export type Entry = {
   /** Leave empty when the source does not state dates. */
   year: string;
   href: string;
+  /** Optional longer description, shown on the About page only. */
+  desc?: string;
 };
+
+/** A photo on the About page. Files live in /public/me/. */
+export type Photo = { src: string; width: number; height: number; alt: string };
 
 export const site = {
   /* ---------------------------------------------------------------- meta */
@@ -189,7 +194,7 @@ export const site = {
     title: 'About',
     /** Each entry is one paragraph. */
     paragraphs: [
-      'I am a product researcher and designer passionate about creating impactful, user-centered solutions at the intersection of technology and human experience. With a background in Electronics and Communication Engineering and over three years of experience driving consumer-facing products from concept to launch, I bridge technical understanding with design thinking.',
+      'I am a product researcher and designer passionate about creating impactful, user-centered solutions at the intersection of technology and human experience. With a background in Electronics and Communication Engineering and over three years of experience driving consumer-facing products from concept to launch, I bridge technical understanding with design thinking to deliver solutions that are both functional and visionary.',
       'I am interested in how humans and computers shape each other. My work explores how technology can support human judgment, emotion and creativity — not replace it. I am especially curious about how our generation is learning to live with AI, and how design can help that relationship feel more intentional, humane and empowering.',
       'When I am not designing, you’ll find me exploring new places, capturing moments through my lens, diving into a good book, or experimenting with new recipes in the kitchen. I also love the outdoors, learning new languages and cultures, and expressing my creativity through pottery.',
     ],
@@ -210,8 +215,9 @@ export const site = {
   },
 
   /* --------------------------------------------------------------- records
-     Three lists in the About section, all rendered by the same component.
-     Rows with an empty `year` simply leave the column blank. */
+     The lists on the About page (#me). The homepage shows only Experience;
+     the page shows every group, with its photos. Rows with an empty `year`
+     leave the column blank. Transcribed from sony-thakuri.xyz/3/. */
   records: {
     groups: [
       {
@@ -242,78 +248,126 @@ export const site = {
             href: '',
           },
         ],
+        photos: [],
       },
       {
         label: 'Recognition',
         items: [
           {
-            title: 'Auto Robotic Car Competition',
-            meta: 'Winner — led the team that built a Bluetooth-controlled car, earning a sponsored program in Singapore',
+            title: 'Winner, Auto Robotic Car Competition',
+            meta: 'Team lead',
             year: '',
             href: '',
+            desc: 'Led my team to victory by designing and developing a Bluetooth-controlled car. The win earned us a sponsored program in Singapore, where I expanded my knowledge in robotics, human–computer interaction and motorsport safety.',
           },
           {
-            title: 'EntrepreneurHer',
-            meta: 'Winner — $2,000 equity investment for Learn Loksewa, widening access to public sector exam preparation in Nepal',
+            title: 'Winner, EntrepreneurHer',
+            meta: 'Learn Loksewa',
             year: '',
             href: '',
+            desc: 'Part of the winning team, awarded $2,000 in equity investment for our passion project, Learn Loksewa. The funding has supported our mission to make public sector exam preparation more accessible across Nepal.',
           },
           {
             title: 'Figma Warrior Award',
-            meta: 'Yatri Motorcycles — for advancing design standards within the team',
+            meta: 'Yatri Motorcycles',
             year: '',
             href: '',
+            desc: 'Recognised as a “Figma Warrior” for my dedication to advancing design standards and pushing creative boundaries within the team.',
           },
           {
             title: 'Girls to Code Bootcamp',
-            meta: 'Assignment winner, top five — awarded a Springboard Scholarship',
+            meta: 'Assignment winner, top five',
             year: '',
             href: '',
+            desc: 'Awarded a Springboard Scholarship.',
           },
+        ],
+        photos: [
+          { src: '/me/recognition-5.webp', width: 1000, height: 1097, alt: 'The Bluetooth-controlled robotic car, wired up on a table.' },
+          { src: '/me/recognition-2.webp', width: 1000, height: 914, alt: 'Receiving the award certificate with the team.' },
+          { src: '/me/recognition-3.webp', width: 1000, height: 522, alt: 'The team in matching blue shirts during the program in Singapore.' },
+          { src: '/me/recognition-4.webp', width: 1000, height: 1124, alt: 'Driving a kart on a racing circuit.' },
+          { src: '/me/recognition-1.webp', width: 1000, height: 1769, alt: 'The Supertree Grove at Gardens by the Bay, Singapore, lit up at night.' },
         ],
       },
       {
-        label: 'Beyond the work',
+        label: 'Speaking & workshops',
         items: [
           {
-            title: 'Girls in Tech Nepal',
-            meta: 'Advisory board member',
+            title: 'Speaker, Hult Prize Itahari',
+            meta: 'Simple Design Thinking',
             year: '',
             href: '',
+            desc: 'Presented design thinking approaches to aspiring entrepreneurs, inspiring them to leverage design principles for impactful solutions.',
           },
           {
-            title: 'Smart Cheli',
-            meta: 'Mentor — guiding a student toward a career in UX',
-            year: '',
-            href: 'https://smartcheli.org.np/',
-          },
-          {
-            title: 'Youngpreneurs',
-            meta: 'Co-founder — interviews, articles and podcasts on young entrepreneurs',
-            year: '',
-            href: 'https://www.instagram.com/youngpreneur.s/',
-          },
-          {
-            title: 'Zeno Project',
-            meta: 'Co-founder — a clothing store donating 10% of profits to the underserved',
-            year: '',
-            href: 'https://www.instagram.com/zeno.project/',
-          },
-          {
-            title: 'Hult Prize Itahari',
-            meta: 'Speaker — Simple Design Thinking',
+            title: 'Design thinking workshop',
+            meta: 'Facilitator',
             year: '',
             href: '',
-          },
-          {
-            title: 'Design thinking workshops',
-            meta: 'Facilitator — hands-on methodology sessions for students',
-            year: '',
-            href: '',
+            desc: 'Led a hands-on workshop on core design thinking methodologies for students, guiding them in applying these techniques to real-world challenges.',
           },
         ],
+        photos: [
+          { src: '/me/speaking-2.webp', width: 1000, height: 765, alt: 'A screen reading “Design thinking for product design”, from a Girls in Tech Nepal session.' },
+          { src: '/me/speaking-1.webp', width: 1000, height: 532, alt: 'Workshop participants on a video call.' },
+        ],
       },
-    ] satisfies { label: string; items: Entry[] }[],
+      {
+        label: 'Community',
+        items: [
+          {
+            title: 'Advisory Board Member',
+            meta: 'Girls in Tech Nepal',
+            year: '',
+            href: '',
+            desc: 'Served on the advisory board, advocating for gender equality in tech and supporting programs that empower women through technology and skill-building.',
+          },
+          {
+            title: 'Mentor',
+            meta: 'Smart Cheli',
+            year: '',
+            href: 'https://smartcheli.org.np/',
+            desc: 'Volunteered as a mentor through the Smart Cheli mentorship program, guiding a student into a career in UX and helping her build the skills the industry asks for.',
+          },
+        ],
+        photos: [
+          { src: '/me/community-1.webp', width: 1000, height: 519, alt: 'A group photo with mentees and mentors.' },
+          { src: '/me/community-2.webp', width: 1000, height: 869, alt: 'Students working through an exercise at a table.' },
+          { src: '/me/community-3.webp', width: 1000, height: 790, alt: 'A smiling group selfie at a community event.' },
+          { src: '/me/community-4.webp', width: 1000, height: 551, alt: 'A large group photo from a Girls in Tech Nepal event.' },
+        ],
+      },
+      {
+        label: 'Initiatives',
+        items: [
+          {
+            title: 'Co-founder, Youngpreneurs',
+            meta: 'Media',
+            year: '',
+            href: 'https://www.instagram.com/youngpreneur.s/',
+            desc: 'Highlighting the journeys of young entrepreneurs through interviews, articles and podcasts — celebrating local entrepreneurship and resilience.',
+          },
+          {
+            title: 'Co-founder, Zeno Project',
+            meta: 'Social enterprise',
+            year: '',
+            href: 'https://www.instagram.com/zeno.project/',
+            desc: 'A socially responsible clothing store that donates 10% of its profits to the underserved, using fashion as a platform for positive impact.',
+          },
+        ],
+        photos: [],
+      },
+    ] satisfies { label: string; items: Entry[]; photos: Photo[] }[],
+  },
+
+  /* -------------------------------------------------------------------- me
+     The About page (#me): everything else it shows comes from `about`,
+     `records` and `contact`. */
+  me: {
+    greeting: 'Hello,',
+    portrait: { src: '/me/portrait.webp', alt: 'Portrait of Sony Thakuri, smiling, one hand raised against the sun.' },
+    signoff: '/me/tree.webp',
   },
 
   /* ----------------------------------------------------------- experiments */

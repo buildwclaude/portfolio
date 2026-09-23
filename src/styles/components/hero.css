@@ -382,3 +382,33 @@
 @media (max-width: 640px) {
   .hero-card:nth-child(4) { display: none; }
 }
+
+/* ==========================================================================
+   Floral — a halftone branch printed off the right edge of the first screen.
+   The SVG (public/hero/floral.svg, traced from the source scan so every
+   dot is a crisp square) is used as a mask, so it takes the ink colour of
+   either theme and stays faint enough to sit behind the cards and notes.
+   ========================================================================== */
+
+.floral {
+  position: absolute;
+  top: calc(var(--header-height) + 6svh);
+  right: 0;
+  z-index: 0;
+  height: min(88svh, 900px);
+  aspect-ratio: 501 / 933;
+  background: var(--ink);
+  opacity: 0.11;
+  -webkit-mask: url('/hero/floral.svg') right top / contain no-repeat;
+  mask: url('/hero/floral.svg') right top / contain no-repeat;
+  pointer-events: none;
+  animation: hero-fade 1.6s var(--ease-out) 0.3s backwards;
+}
+[data-theme='dark'] .floral { opacity: 0.14; }
+
+/* The page must sit above it. */
+.hero { position: relative; z-index: 1; }
+
+@media (max-width: 860px) {
+  .floral { display: none; }
+}

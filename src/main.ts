@@ -7,6 +7,7 @@ import './styles/components/hero.css';
 import './styles/components/work.css';
 import './styles/components/warp.css';
 import './styles/components/warp-detail.css';
+import './styles/components/me.css';
 import './styles/components/playground.css';
 import './styles/components/about.css';
 import './styles/components/records.css';

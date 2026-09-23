@@ -1,0 +1,256 @@
+/* ==========================================================================
+   About page (#me) — opened in the case-study window.
+   The homepage's language at reading length: a light/bold greeting, a
+   portrait printed like the hero cards, and numbered sections set as
+   hairline-ruled rows, each with its photos.
+   ========================================================================== */
+
+/* The window, when it holds a native page rather than a Readymag canvas. */
+.detail--native .detail__panel { background: var(--paper); }
+.detail--native .detail__close { background: var(--paper); color: var(--ink); border-color: var(--rule); }
+.detail--native .detail__close:hover { background: var(--ink); color: var(--paper); }
+
+/* warp.css styles every `.meta` on the site as a flex row with a top
+   margin (meant for the work cards); here the labels are plain text. */
+.me .meta { display: block; margin-top: 0; }
+
+.me {
+  --me-ink: #3d42c8; /* the doodle ink, as on the homepage */
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(4.5rem, 12vh, 8rem) var(--shell-margin) clamp(4rem, 10vh, 7rem);
+  color: var(--ink);
+}
+[data-theme='dark'] .me { --me-ink: #8f94ff; }
+
+/* --- Intro ---------------------------------------------------------------- */
+
+.me__intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-items: start;
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+}
+.me__intro-text { grid-column: 1 / span 7; }
+
+.me__eyebrow {
+  margin: 0 0 var(--space-24);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-secondary);
+}
+
+.me__title {
+  margin: 0 0 var(--space-32);
+  font-size: clamp(2.8rem, 1.6rem + 4.2vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.me__hello {
+  display: block;
+  font-family: 'Inter', var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.05em;
+}
+.me__name { display: block; font-weight: var(--weight-bold); }
+
+.me__bio p {
+  margin: 0 0 var(--space-16);
+  max-width: 60ch;
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--ink-secondary);
+}
+.me__bio p:first-child { color: var(--ink); }
+
+.me__facts { margin: var(--space-32) 0 0; max-width: 60ch; }
+.me__fact {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  column-gap: var(--space-16);
+  padding-block: var(--space-12);
+  border-top: 1px solid var(--rule-soft);
+}
+.me__fact dt { margin: 0; padding-top: 0.2em; color: var(--ink-muted); }
+.me__fact dd { margin: 0; font-size: var(--text-small); line-height: 1.55; }
+
+/* Printed like the sticker cards on the homepage. */
+.me__portrait {
+  grid-column: 9 / -1;
+  margin: var(--space-16) 0 0;
+  transform: rotate(2deg);
+}
+.me__portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  border: 7px solid #fbfaf6;
+  border-radius: 3px;
+  box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.25), 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Sections ------------------------------------------------------------- */
+
+.me__section {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+  border-top: 1px solid var(--rule);
+}
+
+.me .me__label {
+  grid-column: 1 / span 3;
+  align-self: start;
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--space-12);
+  margin: 0;
+  color: var(--ink);
+}
+.me__label-num {
+  font-family: 'Inter', var(--font-sans);
+  font-weight: 300;
+  font-size: 1.6rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink-muted);
+  text-transform: none;
+}
+
+.me__list,
+.me__photos {
+  grid-column: 4 / -1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.me__row { padding-block: var(--space-16); }
+.me__row + .me__row { border-top: 1px solid var(--rule-soft); }
+
+.me__row-head {
+  display: grid;
+  /* A fixed year column, so every row shares the same column lines. */
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 9.5rem;
+  column-gap: var(--space-24);
+  align-items: baseline;
+}
+.me__row-title {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.01em;
+}
+.me__row-title a { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size var(--dur-mid) var(--ease-out); }
+.me__row-title a:hover,
+.me__row-title a:focus-visible { background-size: 100% 1px; }
+.me__row-title a span { color: var(--ink-muted); font-weight: 400; }
+.me__row-meta { font-size: var(--text-small); color: var(--ink-secondary); }
+.me__row-year { justify-self: end; color: var(--ink-secondary); white-space: nowrap; }
+
+.me__row-desc {
+  margin: var(--space-8) 0 0;
+  max-width: 64ch;
+  font-size: var(--text-small);
+  line-height: 1.65;
+  color: var(--ink-secondary);
+}
+
+/* A justified gallery: each photo grows in proportion to its aspect ratio
+   (--ar), so every row fills the width and its photos share one height.
+   On phones it becomes a strip you swipe through (below). */
+.me__photos {
+  --row: clamp(120px, 10.5vw, 150px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+  margin-top: var(--space-24);
+}
+.me__photos li { flex: var(--ar) 1 calc(var(--ar) * var(--row)); }
+/* Soaks up the last row's slack, so a photo left alone there keeps the row
+   height instead of stretching to the full width. */
+.me__photos::after { content: ''; flex: 999 1 0; }
+.me__photos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  background: var(--paper-sunk);
+}
+
+/* --- Sign-off ------------------------------------------------------------- */
+
+.me__signoff {
+  padding-top: clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.me__tree { display: block; width: 3.2rem; height: auto; margin: 0 auto; }
+[data-theme='dark'] .me__tree { filter: brightness(1.15); }
+.me__signoff-line {
+  margin: var(--space-12) 0 var(--space-24);
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 1.3rem + 1.4vw, 2.6rem);
+  line-height: 1;
+  color: var(--me-ink);
+}
+.me__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-12) var(--space-32);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.me__links a {
+  font-size: var(--text-small);
+  color: var(--ink);
+  text-decoration: none;
+  padding-bottom: 2px;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+}
+.me__links a span { color: var(--ink-muted); }
+.me__links a:hover span { color: var(--me-ink); }
+.me .me__colophon { margin: var(--space-48) 0 0; text-align: center; color: var(--ink-muted); }
+
+/* --- Entrance: a small rise, as sections scroll in ----------------------- */
+
+.me [data-rm-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+.me [data-rm-reveal].is-in { opacity: 1; transform: none; }
+
+/* --- Narrow screens ------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .me__intro { display: flex; flex-direction: column; }
+  .me__portrait { order: -1; width: min(62%, 16rem); margin: 0 0 var(--space-32); }
+  .me .me__label { position: static; grid-column: 1 / -1; margin-bottom: var(--space-12); }
+  .me__list,
+  .me__photos { grid-column: 1 / -1; }
+  .me__row-head { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; }
+  .me__row-meta { grid-column: 1; grid-row: 2; }
+  .me__row-year { grid-row: 1; grid-column: 2; }
+  .me__photos {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(var(--shell-margin) * -1);
+    padding-inline: var(--shell-margin);
+    scroll-padding-inline: var(--shell-margin);
+  }
+  .me__photos li { flex: none; scroll-snap-align: start; }
+  .me__photos::after { content: none; }
+  .me__photos img { height: 170px; width: auto; }
+}

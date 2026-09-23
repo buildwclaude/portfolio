@@ -17,7 +17,8 @@ const STUDIES: Record<string, () => Promise<string>> = {
   'yatri-energy': () => import('../content/studies/yatri-energy.html?raw').then((m) => m.default),
   eduquest: () => import('../content/studies/eduquest.html?raw').then((m) => m.default),
   dashboard: () => import('../content/studies/dashboard.html?raw').then((m) => m.default),
-  me: () => import('../content/studies/me.html?raw').then((m) => m.default),
+  // The About page is built natively from site content, not imported.
+  me: () => import('../site/me').then((m) => m.renderMe()),
 };
 
 /**
@@ -186,6 +187,8 @@ export function initWarpDetail() {
       const page = await load();
       content.innerHTML = page.replace(/src="\//g, `src="${BASE}`);
       content.hidden = false;
+      // Native pages (not a Readymag canvas) sit on the site's own paper.
+      root!.classList.toggle('detail--native', !content.querySelector('.rm'));
     } else {
       // The card's image is already decoded, so the hero appears instantly.
       img.src = source?.currentSrc || source?.src || '';
@@ -194,6 +197,7 @@ export function initWarpDetail() {
       root!.querySelector('#detail-note')!.textContent = item?.desc || 'Full case study coming soon.';
       content.innerHTML = '';
       content.hidden = true;
+      root!.classList.remove('detail--native');
     }
   }
 
