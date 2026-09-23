@@ -3,7 +3,7 @@ import { html } from '../lib/html';
 export function warp() {
   return html`
     <section class="warp-work" id="warp-work">
-      <div class="shell sectionbar"><b>Selected work</b><span>06 pieces</span></div>
+      <div class="shell sectionbar"><b>Selected work</b><span>05 pieces</span></div>
       <div class="shell warp-grid">
         <div class="warp-col">
           <a class="warp-card" href="#" data-speed="0.06" data-case="yatri-hub">
@@ -24,7 +24,7 @@ export function warp() {
 
           <a class="warp-card" href="#" data-speed="0.06" data-case="yatri-energy">
             <figure class="media media--tall" data-gl>
-              <img src="/work/yatri-energy/5fc7460f-f63330.webp" alt="Yatri Energy" data-fallback="rings" />
+              <img src="/work/yatri-energy/cover.webp" alt="Yatri Energy" data-fallback="rings" />
             </figure>
             <div class="meta"><span class="title">Yatri Energy</span><span class="idx">03</span></div>
             <div class="meta"><span>Product Design · UX</span><span>2023</span></div>
@@ -48,13 +48,6 @@ export function warp() {
             <div class="meta"><span>UX Research · Product Design</span><span>2024</span></div>
           </a>
 
-          <a class="warp-card" href="#" data-speed="-0.05">
-            <figure class="media media--tall" data-gl>
-              <img src="/img/06.jpg" alt="Paper Terminal" data-fallback="grid" />
-            </figure>
-            <div class="meta"><span class="title">Paper Terminal</span><span class="idx">06</span></div>
-            <div class="meta"><span>Type · Experiment</span><span>2022</span></div>
-          </a>
         </div>
       </div>
     </section>
