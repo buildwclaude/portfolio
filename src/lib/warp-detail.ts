@@ -27,8 +27,14 @@ const STUDY_FONTS =
   'https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:wght@100..900&family=Manrope:wght@200..800&family=Mulish:wght@200..1000&family=Open+Sans:wght@300..800&display=swap';
 
 const BASE = import.meta.env.BASE_URL;
-/** Readymag's desktop canvas width; the page is scaled down below it. */
+/** Readymag's desktop canvas width; the page is scaled to the window from it. */
 const CANVAS = 1024;
+/**
+ * Readymag zooms the canvas to fill the window's width (1.4x on a 1440px
+ * laptop), so the case studies do the same. Capped where a 1920px screen
+ * lands, so an ultra-wide monitor doesn't turn 12px body text into 30px.
+ */
+const MAX_SCALE = 1.875;
 
 export function initWarpDetail() {
   const root = document.getElementById('warp-detail');
@@ -108,10 +114,10 @@ export function initWarpDetail() {
     }
   }
 
-  /** Scales the fixed-width Readymag canvas to the window, never above 1:1. */
+  /** Scales the fixed-width Readymag canvas to fill the window, as Readymag does. */
   function fitStudy() {
     const page = content.querySelector<HTMLElement>('.rm');
-    if (page) page.style.setProperty('--rm-s', String(Math.min(1, content.clientWidth / CANVAS)));
+    if (page) page.style.setProperty('--rm-s', String(Math.min(MAX_SCALE, content.clientWidth / CANVAS)));
   }
 
   /** Readymag's scroll animation: widgets grow and fade in as they arrive. */
