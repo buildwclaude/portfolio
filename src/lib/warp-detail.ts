@@ -13,6 +13,10 @@ import { ITEMS } from './playground/items';
  */
 const STUDIES: Record<string, () => Promise<string>> = {
   'yatri-hub': () => import('../content/studies/yatrihub.html?raw').then((m) => m.default),
+  'ar-hud': () => import('../content/studies/ar-hud.html?raw').then((m) => m.default),
+  'yatri-energy': () => import('../content/studies/yatri-energy.html?raw').then((m) => m.default),
+  eduquest: () => import('../content/studies/eduquest.html?raw').then((m) => m.default),
+  dashboard: () => import('../content/studies/dashboard.html?raw').then((m) => m.default),
 };
 
 /**
@@ -159,11 +163,15 @@ export function initWarpDetail() {
     }
   }
 
-  /** Where the flying image lands: the study's hero picture, or the plain hero. */
-  function landing(): HTMLElement {
-    return root!.classList.contains('detail--study')
-      ? content.querySelector<HTMLElement>('.rm-pic') || content
-      : figure;
+  /**
+   * Where the flying image lands: the study's copy of the card's picture if it
+   * has one, else its first picture; or the plain hero for cards without one.
+   */
+  function landing(card: HTMLElement): HTMLElement {
+    if (!root!.classList.contains('detail--study')) return figure;
+    const file = card.querySelector('img')?.getAttribute('src')?.split('/').pop();
+    const match = file ? content.querySelector(`.rm-pic img[src$="/${file}"]`) : null;
+    return match?.parentElement || content.querySelector<HTMLElement>('.rm-pic') || content;
   }
 
   function makeGhost(card: HTMLElement) {
@@ -198,7 +206,7 @@ export function initWarpDetail() {
     watchReveals();
 
     const from = (card.querySelector('figure') || card).getBoundingClientRect();
-    const to = landing().getBoundingClientRect();
+    const to = landing(card).getBoundingClientRect();
 
     tl?.kill();
     if (reduced) {
@@ -257,7 +265,7 @@ export function initWarpDetail() {
 
     // Fly the image back only while the hero is still on screen; deep in the
     // page a plain fade reads better than an image arriving from above.
-    const to = landing().getBoundingClientRect();
+    const to = landing(card).getBoundingClientRect();
     if (to.bottom > to.height * 0.4) {
       const from = (card.querySelector('figure') || card).getBoundingClientRect();
       ghost?.remove();

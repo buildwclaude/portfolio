@@ -14,38 +14,38 @@ export function warp() {
             <div class="meta"><span>Product Design · UX Research</span><span>2025</span></div>
           </a>
 
-          <a class="warp-card" href="#" data-speed="0.06">
+          <a class="warp-card" href="#" data-speed="0.06" data-case="ar-hud">
             <figure class="media media--wide" data-gl>
-              <img src="/img/02.jpg" alt="Moiré Records" data-fallback="moire" />
+              <img src="/work/ar-hud/3abae169-38f525.webp" alt="AR Head-Up Display" data-fallback="moire" />
             </figure>
-            <div class="meta"><span class="title">Moiré Records</span><span class="idx">02</span></div>
-            <div class="meta"><span>Identity · Shop</span><span>2025</span></div>
+            <div class="meta"><span class="title">AR Head-Up Display</span><span class="idx">02</span></div>
+            <div class="meta"><span>AR · Research</span><span>2026</span></div>
           </a>
 
-          <a class="warp-card" href="#" data-speed="0.06">
+          <a class="warp-card" href="#" data-speed="0.06" data-case="yatri-energy">
             <figure class="media media--tall" data-gl>
-              <img src="/img/03.jpg" alt="Longwave Atlas" data-fallback="rings" />
+              <img src="/work/yatri-energy/5fc7460f-f63330.webp" alt="Yatri Energy" data-fallback="rings" />
             </figure>
-            <div class="meta"><span class="title">Longwave Atlas</span><span class="idx">03</span></div>
-            <div class="meta"><span>Data · Interactive</span><span>2025</span></div>
+            <div class="meta"><span class="title">Yatri Energy</span><span class="idx">03</span></div>
+            <div class="meta"><span>Product Design · UX</span><span>2023</span></div>
           </a>
         </div>
 
         <div class="warp-col warp-col--offset">
-          <a class="warp-card" href="#" data-speed="-0.05">
+          <a class="warp-card" href="#" data-speed="-0.05" data-case="eduquest">
             <figure class="media media--wide" data-gl>
-              <img src="/img/04.jpg" alt="Strata Studio" data-fallback="strata" />
+              <img src="/work/eduquest/59d0b409-7a3941.webp" alt="EduQuest" data-fallback="strata" />
             </figure>
-            <div class="meta"><span class="title">Strata Studio</span><span class="idx">04</span></div>
-            <div class="meta"><span>Architecture · Site</span><span>2024</span></div>
+            <div class="meta"><span class="title">EduQuest</span><span class="idx">04</span></div>
+            <div class="meta"><span>UX Research · Product Design</span><span>2024</span></div>
           </a>
 
-          <a class="warp-card" href="#" data-speed="-0.05">
+          <a class="warp-card" href="#" data-speed="-0.05" data-case="dashboard">
             <figure class="media media--tall" data-gl>
-              <img src="/img/05.jpg" alt="Nightshift FM" data-fallback="dots" />
+              <img src="/work/dashboard/f5f971ba-fda800.webp" alt="Dynamic Dashboard" data-fallback="dots" />
             </figure>
-            <div class="meta"><span class="title">Nightshift FM</span><span class="idx">05</span></div>
-            <div class="meta"><span>Audio · Toy</span><span>2023</span></div>
+            <div class="meta"><span class="title">Dynamic Dashboard</span><span class="idx">05</span></div>
+            <div class="meta"><span>UX Research · Product Design</span><span>2024</span></div>
           </a>
 
           <a class="warp-card" href="#" data-speed="-0.05">

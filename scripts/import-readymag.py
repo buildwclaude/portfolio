@@ -7,12 +7,9 @@ Readymag serves every page as a list of absolutely positioned widgets
 list, downloads every picture with the crop Readymag shows, and writes the
 page as plain HTML that `src/lib/warp-detail.ts` scales to fit its window.
 
-    python3 scripts/import-readymag.py <project-id> <page-id> <slug>
+    python3 scripts/import-readymag.py <page-number> <slug>
 
-    e.g. python3 scripts/import-readymag.py 6021618 696d94fbc39fae1a364a188e yatrihub
-
-The page id is the `pageId` of the `/api/viewer/project/<id>/widgets` request
-the live page makes (visible in the browser's network panel).
+    e.g. python3 scripts/import-readymag.py 8 yatrihub     # sony-thakuri.xyz/8/
 
 Writes:
     src/content/studies/<slug>.html   the page
@@ -29,6 +26,7 @@ import urllib.request
 
 CANVAS = 1024  # Readymag's desktop page width
 SITE = 'https://sony-thakuri.xyz'
+PROJECT = 6021618  # the Readymag project behind the site
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -112,6 +110,16 @@ def load_text_styles():
 TEXT_STYLES = {}
 
 
+def find_page(num):
+    """The page's id and height, from the project data the viewer embeds."""
+    page = fetch(f'{SITE}/{num}/').decode('utf-8', 'replace').replace('&quot;', '"')
+    for m in re.finditer(r'"num":(\d+),"type":"\w+","height":(\d+)', page):
+        if int(m.group(1)) == int(num):
+            ids = re.findall(r'"_id":"([0-9a-f]{24})"', page[max(0, m.start() - 3000):m.start()])
+            return ids[-1], int(m.group(2))
+    sys.exit(f'page {num} not found')
+
+
 def render_text(w):
     styles = {s['key']: s for s in w.get('styles', [])}
     metas = {m['key']: m.get('data', {}) for m in w.get('blocksMeta', [])}
@@ -169,19 +177,22 @@ def render_text(w):
 
 # ── pictures ────────────────────────────────────────────────────────────────
 
+def download(url, slug, stem):
+    name = f"{stem}-{hashlib.sha1(url.encode()).hexdigest()[:6]}.{'png' if url.endswith('.png') else 'webp'}"
+    out = os.path.join(ROOT, 'public', 'work', slug, name)
+    if not os.path.exists(out):
+        with open(out, 'wb') as f:
+            f.write(fetch(url))
+    return f'/work/{slug}/{name}'
+
+
 def picture_src(w, slug):
     pic = w['picture']
     base = pic.get('lambdaUrl') or pic['url']
     width = min(2048, int(round(w['w'] * 2)))  # 2x for sharp screens
     crop = f"&cX={w['cropX']}&cY={w['cropY']}&cW={w['cropW']}&cH={w['cropH']}" if 'cropX' in w else ''
     url = f'{base}?w={width}&e=webp&nll=true{crop}'
-    stem = base.rsplit('/', 1)[-1].replace('image-', '').split('-')[0]
-    name = f"{stem}-{hashlib.sha1(url.encode()).hexdigest()[:6]}.webp"
-    out = os.path.join(ROOT, 'public', 'work', slug, name)
-    if not os.path.exists(out):
-        with open(out, 'wb') as f:
-            f.write(fetch(url))
-    return f'/work/{slug}/{name}'
+    return download(url, slug, base.rsplit('/', 1)[-1].replace('image-', '').split('-')[0])
 
 
 # ── page ────────────────────────────────────────────────────────────────────
@@ -197,16 +208,17 @@ def anim_attrs(w):
 
 
 def main():
-    project, page, slug = sys.argv[1:4]
+    num, slug = sys.argv[1:3]
+    page, page_height = find_page(num)
     TEXT_STYLES.update(load_text_styles())
-    widgets = json.loads(fetch(f'{SITE}/api/viewer/project/{project}/widgets?pageId={page}'))
+    widgets = json.loads(fetch(f'{SITE}/api/viewer/project/{PROJECT}/widgets?pageId={page}'))
     os.makedirs(os.path.join(ROOT, 'public', 'work', slug), exist_ok=True)
 
     background = next((w for w in widgets if w['type'] == 'background'), {})
-    items, bottom = [], 0
+    items = []
     for w in sorted((w for w in widgets if 'x' in w), key=lambda w: (w['y'], w['x'])):
         # Only what sits on the canvas; Readymag keeps drafts parked off to the sides.
-        if w['x'] + w['w'] <= 0 or w['x'] >= CANVAS:
+        if w['x'] + w['w'] <= 0 or w['x'] >= CANVAS or w['y'] >= page_height:
             continue
         # The site's own navigation is replaced by the window's close button.
         if w['type'] == 'text' and w['y'] < 80 and any(
@@ -217,19 +229,38 @@ def main():
         box = f"left:{px(w['x'])};top:{px(w['y'])};width:{px(w['w'])};z-index:{w.get('z', 1)}"
         if w['type'] == 'text':
             items.append(f'<div class="rm-w rm-text" style="{box}"{anim_attrs(w)}>{render_text(w)}</div>')
-            bottom = max(bottom, w['y'] + w['h'])
         elif w['type'] == 'picture' and w.get('picture'):
             src = picture_src(w, slug)
             style = f"{box};height:{px(w['h'])}"
             if w.get('border_radius'):
                 style += f";border-radius:{w['border_radius']}px"
             # Opacity sits on the image so the reveal animation can own the box's.
-            img_style = f' style="opacity:{w["opacity"]}"' if w.get('opacity') not in (None, 1) else ''
+            img_css = []
+            if w.get('opacity') not in (None, 1):
+                img_css.append(f"opacity:{w['opacity']}")
+            # Rotation sits on the image too, so the reveal can't overwrite it.
+            if w.get('angle'):
+                img_css.append(f"transform:rotate({w['angle']}deg)")
+            img_style = f' style="{";".join(img_css)}"' if img_css else ''
             items.append(
                 f'<div class="rm-w rm-pic" style="{style}"{anim_attrs(w)}>'
                 f'<img src="{src}" alt=""{img_style} loading="lazy" decoding="async"></div>'
             )
-            bottom = max(bottom, w['y'] + w['h'])
+        elif w['type'] == 'shape' and w.get('tp') == 'icon':
+            src = download(w.get('raster2xUrl') or w['rasterUrl'], slug, 'icon')
+            items.append(
+                f'<div class="rm-w rm-pic" style="{box};height:{px(w["h"])}"{anim_attrs(w)}>'
+                f'<img src="{src}" alt="" loading="lazy" decoding="async"></div>'
+            )
+        elif w['type'] == 'shape' and w.get('tp') == 'line':
+            # A line's box is its hit area; the rule is drawn centred in it.
+            weight = w.get('weight', 1)
+            top = w['y'] + (w['h'] - weight) / 2
+            line_box = f"left:{px(w['x'])};top:{px(top)};width:{px(w['w'])};z-index:{w.get('z', 1)}"
+            items.append(
+                f'<div class="rm-w rm-shape" style="{line_box};height:{px(weight)};'
+                f"background:{rgba(w.get('bg_color'), w.get('bg_opacity', 1))}\"{anim_attrs(w)}></div>"
+            )
         elif w['type'] == 'shape':
             style = f"{box};height:{px(w['h'])};background:{rgba(w.get('bg_color'), w.get('bg_opacity', 1))}"
             if w.get('borders'):
@@ -241,12 +272,11 @@ def main():
             if w.get('opacity') not in (None, 1):
                 style += f";opacity:{w['opacity']}"
             items.append(f'<div class="rm-w rm-shape" style="{style}"{anim_attrs(w)}></div>')
-            bottom = max(bottom, w['y'] + w['h'])
 
-    height = int(bottom + 160)  # the page's closing margin
+    height = page_height
     bg = rgba(background.get('color', 'ffffff'), background.get('opacity', 1))
     page_html = (
-        f'<!-- Generated by scripts/import-readymag.py from {SITE} (project {project}, page {page}). -->\n'
+        f'<!-- Generated by scripts/import-readymag.py from {SITE}/{num}/ (page {page}). -->\n'
         f'<div class="rm" style="--rm-w:{CANVAS};--rm-h:{height};--rm-bg:{bg}">'
         f'<div class="rm__canvas">\n' + '\n'.join(items) + '\n</div></div>\n'
     )
