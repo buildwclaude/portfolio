@@ -7,8 +7,8 @@ export function warp() {
       <div class="shell warp-grid">
         <div class="warp-col">
           <a class="warp-card" href="#" data-speed="0.06" data-case="yatri-hub">
-            <figure class="media media--tall media--transparent" data-gl style="background: transparent;">
-              <img src="/work/yatrihub1.png" alt="Yatri Hub" data-fallback="dots" />
+            <figure class="media media--tall" data-gl>
+              <img src="/work/yatrihub/cover.webp" alt="Yatri Hub" data-fallback="field" />
             </figure>
             <div class="meta"><span class="title">Yatri Hub</span><span class="idx">01</span></div>
             <div class="meta"><span>Product Design · UX Research</span><span>2025</span></div>
