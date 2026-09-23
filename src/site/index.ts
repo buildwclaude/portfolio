@@ -79,16 +79,21 @@ export function renderPage(): string {
           <span class="detail-rail__track"></span>
           <span class="detail-rail__fill"></span>
         </div>
-        
+
         <button class="detail__close" type="button" data-detail-close data-cursor-label="Close">
           <span aria-hidden="true">✕</span><span class="visually-hidden">Close</span>
         </button>
+        <figure class="detail__figure">
+          <img id="detail-img" src="" alt="" decoding="async" />
+        </figure>
         <div class="detail__body">
-          <p class="detail__num" id="detail-num"></p>
-          <h2 class="detail__title" id="detail-title"></h2>
-          <p class="detail__meta" id="detail-meta"></p>
-          <p class="detail__note" id="detail-note"></p>
-          <div id="detail-rich-content" class="detail__rich_content"></div>
+          <header class="detail__head">
+            <p class="detail__num" id="detail-num"></p>
+            <h2 class="detail__title" id="detail-title"></h2>
+            <p class="detail__meta" id="detail-meta"></p>
+            <p class="detail__note" id="detail-note"></p>
+          </header>
+          <div id="detail-rich-content" class="detail__content"></div>
         </div>
       </div>
     </div>

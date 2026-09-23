@@ -33,7 +33,7 @@ export function openDetail(item) {
   if (item.detail) {
     // Hero Image
     if (item.detail.hero) {
-      hero.innerHTML = `<img src="${item.detail.hero}" alt="${item.title} hero" style="width: 100%; height: auto; border-radius: var(--radius-sm); margin-top: 24px;" />`;
+      hero.innerHTML = `<img src="${item.detail.hero}" alt="${item.title} hero" style="width: 100%; height: auto; border-radius: var(--radius-sm); margin-top: 24px; border: 1px solid var(--ink);" />`;
       hero.hidden = false;
     } else {
       hero.hidden = true;

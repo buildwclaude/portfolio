@@ -11,6 +11,7 @@ export function hero() {
 
   return html`
     <section class="hero shell grid" aria-labelledby="hero-title">
+
       <div class="hero-cards" aria-hidden="true" data-reveal data-mounted="true" style="transform: translateX(20%) !important;">
         ${cards.map(
           (card, i) => html`

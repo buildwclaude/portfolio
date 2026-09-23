@@ -120,6 +120,10 @@ function mountHelix() {
 
 /* The scroll layer waits until the page has painted. */
 async function enhance() {
+  // The case-study window works at every width, so it is wired up before the
+  // desktop-only scroll layer bails out.
+  import('./lib/warp-detail').then(({ initWarpDetail }) => initWarpDetail());
+
   // Scrubbed motion is a desktop-only nicety: below this width the layout is
   // a single column and the parallax has nothing to play against. A failure
   // is swallowed on purpose — the page is already complete without any of it.
@@ -131,8 +135,6 @@ async function enhance() {
   const media = await import('./lib/warp-gl')
     .then(({ initWarpGl }) => initWarpGl())
     .catch(() => null);
-
-  import('./lib/warp-detail').then(({ initWarpDetail }) => initWarpDetail());
 
   await initScrollMotion({ onVelocity: media?.setVelocity }).catch(() => undefined);
 }

@@ -119,7 +119,7 @@ export const site = {
           'A smart companion app for Yatri electric bike riders — real-time bike monitoring, ride history, nearby charging stations and navigation. The redesign cut trip-planning uncertainty by 67% and raised first-time task success by 60%.',
         tech: ['UI/UX', 'UX research', 'Product design', 'Design lead'],
         href: 'https://sony-thakuri.xyz/8/',
-        image: '/work/yatri-hub.webp',
+        image: '/work/yatrihub1.png',
         imageAlt:
           'Yatri Hub app screens: a bike status view with battery and range, a map with nearby charging stations, and riding statistics.',
       },

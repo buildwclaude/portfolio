@@ -106,6 +106,7 @@ export async function initWarpGl() {
   for (const el of document.querySelectorAll('[data-gl]')) {
     const img = el.querySelector('img');
     if(!img) continue;
+    
     const texture = await loadTexture(img);
     const im = texture.image;
     const imgAspect = (im.width || 1) / (im.height || 1);

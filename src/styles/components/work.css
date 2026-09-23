@@ -55,7 +55,7 @@
   background-color: var(--paper-sunk);
   
   /* Sharp editorial style */
-  border: 1px solid var(--ink);
+  border: none;
   transition: transform var(--dur-mid) var(--ease-out);
 }
 

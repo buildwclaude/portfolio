@@ -32,9 +32,9 @@ export const ITEMS = [
   {
     title: 'Yatri Hub', tag: 'Product Design', year: 2025, role: 'UI/UX & Research', type: 'project',
     desc: 'How I redesigned the rider experience to build confidence and reduced trip-planning uncertainty by 67% for e-bike riders.',
-    url: 'https://sony-thakuri.xyz/8/', linkLabel: 'View on Portfolio', src: '/img/01.jpg', featured: true, fallback: 'field', ratio: 0.78,
+    url: 'https://sony-thakuri.xyz/8/', linkLabel: 'View on Portfolio', src: '/work/yatrihub1.png', featured: true, fallback: 'dots', ratio: 0.78,
     detail: {
-      hero: '/img/01.jpg',
+      hero: '/work/yatrihub1.png',
       meta: [
         { label: 'Role', value: 'UX Researcher, UI/UX Designer' },
         { label: 'Timeline', value: 'Dec 2024 – May 2025' },
