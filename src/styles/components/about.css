@@ -6,6 +6,22 @@
   grid-column: 1 / span 6;
 }
 
+/* Opens the full About page (#me) in the case-study window. */
+.about__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-32);
+  padding-bottom: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--ink);
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+}
+.about__more-arrow { transition: transform var(--dur-mid) var(--ease-out); }
+.about__more:hover .about__more-arrow,
+.about__more:focus-visible .about__more-arrow { transform: translateX(4px); }
+
 .about__columns {
   grid-column: 8 / -1;
   display: flex;

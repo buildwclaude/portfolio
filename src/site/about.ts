@@ -16,6 +16,9 @@ export function about() {
 
         <div class="about__text" data-reveal>
           ${paragraphs.map((p) => html`<p class="lead prose">${p}</p>`)}
+          <a class="about__more" href="#me" data-study="me">
+            <span>More about me</span><span class="about__more-arrow" aria-hidden="true">→</span>
+          </a>
         </div>
 
         <dl class="about__columns" data-reveal>
@@ -33,7 +36,7 @@ export function about() {
           )}
         </dl>
 
-        ${records()}
+        ${records(['Experience'])}
       </div>
     </section>
   `;

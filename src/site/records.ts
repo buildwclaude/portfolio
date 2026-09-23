@@ -39,10 +39,15 @@ function group(label: string, items: readonly Entry[], index: number): Html {
   `;
 }
 
-export function records() {
+/**
+ * The homepage shows only the groups named here; the full set, with photos,
+ * lives on the About page (`#me`).
+ */
+export function records(labels?: readonly string[]) {
+  const groups = labels ? site.records.groups.filter((g) => labels.includes(g.label)) : site.records.groups;
   return html`
     <div class="records">
-      ${site.records.groups.map((entry, i) => group(entry.label, entry.items, i + 1))}
+      ${groups.map((entry, i) => group(entry.label, entry.items, i + 1))}
     </div>
   `;
 }

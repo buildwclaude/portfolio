@@ -1,269 +1,321 @@
 /* ==========================================================================
    Hero
+   A printed index page: a hairline strip, the statement with its doodles
+   drawn over it, an introduction beside the margin notes, and a numbered
+   index of the page along the bottom. Swiss in structure; the ink doodles
+   and the printed cards are the only things allowed to be loose.
    ========================================================================== */
 
 .hero {
+  --doodle-ink: #3d42c8;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
   min-height: 100svh;
-  padding-top: calc(var(--header-height) + clamp(2.5rem, 9vh, 5.5rem));
-  padding-bottom: clamp(2rem, 6vh, 4rem);
-  align-content: space-between;
-  row-gap: clamp(1.75rem, 4.6vh, 3.25rem);
+  padding-top: calc(var(--header-height) + var(--space-8));
+  padding-bottom: clamp(1.25rem, 3vh, 2rem);
+  row-gap: clamp(1.25rem, 3.2vh, 2.25rem);
 }
 
-.hero__eyebrow {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  /* Pull it up out of the grid and into the hero's padding, just below the header */
-  margin-top: calc(0px - clamp(2.5rem, 9vh, 5.5rem));
+[data-theme='dark'] .hero { --doodle-ink: #8f94ff; }
+
+/* --- Top strip ------------------------------------------------------------ */
+
+.hero__strip {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-secondary);
+}
+.hero__strip > :first-child { grid-column: 1 / span 4; }
+.hero__strip-role { grid-column: 9 / -1; }
+
+/* --- Statement ------------------------------------------------------------ */
+
+.hero__stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-items: center;
 }
 
 .hero__display {
-  grid-column: 1 / span 9;
-  grid-row: 2;
+  grid-column: 1 / span 8;
+  grid-row: 1;
+  margin: 0;
 }
 
-/* Each line is masked so the statement rises into place on load. */
+/* Each line is masked so the statement rises into place on load. The mask
+   is generous at the bottom so the vines, which hang below the baseline,
+   are not clipped. */
 .hero__line {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
+  padding: 0.04em 0 0.14em;
+  margin-bottom: -0.14em;
 }
 
 .hero__line-inner {
-  display: block;
+  position: relative;
+  display: inline-block;
   animation: hero-line 1000ms var(--ease-out) backwards;
   animation-delay: calc(var(--line-index) * 90ms + 180ms);
 }
 
+/* The second reference's contrast: a light greeting over a bold name. */
+.hero__line--light { font-weight: 300; font-family: 'Inter', var(--font-display); letter-spacing: -0.05em; }
+.hero__line--bold { font-weight: var(--weight-bold); }
+
 @keyframes hero-line {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
-  }
+  from { transform: translateY(105%); }
+  to { transform: none; }
 }
 
-/* removed duplicate .hero__intro rule */
-
-.hero__notes {
-  grid-column: 8 / -1;
-  grid-row: 3;
-  align-self: end;
-  --reveal-delay: 260ms;
+/* The doodles are drawn over the type, as if inked onto the page after. */
+.hero__avatar {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 0.62em;
+  height: auto;
+  margin-left: 0.18em;
+  transform: translateY(-58%) rotate(-6deg);
 }
 
-.hero__note {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: center;
-  gap: 8px;
-  padding-block: var(--space-12);
-  border-top: 1px solid var(--rule-soft);
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  line-height: 1.7;
-  letter-spacing: 0.01em;
-  color: var(--ink);
-}
-
-.hero__note dt {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  color: inherit;
-  text-transform: none;
-}
-
-.hero__note:nth-child(2) dt {
-  transform: translateY(-0.5mm);
-}
-
-.hero__scroll {
-  grid-column: 1 / -1;
-  grid-row: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-16);
-  width: fit-content;
-  color: var(--ink-muted);
-  transition:
-    color var(--dur-mid) var(--ease-out),
-    opacity var(--dur-mid) var(--ease-out);
-}
-
-.hero__image-wrapper {
-  grid-column: 1 / -1;
-  grid-row: 4;
-  margin-top: var(--space-48);
-  margin-bottom: var(--space-24);
-  
+.hero__vines {
+  position: absolute;
+  left: 0;
+  top: 60%;
+  z-index: 2;
   width: 100%;
-  aspect-ratio: 21 / 9;
-  overflow: hidden;
-  border: 1px solid var(--ink);
+  transform: translateY(-50%) scaleX(1.05);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* The ink doodles are dark blue; lift them so they still read on black. */
+[data-theme='dark'] .hero__avatar,
+[data-theme='dark'] .hero__vines { filter: brightness(1.8) saturate(0.8); }
+
+/* A handwritten aside pointing back at the avatar. */
+.hero__scribble {
+  grid-column: 1 / span 8;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  margin: 0;
+  /* Sits just past the end of "hello," and under the avatar. */
+  margin-left: calc(var(--text-display) * 3.35);
+  margin-top: calc(var(--text-display) * 0.62);
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 0.8rem + 0.9vw, 1.6rem);
+  line-height: 1;
+  color: var(--doodle-ink);
+  transform: rotate(-4deg);
+  animation: hero-fade 900ms var(--ease-out) 900ms backwards;
+}
+.hero__scribble-arrow {
+  width: 2.2em;
+  height: auto;
+  margin-bottom: 0.4em;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(20%) contrast(1.1);
+@keyframes hero-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- Lower band: label, introduction, notes ------------------------------ */
+
+.hero__lower {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-items: start;
+  padding-top: var(--space-16);
+  border-top: 1px solid var(--rule);
+}
+
+.hero__label {
+  grid-column: 1 / span 2;
+  margin: 0;
+  padding-top: 0.35em;
+  color: var(--ink-secondary);
 }
 
 .hero__intro {
-  position: relative;
-  grid-column: 1 / span 5;
-  grid-row: 3;
-  align-self: start;
-  
-  /* Zine/printed block styling */
-  padding: var(--space-24) var(--space-32);
-  margin-left: calc(var(--space-16) * -1); /* slightly offset to align visually */
-  
-  /* Very subtle square grid */
-  background-image: 
-    linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 16px 16px;
-  
-  color: var(--ink);
-  font-family: var(--font-sans);
+  grid-column: 3 / span 5;
   font-size: var(--text-body);
-  line-height: 1.7;
-  letter-spacing: 0.01em;
-  --reveal-delay: 140ms;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+  --reveal-delay: 120ms;
+}
+.hero__intro p { margin: 0; max-width: 42ch; }
+
+/* The margin notes, set as a small ruled list. */
+.hero__notes {
+  grid-column: 9 / -1;
+  margin: 0;
+  --reveal-delay: 220ms;
+}
+.hero__note {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  column-gap: var(--space-16);
+  padding-block: var(--space-12);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.hero__note:first-child { padding-top: 0.35em; }
+.hero__note dt { margin: 0; padding-top: 0.2em; color: var(--ink-muted); }
+.hero__note dd {
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 1.55;
+  color: var(--ink);
 }
 
-.hero__intro-corner {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 4px solid var(--ink);
-}
+/* --- Index ---------------------------------------------------------------- */
 
-.hero__intro-corner--tr {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
+.hero__index {
+  animation: hero-fade 900ms var(--ease-out) 700ms backwards;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-24);
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--rule);
 }
-
-.hero__intro-corner--bl {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
+.hero__index ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) clamp(1.5rem, 4vw, 4rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+.hero__index a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+.hero__index-num {
+  font-family: 'Inter', var(--font-sans);
+  font-weight: 300;
+  font-size: clamp(1.4rem, 1rem + 1vw, 2rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--ink-muted);
+  transition: color var(--dur-mid) var(--ease-out);
+}
+.hero__index-label {
+  font-size: var(--text-small);
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size var(--dur-mid) var(--ease-out);
+}
+.hero__index a:hover .hero__index-num,
+.hero__index a:focus-visible .hero__index-num { color: var(--ink); }
+.hero__index a:hover .hero__index-label,
+.hero__index a:focus-visible .hero__index-label { background-size: 100% 1px; }
 
+.hero__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-12);
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--dur-mid) var(--ease-out);
+}
 .hero__scroll-rule {
   display: block;
-  width: clamp(2.5rem, 6vw, 5rem);
+  width: clamp(2rem, 4vw, 3.5rem);
   height: 1px;
   background: currentColor;
   transform-origin: left;
   transition: transform var(--dur-slow) var(--ease-out);
 }
-
 .hero__scroll:hover,
-.hero__scroll:focus-visible {
-  color: var(--ink);
-}
-
+.hero__scroll:focus-visible { color: var(--ink); }
 .hero__scroll:hover .hero__scroll-rule,
-.hero__scroll:focus-visible .hero__scroll-rule {
-  transform: scaleX(1.35);
-}
+.hero__scroll:focus-visible .hero__scroll-rule { transform: scaleX(1.35); }
+
+/* --- Responsive ----------------------------------------------------------- */
 
 @media (max-width: 1100px) {
-  .hero__display {
-    grid-column: 1 / -1;
-  }
-
-  .hero__intro {
-    grid-column: 1 / span 6;
-  }
-
-  .hero__image-wrapper {
-    aspect-ratio: 16 / 9;
-  }
+  .hero__intro { grid-column: 3 / span 6; }
+  .hero__notes { grid-column: 9 / -1; }
 }
 
 @media (max-width: 860px) {
-  .hero {
-    padding-bottom: var(--space-64);
-  }
-
-  .hero__intro,
-  .hero__notes {
-    grid-column: 1 / -1;
-  }
-
-  .hero__intro {
-    max-width: 58ch;
-  }
-
-  .hero__notes {
-    grid-row: 4;
-  }
-
-  .hero__image-wrapper {
-    grid-row: 5;
-    aspect-ratio: 4 / 3;
-  }
-
-  .hero__scroll {
-    grid-row: 6;
-  }
+  .hero { grid-template-rows: auto auto auto auto; row-gap: var(--space-32); }
+  .hero__strip-role { display: none; }
+  .hero__label { grid-column: 1 / -1; margin-bottom: var(--space-12); }
+  .hero__intro { grid-column: 1 / -1; }
+  .hero__notes { grid-column: 1 / -1; margin-top: var(--space-32); }
+  .hero__display { grid-column: 1 / -1; }
+  .hero__scribble { display: none; }
+  .hero__index { flex-direction: column; align-items: flex-start; }
+  .hero__index ol { flex-direction: column; gap: var(--space-8); }
 }
 
 /* ==========================================================================
-   Hero Cards (Bouncy overlapping cluster)
+   Hero cards — the sticker cluster, printed and taped down.
    ========================================================================== */
 
-.hero-spline {
-  grid-column: 7 / -1;
-  grid-row: 2 / span 3;
-  align-self: start;
-  justify-self: end;
-  width: clamp(300px, 40vw, 600px);
-  aspect-ratio: 1;
-  pointer-events: auto;
-  z-index: 10;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  margin-top: -8rem; /* Use margin-top because data-reveal wipes out CSS transforms */
-}
-
-.hero-spline spline-viewer {
-  width: 100%;
-  height: 100%;
-}
-
 .hero-cards {
-  grid-column: 7 / -1;
-  grid-row: 2;
-  align-self: center;
+  grid-column: 9 / -1;
+  grid-row: 1;
+  position: relative;
   justify-self: end;
   display: flex;
   justify-content: center;
   pointer-events: none;
   touch-action: none;
   contain: layout style;
-  margin-right: clamp(1rem, 2vw, 2rem);
-  transform: translateX(-5vw);
-  z-index: 10;
+  z-index: 3;
+}
+
+/* A strip of masking tape across the second print. It shares the card's
+   offsets and lean, so it stays stuck on when the cards are pushed around,
+   and it is its own compositor layer so the cards' layers can't paint over it. */
+.hero-card:nth-child(2)::after {
+  content: '';
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: center;
+  z-index: 2;
+  width: 64%;
+  height: 20%;
+  margin-top: -9%;
+  background: rgba(228, 214, 178, 0.88);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  /* Torn ends: a zigzag down each short edge. */
+  clip-path: polygon(0 0, 100% 0, 97% 16%, 100% 33%, 96% 50%, 100% 67%, 97% 84%, 100% 100%,
+    0 100%, 3% 84%, 0 67%, 4% 50%, 0 33%, 3% 16%);
+  translate: calc(var(--offsetX) * 1px) calc(var(--offsetY) * 1px + var(--translateY));
+  rotate: calc(var(--rotate) - var(--velocity) * 0.25deg + 5deg);
+  will-change: transform;
+  pointer-events: none;
+  animation: hero-fade 500ms var(--ease-out) 1.3s backwards;
 }
 
 .hero-card {
   display: grid;
   aspect-ratio: 1;
-  width: clamp(100px, 12vw, 160px);
-  margin-right: -6%;
-  border-radius: var(--space-8);
+  width: clamp(92px, 9.5vw, 140px);
+  margin-right: -8%;
   position: relative;
   --offsetX: 0;
   --offsetY: 0;
@@ -271,19 +323,16 @@
   --lift: 0;
 }
 
-.hero-card:last-child {
-  margin-right: 0;
-}
+.hero-card:last-of-type { margin-right: 0; }
 
-.hero-card:nth-child(1) { --rotate: 2deg; --translateY: 5%; }
-.hero-card:nth-child(2) { --rotate: -3deg; --translateY: -6%; }
-.hero-card:nth-child(3) { --rotate: 6deg; --translateY: 5%; }
+.hero-card:nth-child(1) { --rotate: 3deg; --translateY: 6%; }
+.hero-card:nth-child(2) { --rotate: -4deg; --translateY: -6%; }
+.hero-card:nth-child(3) { --rotate: 5deg; --translateY: 4%; }
 .hero-card:nth-child(4) { --rotate: -2deg; --translateY: -4%; }
 
 .hero-card__shadow,
 .hero-card__img {
   grid-area: 1 / 1;
-  border-radius: inherit;
   will-change: transform;
   translate: calc(var(--offsetX) * 1px) calc(var(--offsetY) * 1px + var(--translateY));
   rotate: calc(var(--rotate) - var(--velocity) * 0.25deg);
@@ -294,6 +343,7 @@
   scale: 0;
 }
 
+/* Printed on paper: a white border, like a photo print or a sticker sheet. */
 .hero-card__img {
   pointer-events: auto;
   object-fit: cover;
@@ -301,51 +351,34 @@
   height: 100%;
   user-select: none;
   -webkit-user-drag: none;
-  /* Clean Apple style */
-  border-radius: var(--radius-sm);
-  
-  /* Entrance animation */
+  box-sizing: border-box;
+  border: 5px solid #fbfaf6;
+  border-radius: 3px;
   transition: scale 0.9s var(--ease-elastic);
   transition-delay: calc(var(--delay) * 0.08s + 0.4s);
 }
 
 .hero-card__shadow {
-  background: var(--rule-soft);
-  box-shadow: var(--shadow-hard);
-  opacity: calc(1 + var(--lift) * 0); /* Opacity 1 for stark shadow */
-  /* Entrance animation */
+  border-radius: 3px;
+  background: transparent;
+  box-shadow: 0 10px 18px -6px rgba(0, 0, 0, 0.22), 0 2px 4px rgba(0, 0, 0, 0.08);
   transition: scale 0.9s var(--ease-elastic);
   transition-delay: calc(var(--delay) * 0.08s + 0.4s);
 }
 
-/* On touch devices, disable interaction */
 @media (hover: none), (pointer: coarse) {
-  .hero-card__img {
-    pointer-events: none;
-  }
+  .hero-card__img { pointer-events: none; }
 }
 
 @media (max-width: 1100px) {
-  .hero-cards {
-    grid-column: 1 / -1;
-    grid-row: 1; /* Moves above the text */
-    justify-self: end;
-    margin-bottom: var(--space-24);
-  }
+  .hero-card { width: 7.4vw; }
 }
 
 @media (max-width: 860px) {
-  .hero-cards {
-    justify-self: center;
-    margin-right: 0;
-  }
-  .hero-card {
-    width: clamp(80px, 15vw, 120px);
-  }
+  .hero-cards { grid-column: 1 / -1; grid-row: 2; justify-self: center; margin-top: var(--space-32); }
+  .hero-card { width: clamp(76px, 20vw, 112px); }
 }
 
 @media (max-width: 640px) {
-  .hero-card:nth-child(4) {
-    display: none;
-  }
+  .hero-card:nth-child(4) { display: none; }
 }

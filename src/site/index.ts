@@ -22,10 +22,26 @@ export function renderPage(): string {
     ${header()} 
 
     <main class="page" id="main" tabindex="-1">
-      <!-- reading progress -->
+      <!-- reading progress: a ruler down the left edge, one mark per section -->
       <div class="rail" aria-hidden="true">
         <span class="rail__track"></span>
+        <span class="rail__minor"></span>
         <span class="rail__fill"></span>
+        ${[
+          { href: '#intro', label: 'Intro' },
+          { href: '#warp-work', label: 'Selected work' },
+          { href: '#about', label: 'About' },
+          { href: '#experiments', label: 'Experiments' },
+        ].map(
+          (s, i) => html`
+            <a class="rail__tick" href="${s.href}" tabindex="-1">
+              <span class="rail__num">${String(i + 1).padStart(2, '0')}</span>
+              <span class="rail__name">${s.label}</span>
+            </a>
+          `,
+        )}
+        <span class="rail__marker"></span>
+        <span class="rail__readout">000</span>
       </div>
       ${hero()}
       ${warp()}

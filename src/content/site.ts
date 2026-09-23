@@ -64,7 +64,7 @@ export const site = {
   /* ------------------------------------------------------------ navigation */
   nav: [
     { label: 'Playground', href: '#playground' },
-    { label: 'Work', href: '#work' },
+    { label: 'Work', href: '#warp-work' },
     { label: 'About', href: '#about' },
     { label: 'Experiments', href: '#experiments' },
     { label: 'Contact', href: '#contact' },
@@ -78,6 +78,8 @@ export const site = {
      * control the line breaks. Keep it to three or four lines.
      */
     lines: ['Hello,', 'This is Sony'],
+    /** The handwritten aside that points at the avatar doodle. */
+    scribble: 'that’s me!',
     /** One short paragraph. Two sentences is usually enough. */
     intro:
       'Passionate about creating impactful, user-centered solutions at the intersection of technology and human experience.<br><br>Over three years driving consumer-facing products from concept to launch.',
@@ -93,6 +95,13 @@ export const site = {
       },
       // The source site does not state a location, so this row stays hidden.
       { label: 'Located', value: '' },
+    ],
+    /** The numbered index along the bottom of the hero. */
+    index: [
+      { label: 'Selected work', href: '#warp-work' },
+      { label: 'About', href: '#about' },
+      { label: 'Experiments', href: '#experiments' },
+      { label: 'Playground', href: '#playground' },
     ],
     cards: [
       { src: '/cards/1.jpeg', width: 440, height: 440 },

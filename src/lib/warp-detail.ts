@@ -17,7 +17,14 @@ const STUDIES: Record<string, () => Promise<string>> = {
   'yatri-energy': () => import('../content/studies/yatri-energy.html?raw').then((m) => m.default),
   eduquest: () => import('../content/studies/eduquest.html?raw').then((m) => m.default),
   dashboard: () => import('../content/studies/dashboard.html?raw').then((m) => m.default),
+  me: () => import('../content/studies/me.html?raw').then((m) => m.default),
 };
+
+/**
+ * Studies that open from a link rather than a card, and have an address of
+ * their own so they can be shared: `<a href="#me" data-study="me">`.
+ */
+const HASHES: Record<string, string> = { '#me': 'me' };
 
 /**
  * The Readymag pages are set in these, loaded the first time one opens. The
@@ -52,17 +59,19 @@ export function initWarpDetail() {
     .filter((el, i, all): el is HTMLElement => !!el && all.indexOf(el) === i && !root.contains(el));
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let open = -1;
+  let open = false;
+  /** The card the window was opened from; null when opened by link or address. */
+  let current: HTMLElement | null = null;
   let busy = false;
   let lastFocus: HTMLElement | null = null;
   let tl: gsap.core.Timeline | null = null;
   let ghost: HTMLImageElement | null = null;
   let reveals: IntersectionObserver | null = null;
 
-  cards.forEach((card, i) => {
+  cards.forEach((card) => {
     card.addEventListener('click', (e) => {
       e.preventDefault();
-      openCard(i);
+      openStudy(card.dataset.case || '', card);
     });
     // Fetch the page before the click lands, so opening never waits on it.
     const load = STUDIES[card.dataset.case || ''];
@@ -72,6 +81,25 @@ export function initWarpDetail() {
   root.querySelectorAll('[data-detail-close]').forEach((el) => {
     el.addEventListener('click', () => closeCard());
   });
+
+  // Links that open a study by name, e.g. "More about me".
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('[data-study]');
+    if (!link || e.defaultPrevented) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openStudy(link.dataset.study || '', null);
+  }, true);
+
+  // The address bar and the back button drive the named studies too.
+  const syncToHash = () => {
+    const key = HASHES[location.hash];
+    if (key && !open) openStudy(key, null);
+    else if (!key && open && !current) closeCard();
+  };
+  window.addEventListener('popstate', syncToHash);
+  window.addEventListener('hashchange', syncToHash);
+  if (HASHES[location.hash]) syncToHash();
 
   panel.addEventListener(
     'scroll',
@@ -85,11 +113,11 @@ export function initWarpDetail() {
   );
 
   window.addEventListener('resize', () => {
-    if (open >= 0) fitStudy();
+    if (open) fitStudy();
   });
 
   document.addEventListener('keydown', (e) => {
-    if (open < 0) return;
+    if (!open) return;
     if (e.key === 'Escape') {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -140,13 +168,13 @@ export function initWarpDetail() {
     reveals = observer;
   }
 
-  async function fill(card: HTMLElement) {
-    const source = card.querySelector('img');
-    const title = card.querySelector('.title')?.textContent?.trim() || '';
-    const num = card.querySelector('.idx')?.textContent?.trim() || '';
-    const spans = card.querySelectorAll('.meta')[1]?.querySelectorAll('span');
+  async function fill(key: string, card: HTMLElement | null) {
+    const source = card?.querySelector('img');
+    const title = card?.querySelector('.title')?.textContent?.trim() || '';
+    const num = card?.querySelector('.idx')?.textContent?.trim() || '';
+    const spans = card?.querySelectorAll('.meta')[1]?.querySelectorAll('span');
     const meta = spans && spans.length >= 2 ? `${spans[0]!.textContent} · ${spans[1]!.textContent}` : '';
-    const load = STUDIES[card.dataset.case || ''];
+    const load = STUDIES[key];
 
     root!.querySelector('#detail-num')!.textContent = num;
     root!.querySelector('#detail-title')!.textContent = title;
@@ -173,9 +201,9 @@ export function initWarpDetail() {
    * Where the flying image lands: the study's copy of the card's picture if it
    * has one, else its first picture; or the plain hero for cards without one.
    */
-  function landing(card: HTMLElement): HTMLElement {
+  function landing(card: HTMLElement | null): HTMLElement {
     if (!root!.classList.contains('detail--study')) return figure;
-    const file = card.querySelector('img')?.getAttribute('src')?.split('/').pop();
+    const file = card?.querySelector('img')?.getAttribute('src')?.split('/').pop();
     const match = file ? content.querySelector(`.rm-pic img[src$="/${file}"]`) : null;
     return match?.parentElement || content.querySelector<HTMLElement>('.rm-pic') || content;
   }
@@ -194,14 +222,18 @@ export function initWarpDetail() {
     return { left: r.left, top: r.top, width: r.width, height: r.height };
   }
 
-  async function openCard(i: number) {
-    if (busy || open >= 0) return;
-    const card = cards[i]!;
+  /** Opens a study; from a card the card's image flies in, otherwise it fades. */
+  async function openStudy(key: string, card: HTMLElement | null) {
+    if (busy || open || (!card && !STUDIES[key])) return;
     busy = true;
-    open = i;
+    open = true;
+    current = card;
     lastFocus = document.activeElement as HTMLElement;
 
-    await fill(card);
+    const hash = Object.keys(HASHES).find((h) => HASHES[h] === key);
+    if (hash && location.hash !== hash) history.pushState(null, '', hash);
+
+    await fill(key, card);
     root!.hidden = false;
     document.documentElement.classList.add('is-locked');
     inertTargets.forEach((el) => el.setAttribute('inert', ''));
@@ -211,9 +243,6 @@ export function initWarpDetail() {
     fitStudy();
     watchReveals();
 
-    const from = (card.querySelector('figure') || card).getBoundingClientRect();
-    const to = landing(card).getBoundingClientRect();
-
     tl?.kill();
     if (reduced) {
       gsap.set([scrim, panel], { opacity: 1 });
@@ -221,6 +250,21 @@ export function initWarpDetail() {
       busy = false;
       return;
     }
+
+    if (!card) {
+      tl = gsap.timeline({
+        onComplete: () => {
+          busy = false;
+          closeBtn.focus({ preventScroll: true });
+        },
+      });
+      tl.fromTo(scrim, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: 'power2.out' }, 0)
+        .fromTo(panel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.1);
+      return;
+    }
+
+    const from = (card.querySelector('figure') || card).getBoundingClientRect();
+    const to = landing(card).getBoundingClientRect();
 
     card.classList.add('is-lifting');
     ghost?.remove();
@@ -243,18 +287,25 @@ export function initWarpDetail() {
   }
 
   function closeCard() {
-    if (open < 0 || busy) return;
-    const card = cards[open]!;
+    if (!open) return;
+    // Closing mid-animation (Back pressed while it opens) finishes it first.
+    if (busy) {
+      tl?.progress(1);
+      if (!open || busy) return;
+    }
+    const card = current;
     busy = true;
+    if (HASHES[location.hash]) history.pushState(null, '', location.pathname + location.search);
 
     const finish = () => {
       root!.hidden = true;
-      open = -1;
+      open = false;
+      current = null;
       busy = false;
       ghost?.remove();
       ghost = null;
       reveals?.disconnect();
-      card.classList.remove('is-lifting');
+      card?.classList.remove('is-lifting');
       document.documentElement.classList.remove('is-locked');
       inertTargets.forEach((el) => el.removeAttribute('inert'));
       lastFocus?.focus({ preventScroll: true });
@@ -272,7 +323,7 @@ export function initWarpDetail() {
     // Fly the image back only while the hero is still on screen; deep in the
     // page a plain fade reads better than an image arriving from above.
     const to = landing(card).getBoundingClientRect();
-    if (to.bottom > to.height * 0.4) {
+    if (card && to.bottom > to.height * 0.4) {
       const from = (card.querySelector('figure') || card).getBoundingClientRect();
       ghost?.remove();
       ghost = makeGhost(card);
