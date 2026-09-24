@@ -13,8 +13,6 @@ import { footer } from './footer';
  * index.html. Nothing here runs in the browser.
  */
 export function renderPage(): string {
-  const cards = site.hero.cards;
-
   return html`
     <a class="skip-link" href="#main">Skip to content</a>
 
@@ -43,8 +41,6 @@ export function renderPage(): string {
         <span class="rail__marker"></span>
         <span class="rail__readout">000</span>
       </div>
-      <!-- a halftone branch printed off the right edge of the first screen -->
-      <div class="floral" aria-hidden="true"></div>
       ${hero()}
       ${warp()}
       ${about()}

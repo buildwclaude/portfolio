@@ -131,22 +131,3 @@ a.xp__inner:focus-visible .xp__title::after {
   }
 }
 
-/* --- The helix -----------------------------------------------------------
-   A spiral of project imagery closing the section. It sits on the paper
-   with no frame, on the same square-cornered language as everything else,
-   and its caption is a plate caption like any other piece of metadata. */
-.experiments__helix {
-  grid-column: 1 / -1;
-  margin: clamp(4rem, 9vw, 7rem) 0 0;
-}
-
-.experiments__helix-mount .helix {
-  /* Square corners: nothing else on this page is rounded. */
-  --helix-card-radius: 0px;
-}
-
-.experiments__helix figcaption {
-  margin-top: var(--space-16);
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--rule-soft);
-}

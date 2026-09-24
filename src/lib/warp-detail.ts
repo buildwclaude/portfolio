@@ -17,15 +17,14 @@ const STUDIES: Record<string, () => Promise<string>> = {
   'yatri-energy': () => import('../content/studies/yatri-energy.html?raw').then((m) => m.default),
   eduquest: () => import('../content/studies/eduquest.html?raw').then((m) => m.default),
   dashboard: () => import('../content/studies/dashboard.html?raw').then((m) => m.default),
-  // The About page is built natively from site content, not imported.
-  me: () => import('../site/me').then((m) => m.renderMe()),
 };
 
 /**
  * Studies that open from a link rather than a card, and have an address of
- * their own so they can be shared: `<a href="#me" data-study="me">`.
+ * their own so they can be shared, e.g. `<a href="#name" data-study="name">`.
+ * (#me is the sketchbook, opened from main.ts.)
  */
-const HASHES: Record<string, string> = { '#me': 'me' };
+const HASHES: Record<string, string> = {};
 
 /**
  * The Readymag pages are set in these, loaded the first time one opens. The

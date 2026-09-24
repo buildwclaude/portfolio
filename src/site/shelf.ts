@@ -8,7 +8,7 @@ import { site, type Book } from '../content/site';
  * The markup is a plain index of the chapters. The shelf is built over it
  * when it scrolls near (src/components/bookshelf), and the index stays
  * underneath as the keyboard and no-WebGL way in. Every chapter opens the
- * About page (#me) at its own section.
+ * sketchbook (#me) at its own spread.
  */
 function volume(book: Book, i: number) {
   return html`
@@ -29,7 +29,7 @@ export function shelf() {
     <div class="shelf" role="group" aria-labelledby="shelf-title">
       <div class="shelf__head">
         <h3 class="shelf__title meta" id="shelf-title">${title}</h3>
-        <a class="about__more" href="#me" data-study="me">
+        <a class="about__more" href="#me" data-sketchbook>
           <span>The full page</span><span class="about__more-arrow" aria-hidden="true">→</span>
         </a>
       </div>

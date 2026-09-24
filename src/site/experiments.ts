@@ -56,11 +56,6 @@ export function experiments() {
         </div>
         <p class="experiments__intro lead" data-reveal>${intro}</p>
         <ul class="experiments__list" data-reveal-stagger>${items.map((x, i) => item(x, i))}</ul>
-
-        <figure class="experiments__helix" data-reveal>
-          <div class="experiments__helix-mount" data-helix></div>
-          <figcaption class="meta">${site.helix.caption}</figcaption>
-        </figure>
       </div>
     </section>
   `;

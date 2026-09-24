@@ -7,7 +7,6 @@ import './styles/components/hero.css';
 import './styles/components/work.css';
 import './styles/components/warp.css';
 import './styles/components/warp-detail.css';
-import './styles/components/me.css';
 import './styles/components/playground.css';
 import './styles/components/about.css';
 import './styles/components/records.css';
@@ -64,17 +63,15 @@ function initThemeToggle() {
   });
 }
 
-import { initHeroCards } from './components/hero-cards';
 import { initRail } from './lib/rail';
-import { chapterId } from './lib/chapter';
+import type { Sketchbook } from './components/sketchbook';
 
 initThemeToggle();
 initNav();
 initRail();
 
-mountHelix();
+mountHeroScene();
 mountShelf();
-initHeroCards();
 
 if (reducedMotion) {
   // Nothing to reveal: the stylesheet leaves everything visible.
@@ -84,58 +81,38 @@ if (reducedMotion) {
 }
 
 /**
- * The helix is well below the fold, so it is not built until it is nearly
- * in view — the component, its stylesheet and its images all stay off the
- * critical path.
+ * The hero's line-drawn scene, named by its host's data-scene. It is on the
+ * first screen, but only decoration, so three.js waits until the page has
+ * finished loading and the browser is idle.
  */
-function mountHelix() {
-  const target = document.querySelector<HTMLElement>('[data-helix]');
-  if (!target) return;
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry?.isIntersecting) return;
-      observer.disconnect();
-      import('./components/helix-carousel')
-        .then(({ createHelixCarousel }) => {
-          const images = site.helix.images;
-          const helix = createHelixCarousel({
-            // Repeated to fill the spiral; it reads as rhythm, not padding.
-            images: Array.from({ length: 15 }, (_, i) => {
-              const src = images[i % images.length]!.src;
-              return src.startsWith('/') ? import.meta.env.BASE_URL + src.slice(1) : src;
-            }),
-            alt: (i) => images[i % images.length]!.alt,
-            speed: 0.45,
-            radius: 357, // Extra 0.5mm gap (radius up from 353)
-            angleStep: 36, // Exactly 10 cards per revolution
-            rise: 50,
-            height: 700, // Cinematic height
-            label: 'A spiral of project imagery',
-          });
-          target.appendChild(helix.element);
-        })
-        .catch(() => undefined);
-    },
-    { rootMargin: '30% 0px' },
-  );
-  observer.observe(target);
+function mountHeroScene() {
+  const host = document.querySelector<HTMLElement>('[data-scene]');
+  if (!host) return;
+  const scenes: Record<string, () => Promise<unknown>> = {
+    console: () => import('./components/console').then(({ createConsole }) => createConsole(host)),
+    ribbon: () => import('./components/ribbon').then(({ createRibbon }) => createRibbon(host)),
+  };
+  const load = scenes[host.dataset.scene || ''];
+  if (!load) return;
+  const go = () => requestIdleCallbackShim(() => void load().catch(() => undefined));
+  if (document.readyState === 'complete') go();
+  else window.addEventListener('load', go, { once: true });
 }
 
 /**
- * "More about me": one volume per About-page chapter, built like the helix
- * only when it is nearly in view. Without WebGL the section keeps its plain
- * index and nothing else changes.
+ * "More about me": one volume per chapter, built only when it is nearly
+ * in view. Without WebGL the section keeps its plain index and
+ * nothing else changes. Every way in opens the sketchbook.
  */
 function mountShelf() {
   const stage = document.querySelector<HTMLElement>('[data-shelf]');
   if (!stage) return;
 
-  // The index always works: each chapter opens the About page at its section.
+  // The index always works: each chapter opens the sketchbook at its spread.
   document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      openChapter(link.dataset.chapter || '');
+      openSketchbook(link.dataset.chapter || '');
     });
   });
 
@@ -151,7 +128,7 @@ function mountShelf() {
               items: site.records.groups.find((g) => g.label === book.group)?.items ?? [],
             })),
             brand: site.meta.name,
-            onOpen: (book) => openChapter(book.group),
+            onOpen: (book) => openSketchbook(book.group),
           }),
         )
         .catch(() => undefined);
@@ -161,32 +138,66 @@ function mountShelf() {
   observer.observe(stage.closest('section') ?? stage);
 }
 
-/**
- * Opens the About page (#me) through the case-study window, then scrolls it
- * to one chapter once the window has settled.
- */
-function openChapter(label: string) {
-  const link = Object.assign(document.createElement('a'), { href: '#me', hidden: true });
-  link.dataset.study = 'me';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
+/* ══════════════════════════════════════════════════════════════════════
+   SKETCHBOOK — "More about me", at #me
+   ══════════════════════════════════════════════════════════════════════ */
 
-  const id = chapterId(label);
-  const started = performance.now();
-  const seek = () => {
-    const panel = document.querySelector<HTMLElement>('#warp-detail .detail__panel');
-    const target = panel?.querySelector<HTMLElement>(`#${id}`);
-    // Wait out the window's opening move, so the scroll lands where it should.
-    if (!panel || !target || performance.now() - started < 900) {
-      if (performance.now() - started < 4000) requestAnimationFrame(seek);
-      return;
-    }
-    const top = target.getBoundingClientRect().top - panel.getBoundingClientRect().top + panel.scrollTop;
-    panel.scrollTo({ top: top - 48, behavior: reducedMotion ? 'auto' : 'smooth' });
-  };
-  requestAnimationFrame(seek);
+const BOOK_HASH = '#me';
+let sketchbook: Promise<Sketchbook> | null = null;
+/** Whether opening the book added the #me history entry, so closing can undo it. */
+let pushedBookHash = false;
+
+function loadSketchbook() {
+  sketchbook ??= Promise.all([import('./components/sketchbook'), import('./site/sketchbook')]).then(
+    ([{ createSketchbook }, { sketchbookSections }]) =>
+      createSketchbook({
+        name: site.meta.name,
+        sections: sketchbookSections,
+        onClose: leaveBookHash,
+      }),
+  );
+  return sketchbook;
 }
+
+/** Opens the sketchbook, at a chapter's spread when given one. */
+function openSketchbook(chapter?: string) {
+  if (location.hash !== BOOK_HASH) {
+    history.pushState(null, '', BOOK_HASH);
+    pushedBookHash = true;
+  }
+  loadSketchbook()
+    .then((book) => book.open(chapter))
+    .catch(() => undefined);
+}
+
+function leaveBookHash() {
+  if (location.hash !== BOOK_HASH) return;
+  if (pushedBookHash) history.back();
+  else history.replaceState(null, '', location.pathname + location.search);
+  pushedBookHash = false;
+}
+
+document.addEventListener('click', (e) => {
+  const link = (e.target as HTMLElement | null)?.closest?.('[data-sketchbook]');
+  if (!link) return;
+  e.preventDefault();
+  openSketchbook();
+});
+
+// The address bar and the back button open and close it too.
+const syncBookToHash = () => {
+  if (location.hash === BOOK_HASH) {
+    loadSketchbook()
+      .then((book) => book.isOpen() || book.open())
+      .catch(() => undefined);
+  } else if (sketchbook) {
+    pushedBookHash = false;
+    sketchbook.then((book) => book.close()).catch(() => undefined);
+  }
+};
+window.addEventListener('popstate', syncBookToHash);
+window.addEventListener('hashchange', syncBookToHash);
+if (location.hash === BOOK_HASH) syncBookToHash();
 
 /* The scroll layer waits until the page has painted. */
 async function enhance() {

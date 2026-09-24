@@ -96,9 +96,15 @@ export const site = {
      * control the line breaks. Keep it to three or four lines.
      */
     lines: ['Hello,', 'This is Sony'],
-    /** One short paragraph. Two sentences is usually enough. */
-    intro:
-      'Passionate about creating impactful, user-centered solutions at the intersection of technology and human experience.<br><br>Over three years driving consumer-facing products from concept to launch.',
+    /**
+     * Credentials under the statement, one line each. **Names** are set in
+     * ink against the muted line, so the eye lands on who and where.
+     */
+    credentials: [
+      'UX Research Assistant at **Open XR Lab, Wichita State** · ex-**Yatri Motorcycles**',
+      'Award-winning designer, recognized with the **Figma Warrior Award** and **EntrepreneurHer**',
+      'Speaker at **Hult Prize**, advisory board at **Girls in Tech Nepal**',
+    ],
     /** Margin notes. Leave any value empty to hide the row. */
     notes: [
       {
@@ -112,19 +118,6 @@ export const site = {
       // The source site does not state a location, so this row stays hidden.
       { label: 'Located', value: '' },
     ],
-    /** The numbered index along the bottom of the hero. */
-    index: [
-      { label: 'Selected work', href: '#warp-work' },
-      { label: 'About', href: '#about' },
-      { label: 'Experiments', href: '#experiments' },
-      { label: 'Playground', href: '#playground' },
-    ],
-    cards: [
-      { src: '/cards/1.jpeg', width: 440, height: 440 },
-      { src: '/cards/2.jpeg', width: 440, height: 440 },
-      { src: '/cards/3.jpeg', width: 440, height: 440 },
-      { src: '/cards/4.jpeg', width: 440, height: 440 },
-    ] as Array<{ src: string; width: number; height: number }>,
   },
 
   /* ------------------------------------------------------------------ work */

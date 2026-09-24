@@ -43,7 +43,14 @@ export function initReveals(root: ParentNode = document) {
     { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
   );
 
-  for (const target of targets) observer.observe(target);
+  /* Whatever is on the first screen at load arrives straight away. The
+     observer's bottom margin is for things scrolled into view; applied here
+     it would hold back anything sitting low on the landing screen. */
+  const fold = window.innerHeight;
+  for (const target of targets) {
+    if (target.getBoundingClientRect().top < fold) target.classList.add('is-revealed');
+    else observer.observe(target);
+  }
 }
 
 /* Scroll ------------------------------------------------------------------ */
@@ -139,16 +146,6 @@ export async function initScrollMotion({ onVelocity }: ScrollMotionOptions = {})
         },
       },
     );
-  }
-
-  // The hero's cue retires once the work section takes over.
-  const cue = document.querySelector('.hero__scroll');
-  if (cue) {
-    gsap.to(cue, {
-      opacity: 0,
-      ease: 'none',
-      scrollTrigger: { trigger: '.hero', start: 'bottom 85%', end: 'bottom 55%', scrub: true },
-    });
   }
 }
 
