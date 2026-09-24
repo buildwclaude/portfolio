@@ -8,7 +8,7 @@ import { site } from '../content/site';
  * `content/site.ts`.
  */
 export function hero() {
-  const { eyebrow, lines, scribble, intro, notes, index, cards } = site.hero;
+  const { eyebrow, lines, intro, notes, index, cards } = site.hero;
 
   return html`
     <section class="hero shell" id="intro" aria-labelledby="hero-title">
@@ -31,14 +31,6 @@ export function hero() {
             `,
           )}
         </h1>
-
-        <p class="hero__scribble" aria-hidden="true">
-          <svg class="hero__scribble-arrow" viewBox="0 0 64 48" fill="none">
-            <path d="M58 40 C 44 44, 22 38, 12 14" />
-            <path d="M4 20 L 12 12 L 19 21" />
-          </svg>
-          <span>${scribble}</span>
-        </p>
 
         <div class="hero-cards" aria-hidden="true" data-reveal data-mounted="true">
           ${cards.map(

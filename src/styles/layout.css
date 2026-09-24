@@ -47,7 +47,7 @@
 .section__rule {
   grid-column: 1 / -1;
   height: 1px;
-  background: var(--ink);
+  background: var(--rule);
   margin-bottom: var(--space-24);
 }
 

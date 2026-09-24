@@ -4,6 +4,7 @@
 
 .about__text {
   grid-column: 1 / span 6;
+  color: var(--ink-secondary);
 }
 
 /* Opens the full About page (#me) in the case-study window. */
@@ -35,7 +36,7 @@
   flex-direction: column;
   gap: var(--space-12);
   padding-top: var(--space-16);
-  border-top: 1px solid var(--ink);
+  border-top: 1px solid var(--rule);
 }
 
 .about__list {

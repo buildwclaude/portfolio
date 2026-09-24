@@ -19,8 +19,8 @@
   --rule-soft: rgba(0, 0, 0, 0.06);
 
   /* Grid lines */
-  --dot: rgba(0, 0, 0, 0.05);
-  --dot-hover: rgba(0, 0, 0, 0.15);
+  --dot: transparent;
+  --dot-hover: rgba(0, 0, 0, 0.07);
   --dot-pitch: 32px;
   --dot-size: 1px;
 
@@ -137,8 +137,8 @@
   --rule: rgba(255, 255, 255, 0.15);
   --rule-soft: rgba(255, 255, 255, 0.08);
 
-  --dot: rgba(255, 255, 255, 0.04);
-  --dot-hover: rgba(255, 255, 255, 0.12);
+  --dot: transparent;
+  --dot-hover: rgba(255, 255, 255, 0.07);
   
   --accent: #2997ff;
   --selection: rgba(41, 151, 255, 0.3);

@@ -29,7 +29,7 @@
   color: var(--ink-secondary);
 }
 .hero__strip > :first-child { grid-column: 1 / span 4; }
-.hero__strip-role { grid-column: 9 / -1; }
+.hero__strip-role { grid-column: 9 / -1; justify-self: end; }
 
 /* --- Statement ------------------------------------------------------------ */
 
@@ -98,38 +98,6 @@
 /* The ink doodles are dark blue; lift them so they still read on black. */
 [data-theme='dark'] .hero__avatar,
 [data-theme='dark'] .hero__vines { filter: brightness(1.8) saturate(0.8); }
-
-/* A handwritten aside pointing back at the avatar. */
-.hero__scribble {
-  grid-column: 1 / span 8;
-  grid-row: 1;
-  align-self: start;
-  justify-self: start;
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  gap: 0.25rem;
-  margin: 0;
-  /* Sits just past the end of "hello," and under the avatar. */
-  margin-left: calc(var(--text-display) * 3.35);
-  margin-top: calc(var(--text-display) * 0.62);
-  font-family: 'Caveat', cursive;
-  font-weight: 600;
-  font-size: clamp(1.1rem, 0.8rem + 0.9vw, 1.6rem);
-  line-height: 1;
-  color: var(--doodle-ink);
-  transform: rotate(-4deg);
-  animation: hero-fade 900ms var(--ease-out) 900ms backwards;
-}
-.hero__scribble-arrow {
-  width: 2.2em;
-  height: auto;
-  margin-bottom: 0.4em;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 
 @keyframes hero-fade {
   from { opacity: 0; }
@@ -261,11 +229,11 @@
 @media (max-width: 860px) {
   .hero { grid-template-rows: auto auto auto auto; row-gap: var(--space-32); }
   .hero__strip-role { display: none; }
+  .hero__strip > :first-child { grid-column: 1 / -1; }
   .hero__label { grid-column: 1 / -1; margin-bottom: var(--space-12); }
   .hero__intro { grid-column: 1 / -1; }
   .hero__notes { grid-column: 1 / -1; margin-top: var(--space-32); }
   .hero__display { grid-column: 1 / -1; }
-  .hero__scribble { display: none; }
   .hero__index { flex-direction: column; align-items: flex-start; }
   .hero__index ol { flex-direction: column; gap: var(--space-8); }
 }

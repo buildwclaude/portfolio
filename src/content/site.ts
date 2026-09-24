@@ -96,8 +96,6 @@ export const site = {
      * control the line breaks. Keep it to three or four lines.
      */
     lines: ['Hello,', 'This is Sony'],
-    /** The handwritten aside that points at the avatar doodle. */
-    scribble: 'that’s me!',
     /** One short paragraph. Two sentences is usually enough. */
     intro:
       'Passionate about creating impactful, user-centered solutions at the intersection of technology and human experience.<br><br>Over three years driving consumer-facing products from concept to launch.',
