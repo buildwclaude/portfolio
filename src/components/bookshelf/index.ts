@@ -27,8 +27,14 @@ type Volume = {
   book: ShelfBook;
   index: number;
   mesh: THREE.Mesh;
+  /** The visible outline, re-inked in accent while the book is picked. */
+  edges: THREE.LineSegments;
+  /** Its hidden edges, dashed, seen through everything in front. */
+  hidden: THREE.LineSegments;
   h: number;
   t: number;
+  /** The painted faces, kept so a theme change can repaint them in place. */
+  faces: { cover: HTMLCanvasElement; back: HTMLCanvasElement; spine: HTMLCanvasElement };
   home: THREE.Vector3;
   pos: THREE.Vector3;
   rot: THREE.Euler;
@@ -41,11 +47,6 @@ const LOOK_Y = 1.25;
 
 export async function createBookshelf(stage: HTMLElement, options: BookshelfOptions) {
   const { books, brand } = options;
-  monogram = brand
-    .split(/\s+/)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
   // The About page covers the shelf, so the book goes back behind it.
   const onOpen = (book: ShelfBook) => {
     options.onOpen(book);
@@ -74,20 +75,34 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   tip.className = 'shelf__tip meta';
   tip.setAttribute('aria-hidden', 'true');
   wrap.appendChild(tip);
+  // The drawing's labels, set in the page's type rather than in the canvas.
+  const title = stage.parentElement?.querySelector('.shelf__title')?.textContent?.trim() ?? '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  for (const [cls, text] of [
+    ['shelf__fig--tl', `Fig. 02 — ${title}`],
+    ['shelf__fig--tr', `Vol. 01 – ${pad(books.length)}`],
+    ['shelf__fig--bl', 'Elevation, not to scale'],
+  ]) {
+    const label = document.createElement('span');
+    label.className = `shelf__fig ${cls} meta`;
+    label.setAttribute('aria-hidden', 'true');
+    label.textContent = text!;
+    wrap.appendChild(label);
+  }
   stage.prepend(wrap);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.NeutralToneMapping;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // No tone mapping and no lights: the shelf is a line drawing in the page's
+  // own ink and paper, and should come out as exactly those colours.
+  renderer.toneMapping = THREE.NoToneMapping;
   const canvas = renderer.domElement;
   canvas.tabIndex = 0;
   canvas.setAttribute('role', 'application');
   canvas.setAttribute(
     'aria-label',
-    'Bookshelf of projects. Use the left and right arrow keys to pull out a volume, Enter to open it, Escape to put it back.',
+    'More about me, as a bookshelf. Use the left and right arrow keys to pull out a volume, Enter to open it, Escape to put it back.',
   );
   wrap.prepend(canvas);
   stage.classList.add('is-live');
@@ -96,55 +111,64 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
   const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 
-  scene.add(new THREE.HemisphereLight(0xfff8ee, 0x3a3226, 1.25));
-  const key = new THREE.DirectionalLight(0xffffff, 2.1);
-  key.position.set(-3.5, 6, 6);
-  key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
-  key.shadow.radius = 6;
-  key.shadow.bias = -0.0008;
-  Object.assign(key.shadow.camera, { left: -6, right: 6, top: 5, bottom: -2, near: 1, far: 20 });
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffe6c4, 0.6);
-  rim.position.set(5, 3, -2);
-  scene.add(rim);
+  /* ---------------------------------------------------------------- ink */
+  // Visible edges in ink; the one you are pointing at in accent; hidden
+  // edges dashed and faint, drawn through everything as a drawing would.
+  const inkLine = new THREE.LineBasicMaterial();
+  const accentLine = new THREE.LineBasicMaterial();
+  // Faint lines are faint by colour (ink mixed into paper), not by opacity:
+  // that keeps them opaque, so draw order alone decides what covers them.
+  const ruleLine = new THREE.LineBasicMaterial();
+  const hiddenLine = new THREE.LineDashedMaterial({ dashSize: 0.05, gapSize: 0.05, depthTest: false });
 
   /* --------------------------------------------------------------- shelf */
   const shelf = new THREE.Group();
   scene.add(shelf);
 
   const anisotropy = renderer.capabilities.getMaxAnisotropy();
-  const weave = weaveTexture();
-  const pages = pagesTexture(anisotropy);
-  const pageMat = new THREE.MeshStandardMaterial({ map: pages, roughness: 0.95 });
+  // Faces are flat paper, pushed back a hair so their outlines sit cleanly on top.
+  const surface = (map: THREE.Texture) =>
+    new THREE.MeshBasicMaterial({ map, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const pageCanvas = document.createElement('canvas');
+  const pageMat = surface(canvasTexture(pageCanvas, anisotropy));
 
-  // Deterministic variety: heights and thicknesses read as a real shelf.
+  // Deterministic variety: a fuller chapter makes a thicker book.
   const rand = mulberry(7);
   let x = 0;
   const volumes: Volume[] = books.map((book, i) => {
     const h = 2.1 + rand() * 0.5;
     const t = 0.34 + heft(book) * 0.07 + rand() * 0.08;
-    const cloth = (map: THREE.Texture) =>
-      new THREE.MeshStandardMaterial({ map, bumpMap: weave, bumpScale: 1.4, roughness: 0.82 });
+    const faces = {
+      cover: document.createElement('canvas'),
+      back: document.createElement('canvas'),
+      spine: document.createElement('canvas'),
+    };
     const geometry = new THREE.BoxGeometry(t, h, DEPTH);
     geometry.translate(0, h / 2, 0);
     // Faces: +x front cover, -x back cover, +y top, -y bottom, +z spine, -z fore-edge.
     const mesh = new THREE.Mesh(geometry, [
-      cloth(canvasTexture(coverCanvas(book, i, h, brand), anisotropy)),
-      cloth(canvasTexture(backCanvas(book, h), anisotropy)),
+      surface(canvasTexture(faces.cover, anisotropy)),
+      surface(canvasTexture(faces.back, anisotropy)),
       pageMat,
       pageMat,
-      cloth(canvasTexture(spineCanvas(book, i, h, t), anisotropy)),
+      surface(canvasTexture(faces.spine, anisotropy)),
       pageMat,
     ]);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    const outline = new THREE.EdgesGeometry(geometry);
+    // Draw order: faces, then the dashed hidden edges through them, then the
+    // solid outlines over the dashes.
+    const edges = new THREE.LineSegments(outline, inkLine);
+    edges.renderOrder = 2;
+    const hidden = new THREE.LineSegments(outline, hiddenLine);
+    hidden.computeLineDistances();
+    hidden.renderOrder = 1;
+    mesh.add(edges, hidden);
     mesh.userData.index = i;
     x += t / 2;
     const home = new THREE.Vector3(x, 0, 0);
     x += t / 2 + GAP;
     shelf.add(mesh);
-    return { book, index: i, mesh, h, t, home, pos: home.clone(), rot: new THREE.Euler() };
+    return { book, index: i, mesh, edges, hidden, h, t, faces, home, pos: home.clone(), rot: new THREE.Euler() };
   });
 
   const width = x - GAP;
@@ -154,26 +178,67 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
     v.mesh.position.copy(v.home);
   }
 
-  const plankMat = new THREE.MeshStandardMaterial({ roughness: 0.9 });
-  const plank = new THREE.Mesh(new THREE.BoxGeometry(width + 1.1, 0.16, DEPTH + 0.5), plankMat);
-  plank.position.set(0, -0.08, 0.05);
-  plank.receiveShadow = true;
-  plank.castShadow = true;
-  shelf.add(plank);
+  // The ledge, in outline, with a scale ruled along the front: a mark at
+  // every tenth, a longer one where each book starts and ends — the same
+  // language as the ruler down the page's left edge.
+  const ledgeW = width + 1.4;
+  const ledgeD = DEPTH + 0.3;
+  const ledgeGeo = new THREE.BoxGeometry(ledgeW, 0.05, ledgeD);
+  const ledgeFace = new THREE.Mesh(
+    ledgeGeo,
+    new THREE.MeshBasicMaterial({ polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+  );
+  ledgeFace.position.y = -0.025;
+  const ledgeEdges = new THREE.LineSegments(new THREE.EdgesGeometry(ledgeGeo), inkLine);
+  ledgeEdges.renderOrder = 2;
+  ledgeFace.add(ledgeEdges);
+  shelf.add(ledgeFace);
 
-  // An invisible wall behind the books that only shows their shadow.
-  const wallMat = new THREE.ShadowMaterial({ opacity: 0.12 });
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 20), wallMat);
-  wall.position.set(0, 4, -DEPTH / 2 - 0.3);
-  wall.receiveShadow = true;
-  scene.add(wall);
+  const scale: number[] = [];
+  const front = ledgeD / 2;
+  const rulerY = -0.22;
+  const seg = (ax: number, ay: number, az: number, bx: number, by: number, bz: number) =>
+    scale.push(ax, ay, az, bx, by, bz);
+  seg(-ledgeW / 2, rulerY, front, ledgeW / 2, rulerY, front);
+  for (let k = 0, n = Math.round(ledgeW / 0.1); k <= n; k++) {
+    const tx = -ledgeW / 2 + k * 0.1;
+    seg(tx, rulerY, front, tx, rulerY + (k % 5 === 0 ? 0.07 : 0.035), front);
+  }
+  const bounds = [...volumes.map((v) => v.home.x - v.t / 2), volumes.at(-1)!.home.x + volumes.at(-1)!.t / 2];
+  for (const bx of bounds) seg(bx, rulerY - 0.06, front, bx, rulerY + 0.12, front);
+  const ruler = new THREE.LineSegments(
+    new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(scale, 3)),
+    ruleLine,
+  );
+  shelf.add(ruler);
 
+  // Projection lines: each book's edge carried down to the scale.
+  const proj: number[] = [];
+  for (const bx of bounds) proj.push(bx, -0.05, front, bx, rulerY, front);
+  const projection = new THREE.LineSegments(
+    new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(proj, 3)),
+    hiddenLine,
+  );
+  projection.computeLineDistances();
+  shelf.add(projection);
+
+  /** Every surface and line is repainted from the page's tokens when the theme flips. */
   const applyTheme = () => {
-    const styles = getComputedStyle(document.documentElement);
-    const dark = document.documentElement.dataset.theme === 'dark';
-    plankMat.color.set(styles.getPropertyValue('--paper-sunk').trim() || '#e9e6dc');
-    if (dark) plankMat.color.offsetHSL(0, 0, 0.06);
-    wallMat.opacity = dark ? 0.35 : 0.06;
+    const pal = readPalette();
+    paintPages(pageCanvas, pal);
+    for (const v of volumes) {
+      paintSpine(v.faces.spine, v.book, v.index, v.h, v.t, pal);
+      paintCover(v.faces.cover, v.book, v.index, v.h, brand, pal);
+      paintBack(v.faces.back, v.h, pal);
+    }
+    for (const m of [pageMat, ...volumes.flatMap((v) => v.mesh.material as THREE.MeshBasicMaterial[])]) {
+      if (m.map) m.map.needsUpdate = true;
+    }
+    (ledgeFace.material as THREE.MeshBasicMaterial).color.set(pal.paper);
+    inkLine.color.set(pal.ink);
+    accentLine.color.set(pal.accent);
+    ruleLine.color.set(pal.paper).lerp(new THREE.Color(pal.muted), 0.6);
+    hiddenLine.color.set(pal.paper).lerp(new THREE.Color(pal.ink), 0.28);
   };
   applyTheme();
   new MutationObserver(applyTheme).observe(document.documentElement, {
@@ -432,6 +497,13 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
       v.rot.z += (tmpRot.z - v.rot.z) * s;
       v.mesh.position.copy(v.pos);
       v.mesh.rotation.copy(v.rot);
+      v.edges.material = v === hovered || v === focused || v === indexHover ? accentLine : inkLine;
+      // A pulled-out book is a sheet in front of the drawing: it is painted
+      // after every hidden line, so none of them run across its cover.
+      const lifted = v === focused;
+      v.mesh.renderOrder = lifted ? 3 : 0;
+      v.edges.renderOrder = lifted ? 4 : 2;
+      v.hidden.visible = !lifted;
     }
 
     renderer.render(scene, camera);
@@ -449,14 +521,28 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
 }
 
 /* ======================================================================
-   Drawing — every surface is painted on a canvas.
+   Drawing — every surface is painted on a canvas, in the page's tokens.
    ====================================================================== */
-
-/** Stamped at the foot of every spine, where a publisher's mark would go. */
-let monogram = '';
 
 const SERIF = '"Instrument Serif", Georgia, serif';
 const SANS = 'Inter, system-ui, sans-serif';
+
+type Palette = { paper: string; ink: string; muted: string; accent: string };
+
+/**
+ * The drawing's colours, straight from the design tokens: the page's paper,
+ * its ink, and the accent — kept for the picked book and the header's dot.
+ */
+function readPalette(): Palette {
+  const css = getComputedStyle(document.documentElement);
+  const token = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
+  return {
+    paper: token('--paper', '#F3F1E9'),
+    ink: token('--ink', '#111111'),
+    muted: token('--ink-muted', '#888888'),
+    accent: token('--accent', '#d94f38'),
+  };
+}
 
 function canvasTexture(c: HTMLCanvasElement, anisotropy: number) {
   const tex = new THREE.CanvasTexture(c);
@@ -465,142 +551,179 @@ function canvasTexture(c: HTMLCanvasElement, anisotropy: number) {
   return tex;
 }
 
-/** Light cloth takes a dark stamp; dark cloth takes gold foil. */
-function foil(color: string) {
-  // Measured in sRGB, as the eye sees the cloth, not in linear light.
-  const n = parseInt(color.slice(1), 16);
-  const lum = (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
-  return lum > 0.45 ? '#2a2016' : '#e2c27a';
+function size(c: HTMLCanvasElement, w: number, h: number) {
+  if (c.width !== w) c.width = w;
+  if (c.height !== h) c.height = h;
+  return c.getContext('2d')!;
 }
 
-/** Cloth: the colour, a fine weave, a little mottling. */
-function paintCloth(ctx: CanvasRenderingContext2D, w: number, h: number, color: string, seed: number) {
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, w, h);
-  const rand = mulberry(seed);
-  for (let i = 0; i < (w * h) / 90; i++) {
-    ctx.fillStyle = rand() > 0.5 ? 'rgba(255,255,255,0.035)' : 'rgba(0,0,0,0.05)';
-    ctx.fillRect(rand() * w, rand() * h, 1 + rand() * 3, 1 + rand() * 3);
-  }
-  ctx.globalAlpha = 0.06;
-  ctx.fillStyle = '#000';
-  for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1);
-  ctx.fillStyle = '#fff';
-  for (let x = 0; x < w; x += 3) ctx.fillRect(x, 0, 1, h);
-  ctx.globalAlpha = 1;
+/** A registration mark: a small circle with a cross through it. */
+function register(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.moveTo(x - r * 1.7, y);
+  ctx.lineTo(x + r * 1.7, y);
+  ctx.moveTo(x, y - r * 1.7);
+  ctx.lineTo(x, y + r * 1.7);
+  ctx.stroke();
 }
 
-function spineCanvas(book: ShelfBook, i: number, h: number, t: number) {
+function paintSpine(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number, t: number, pal: Palette) {
   const H = 1024;
   const W = Math.round((H * t) / h);
-  const c = Object.assign(document.createElement('canvas'), { width: W, height: H });
-  const ctx = c.getContext('2d')!;
-  paintCloth(ctx, W, H, book.color, i + 11);
-  const ink = foil(book.color);
-
-  // Rounded-spine shading.
-  const g = ctx.createLinearGradient(0, 0, W, 0);
-  g.addColorStop(0, 'rgba(0,0,0,0.28)');
-  g.addColorStop(0.35, 'rgba(255,255,255,0.06)');
-  g.addColorStop(0.65, 'rgba(255,255,255,0.03)');
-  g.addColorStop(1, 'rgba(0,0,0,0.3)');
-  ctx.fillStyle = g;
+  const ctx = size(c, W, H);
+  ctx.fillStyle = pal.paper;
   ctx.fillRect(0, 0, W, H);
-
-  // Headband and tailband rules.
-  ctx.fillStyle = ink;
-  for (const y of [34, 44, H - 48, H - 38]) ctx.fillRect(8, y, W - 16, 2);
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = `500 ${Math.round(W * 0.17)}px ${SANS}`;
-  ctx.fillText(String(i + 1).padStart(2, '0'), W / 2, 84);
-  ctx.fillText(monogram, W / 2, H - 86);
+  ctx.fillStyle = pal.muted;
+  ctx.font = `400 ${Math.round(W * 0.15)}px ${SANS}`;
+  ctx.fillText(String(i + 1).padStart(2, '0'), W / 2, 70);
+
+  // Construction lines framing the title, like guides left on a drawing.
+  ctx.strokeStyle = pal.muted;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath();
+  for (const y of [112, H - 112]) {
+    ctx.moveTo(W * 0.18, y);
+    ctx.lineTo(W * 0.82, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  register(ctx, W / 2, H - 66, Math.max(6, W * 0.06));
 
   // Title, set along the spine and read top to bottom.
   ctx.save();
   ctx.translate(W / 2, H / 2);
   ctx.rotate(Math.PI / 2);
-  let size = Math.round(W * 0.5);
-  ctx.font = `${size}px ${SERIF}`;
-  while (ctx.measureText(book.group).width > H * 0.62 && size > 12) {
-    size -= 2;
-    ctx.font = `${size}px ${SERIF}`;
+  ctx.fillStyle = pal.ink;
+  let px = Math.round(W * 0.42);
+  ctx.font = `${px}px ${SERIF}`;
+  while (ctx.measureText(book.group).width > H * 0.6 && px > 12) {
+    px -= 2;
+    ctx.font = `${px}px ${SERIF}`;
   }
   ctx.fillText(book.group, 0, 2);
   ctx.restore();
-  return c;
 }
 
-function coverCanvas(book: ShelfBook, i: number, h: number, brand: string) {
+function paintCover(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number, brand: string, pal: Palette) {
   const W = 640;
   const H = Math.round((W * h) / DEPTH);
-  const c = Object.assign(document.createElement('canvas'), { width: W, height: H });
-  const ctx = c.getContext('2d')!;
-  paintCloth(ctx, W, H, book.color, i + 101);
-  const ink = foil(book.color);
+  const ctx = size(c, W, H);
+  ctx.fillStyle = pal.paper;
+  ctx.fillRect(0, 0, W, H);
 
-  // Hinge shadow along the spine edge (left).
-  const hinge = ctx.createLinearGradient(0, 0, 56, 0);
-  hinge.addColorStop(0, 'rgba(0,0,0,0.3)');
-  hinge.addColorStop(0.6, 'rgba(0,0,0,0.05)');
-  hinge.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = hinge;
-  ctx.fillRect(0, 0, 56, H);
-
-  ctx.strokeStyle = ink;
-  ctx.fillStyle = ink;
-  ctx.lineWidth = 2;
-  ctx.strokeRect(58, 40, W - 98, H - 80);
-  ctx.lineWidth = 1;
-  ctx.strokeRect(66, 48, W - 114, H - 96);
-
-  const left = 104;
-  const right = W - 76;
+  const left = 72;
+  const right = W - 56;
   ctx.textBaseline = 'alphabetic';
-  ctx.textAlign = 'left';
-  ctx.font = `500 22px ${SANS}`;
-  ctx.letterSpacing = '4px';
-  ctx.fillText(`MORE ABOUT ME  ·  VOL. ${String(i + 1).padStart(2, '0')}`, left, 118);
-  ctx.letterSpacing = '0px';
-
-  // Title, wrapped to the frame.
-  ctx.font = `96px ${SERIF}`;
-  const lines = wrap(ctx, book.group, right - left);
-  let y = 230;
-  for (const line of lines) {
-    ctx.fillText(line, left, y);
-    y += 92;
-  }
-  ctx.fillRect(left, y - 40, 64, 2);
-  ctx.font = `400 26px ${SANS}`;
-  ctx.fillText(book.tagline, left, y + 6);
-
-  // A motif per series.
-  ctx.save();
+  ctx.strokeStyle = pal.ink;
   ctx.lineWidth = 1.5;
-  ctx.globalAlpha = 0.85;
-  motif(ctx, book.motif, W / 2 + 10, H * 0.68, Math.min(W, H) * 0.19);
+
+  // The hinge, as a single ruled line.
+  ctx.beginPath();
+  ctx.moveTo(36, 0);
+  ctx.lineTo(36, H);
+  ctx.stroke();
+
+  // Head: the series and the volume number over a rule.
+  ctx.fillStyle = pal.muted;
+  ctx.font = `400 20px ${SANS}`;
+  ctx.letterSpacing = '3px';
+  ctx.textAlign = 'left';
+  ctx.fillText('MORE ABOUT ME', left, 100);
+  ctx.textAlign = 'right';
+  ctx.fillText(`VOL. ${String(i + 1).padStart(2, '0')}`, right, 100);
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '0px';
+  ctx.beginPath();
+  ctx.moveTo(left, 124);
+  ctx.lineTo(right, 124);
+  ctx.stroke();
+
+  // Title and tagline.
+  ctx.fillStyle = pal.ink;
+  ctx.font = `92px ${SERIF}`;
+  let y = 236;
+  for (const line of wrap(ctx, book.group, right - left)) {
+    ctx.fillText(line, left, y);
+    y += 88;
+  }
+  ctx.fillStyle = pal.muted;
+  ctx.font = `400 26px ${SANS}`;
+  ctx.fillText(book.tagline, left, y - 28);
+
+  // The chapter's glyph, set in a dashed construction square with centre lines.
+  const cx = W / 2 + 8;
+  const cy = H * 0.64;
+  const r = Math.min(W, H) * 0.19;
+  ctx.save();
+  ctx.strokeStyle = pal.muted;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 6]);
+  ctx.strokeRect(cx - r * 1.3, cy - r * 1.3, r * 2.6, r * 2.6);
+  ctx.beginPath();
+  ctx.moveTo(cx - r * 1.5, cy);
+  ctx.lineTo(cx + r * 1.5, cy);
+  ctx.moveTo(cx, cy - r * 1.5);
+  ctx.lineTo(cx, cy + r * 1.5);
+  ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.strokeStyle = pal.ink;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  motif(ctx, book.motif, cx, cy, r * 0.9);
   ctx.restore();
 
-  ctx.textAlign = 'center';
-  ctx.font = `500 20px ${SANS}`;
-  ctx.letterSpacing = '6px';
-  ctx.fillText(brand.toUpperCase(), W / 2 + 10, H - 84);
-  ctx.letterSpacing = '0px';
-  return c;
+  // Foot: a title block — the name, with the header's dot beside it.
+  ctx.beginPath();
+  ctx.moveTo(left, H - 124);
+  ctx.lineTo(right, H - 124);
+  ctx.stroke();
+  ctx.fillStyle = pal.accent;
+  ctx.beginPath();
+  ctx.arc(left + 6, H - 84, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = pal.ink;
+  ctx.font = `500 24px ${SANS}`;
+  ctx.fillText(brand, left + 24, H - 76);
+  ctx.fillStyle = pal.muted;
+  ctx.font = `400 20px ${SANS}`;
+  ctx.textAlign = 'right';
+  ctx.fillText(`${book.items.length} ${book.items.length === 1 ? 'entry' : 'entries'}`, right, H - 76);
+  ctx.textAlign = 'left';
 }
 
-function backCanvas(book: ShelfBook, h: number) {
+function paintBack(c: HTMLCanvasElement, h: number, pal: Palette) {
   const W = 320;
   const H = Math.round((W * h) / DEPTH);
-  const c = Object.assign(document.createElement('canvas'), { width: W, height: H });
-  const ctx = c.getContext('2d')!;
-  paintCloth(ctx, W, H, book.color, 7);
-  ctx.strokeStyle = foil(book.color);
-  ctx.globalAlpha = 0.6;
-  ctx.strokeRect(24, 20, W - 48, H - 40);
-  return c;
+  const ctx = size(c, W, H);
+  ctx.fillStyle = pal.paper;
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = pal.muted;
+  ctx.lineWidth = 1.5;
+  register(ctx, W / 2, H - 60, 8);
+}
+
+/** Page edges read as a cut section: fine 45° hatching, as on a drawing. */
+function paintPages(c: HTMLCanvasElement, pal: Palette) {
+  const ctx = size(c, 256, 256);
+  ctx.fillStyle = pal.paper;
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.strokeStyle = pal.muted;
+  ctx.globalAlpha = 0.55;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let k = -256; k < 256; k += 14) {
+    ctx.moveTo(k, 256);
+    ctx.lineTo(k + 256, 0);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
 }
 
 function motif(ctx: CanvasRenderingContext2D, kind: Book['motif'], cx: number, cy: number, r: number) {
@@ -684,36 +807,6 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, max: number) {
   }
   if (line) lines.push(line);
   return lines;
-}
-
-function pagesTexture(anisotropy: number) {
-  const c = Object.assign(document.createElement('canvas'), { width: 256, height: 256 });
-  const ctx = c.getContext('2d')!;
-  ctx.fillStyle = '#efe7d4';
-  ctx.fillRect(0, 0, 256, 256);
-  const rand = mulberry(5);
-  for (let y = 0; y < 256; y += 2) {
-    ctx.fillStyle = `rgba(90,70,40,${0.04 + rand() * 0.08})`;
-    ctx.fillRect(0, y, 256, 1);
-  }
-  return canvasTexture(c, anisotropy);
-}
-
-function weaveTexture() {
-  const c = Object.assign(document.createElement('canvas'), { width: 128, height: 128 });
-  const ctx = c.getContext('2d')!;
-  ctx.fillStyle = '#808080';
-  ctx.fillRect(0, 0, 128, 128);
-  for (let y = 0; y < 128; y += 2) {
-    for (let x = 0; x < 128; x += 2) {
-      ctx.fillStyle = (x + y) % 4 === 0 ? '#9a9a9a' : '#6a6a6a';
-      ctx.fillRect(x, y, 2, 2);
-    }
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(4, 4);
-  return tex;
 }
 
 /** A fuller chapter makes a thicker book. */

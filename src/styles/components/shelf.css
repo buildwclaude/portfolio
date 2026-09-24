@@ -39,7 +39,42 @@
 .shelf__canvas {
   position: relative;
   height: clamp(380px, 36vw, 540px);
+  /* The drawing sheet: the page's grid, ruled at its own pitch. */
+  background-image:
+    linear-gradient(var(--rule-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
+  background-size: var(--dot-pitch) var(--dot-pitch);
+  background-position: center;
 }
+
+/* Crop marks at the four corners of the sheet. */
+.shelf__canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --m: 14px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) 0 0 / var(--m) 1px,
+    linear-gradient(var(--ink), var(--ink)) 0 0 / 1px var(--m),
+    linear-gradient(var(--ink), var(--ink)) 100% 0 / var(--m) 1px,
+    linear-gradient(var(--ink), var(--ink)) 100% 0 / 1px var(--m),
+    linear-gradient(var(--ink), var(--ink)) 0 100% / var(--m) 1px,
+    linear-gradient(var(--ink), var(--ink)) 0 100% / 1px var(--m),
+    linear-gradient(var(--ink), var(--ink)) 100% 100% / var(--m) 1px,
+    linear-gradient(var(--ink), var(--ink)) 100% 100% / 1px var(--m);
+  background-repeat: no-repeat;
+}
+
+.shelf__fig {
+  position: absolute;
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+.shelf__fig--tl { top: var(--space-16); left: var(--space-24); }
+.shelf__fig--tr { top: var(--space-16); right: var(--space-24); }
+.shelf__fig--bl { bottom: var(--space-16); left: var(--space-24); }
 
 .shelf__canvas canvas {
   display: block;
@@ -99,9 +134,9 @@
   flex-direction: column;
   gap: var(--space-12);
   padding: var(--space-24);
-  background: var(--paper-raised);
-  border: var(--border-thick);
-  box-shadow: var(--shadow-hard-hover);
+  /* A sheet laid on the drawing: paper and a hairline, no lift. */
+  background: var(--paper);
+  border: 1px solid var(--ink);
   opacity: 0;
   visibility: hidden;
   transform: translate(12px, -50%);
@@ -223,21 +258,13 @@
 
 .shelf__link {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto auto;
   align-items: baseline;
   column-gap: var(--space-12);
   padding: var(--space-12) 0;
   color: var(--ink);
   text-decoration: none;
-}
-
-.shelf__swatch {
-  grid-row: 1 / span 2;
-  align-self: stretch;
-  width: 6px;
-  transition: transform var(--dur-mid) var(--ease-out);
-  transform-origin: bottom;
 }
 
 .shelf__num {
@@ -250,14 +277,8 @@
 }
 
 .shelf__kind {
-  grid-column: 2 / -1;
+  grid-column: 2;
   color: var(--ink-muted);
-}
-
-.shelf__link:hover .shelf__swatch,
-.shelf__link:focus-visible .shelf__swatch,
-.shelf__vol.is-active .shelf__swatch {
-  transform: scaleY(1.35);
 }
 
 .shelf__link:hover .shelf__name,
@@ -301,6 +322,13 @@
   }
 
   .shelf__stage.has-focus .shelf__hint {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  /* No margin for the drawing's labels at this width; the crop marks stay. */
+  .shelf__fig {
     display: none;
   }
 }

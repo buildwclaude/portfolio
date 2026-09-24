@@ -14,7 +14,6 @@ function volume(book: Book, i: number) {
   return html`
     <li class="shelf__vol" data-index="${String(i)}">
       <a class="shelf__link" href="#me" data-chapter="${book.group}">
-        <span class="shelf__swatch" style="background:${book.color}" aria-hidden="true"></span>
         <span class="shelf__num meta">${String(i + 1).padStart(2, '0')}</span>
         <span class="shelf__name">${book.group}</span>
         <span class="shelf__kind meta">${book.tagline}</span>

@@ -61,8 +61,6 @@ export type Book = {
   group: string;
   /** Printed under the title on the cover. */
   tagline: string;
-  /** Cloth colour. */
-  color: string;
   /** The line drawing stamped on the cover. */
   motif: 'steps' | 'rosette' | 'circles' | 'waves' | 'sprout';
 };
@@ -429,11 +427,11 @@ export const site = {
     title: 'More about me',
     hint: 'Drag to turn the shelf · click a spine to pull it out',
     books: [
-      { group: 'Experience', tagline: 'Four roles, 2021 — present', color: '#1f4d3a', motif: 'steps' },
-      { group: 'Recognition', tagline: 'Awards and wins', color: '#b8892b', motif: 'rosette' },
-      { group: 'Community', tagline: 'Advisory and mentorship', color: '#7a2a2a', motif: 'circles' },
-      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', color: '#1d2b4f', motif: 'waves' },
-      { group: 'Initiatives', tagline: 'Two ventures, co-founded', color: '#56613a', motif: 'sprout' },
+      { group: 'Experience', tagline: 'Four roles, 2021 — present', motif: 'steps' },
+      { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette' },
+      { group: 'Community', tagline: 'Advisory and mentorship', motif: 'circles' },
+      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', motif: 'waves' },
+      { group: 'Initiatives', tagline: 'Two ventures, co-founded', motif: 'sprout' },
     ] satisfies Book[],
   },
 
