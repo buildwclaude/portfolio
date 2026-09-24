@@ -348,6 +348,9 @@ html.sb-open { overflow: hidden; }
   color: var(--ink-muted);
 }
 .sb-fig--portrait { align-self: center; flex: none; width: 62%; margin-top: 2cqw; }
+/* The portrait keeps its own colours; the other figures stay in greyscale. */
+.sb-fig--portrait img,
+[data-theme='dark'] .sb-fig--portrait img { filter: none; mix-blend-mode: normal; opacity: 1; }
 
 .sb-facts { display: grid; gap: 2.4cqw; margin: 2cqw 0 0; }
 .sb-facts div { display: grid; grid-template-columns: 24cqw 1fr; gap: 3cqw; padding-top: 2.4cqw; border-top: 1px dashed var(--rule); }
