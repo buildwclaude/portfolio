@@ -1,5 +1,6 @@
 import { html, raw } from '../lib/html';
 import { site, type Entry, type Photo } from '../content/site';
+import { chapterId } from '../lib/chapter';
 
 /**
  * The About page, opened in the case-study window at #me. Built from the
@@ -59,7 +60,7 @@ export function renderMe(): string {
 }
 
 function section(label: string, items: readonly Entry[], photos: readonly Photo[], i: number) {
-  const id = `me-${label.toLowerCase().replace(/[^a-z]+/g, '-')}`;
+  const id = chapterId(label);
   return html`
     <section class="me__section" aria-labelledby="${id}" data-rm-reveal>
       <h3 class="me__label meta" id="${id}">

@@ -1,6 +1,6 @@
 import { html } from '../lib/html';
 import { site } from '../content/site';
-import { records } from './records';
+import { shelf } from './shelf';
 
 export function about() {
   const { title, paragraphs, columns } = site.about;
@@ -15,10 +15,8 @@ export function about() {
         </div>
 
         <div class="about__text" data-reveal>
-          ${paragraphs.map((p) => html`<p class="lead prose">${p}</p>`)}
-          <a class="about__more" href="#me" data-study="me">
-            <span>More about me</span><span class="about__more-arrow" aria-hidden="true">→</span>
-          </a>
+          <!-- The homepage keeps to the first paragraph; the shelf below opens the rest. -->
+          <p class="lead prose">${paragraphs[0]}</p>
         </div>
 
         <dl class="about__columns" data-reveal>
@@ -36,7 +34,7 @@ export function about() {
           )}
         </dl>
 
-        ${records(['Experience'])}
+        ${shelf()}
       </div>
     </section>
   `;

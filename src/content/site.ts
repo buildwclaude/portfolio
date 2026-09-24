@@ -52,6 +52,21 @@ export type Entry = {
   desc?: string;
 };
 
+/**
+ * A volume on the "More about me" shelf. Its contents are the `records`
+ * group with the same label, so the shelf and the About page always agree.
+ */
+export type Book = {
+  /** A `records.groups` label. */
+  group: string;
+  /** Printed under the title on the cover. */
+  tagline: string;
+  /** Cloth colour. */
+  color: string;
+  /** The line drawing stamped on the cover. */
+  motif: 'steps' | 'rosette' | 'circles' | 'waves' | 'sprout';
+};
+
 /** A photo on the About page. Files live in /public/me/. */
 export type Photo = { src: string; width: number; height: number; alt: string };
 
@@ -291,29 +306,6 @@ export const site = {
         ],
       },
       {
-        label: 'Speaking & workshops',
-        items: [
-          {
-            title: 'Speaker, Hult Prize Itahari',
-            meta: 'Simple Design Thinking',
-            year: '',
-            href: '',
-            desc: 'Presented design thinking approaches to aspiring entrepreneurs, inspiring them to leverage design principles for impactful solutions.',
-          },
-          {
-            title: 'Design thinking workshop',
-            meta: 'Facilitator',
-            year: '',
-            href: '',
-            desc: 'Led a hands-on workshop on core design thinking methodologies for students, guiding them in applying these techniques to real-world challenges.',
-          },
-        ],
-        photos: [
-          { src: '/me/speaking-2.webp', width: 1000, height: 765, alt: 'A screen reading “Design thinking for product design”, from a Girls in Tech Nepal session.' },
-          { src: '/me/speaking-1.webp', width: 1000, height: 532, alt: 'Workshop participants on a video call.' },
-        ],
-      },
-      {
         label: 'Community',
         items: [
           {
@@ -336,6 +328,29 @@ export const site = {
           { src: '/me/community-2.webp', width: 1000, height: 869, alt: 'Students working through an exercise at a table.' },
           { src: '/me/community-3.webp', width: 1000, height: 790, alt: 'A smiling group selfie at a community event.' },
           { src: '/me/community-4.webp', width: 1000, height: 551, alt: 'A large group photo from a Girls in Tech Nepal event.' },
+        ],
+      },
+      {
+        label: 'Speaking & workshops',
+        items: [
+          {
+            title: 'Speaker, Hult Prize Itahari',
+            meta: 'Simple Design Thinking',
+            year: '',
+            href: '',
+            desc: 'Presented design thinking approaches to aspiring entrepreneurs, inspiring them to leverage design principles for impactful solutions.',
+          },
+          {
+            title: 'Design thinking workshop',
+            meta: 'Facilitator',
+            year: '',
+            href: '',
+            desc: 'Led a hands-on workshop on core design thinking methodologies for students, guiding them in applying these techniques to real-world challenges.',
+          },
+        ],
+        photos: [
+          { src: '/me/speaking-2.webp', width: 1000, height: 765, alt: 'A screen reading “Design thinking for product design”, from a Girls in Tech Nepal session.' },
+          { src: '/me/speaking-1.webp', width: 1000, height: 532, alt: 'Workshop participants on a video call.' },
         ],
       },
       {
@@ -405,6 +420,21 @@ export const site = {
         href: 'https://sony-thakuri.xyz/6/',
       },
     ] satisfies Experiment[],
+  },
+
+  /* ----------------------------------------------------------------- shelf
+     "More about me" in the About section: one volume per `records` group.
+     Order is shelf order, left to right. */
+  shelf: {
+    title: 'More about me',
+    hint: 'Drag to turn the shelf · click a spine to pull it out',
+    books: [
+      { group: 'Experience', tagline: 'Four roles, 2021 — present', color: '#1f4d3a', motif: 'steps' },
+      { group: 'Recognition', tagline: 'Awards and wins', color: '#b8892b', motif: 'rosette' },
+      { group: 'Community', tagline: 'Advisory and mentorship', color: '#7a2a2a', motif: 'circles' },
+      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', color: '#1d2b4f', motif: 'waves' },
+      { group: 'Initiatives', tagline: 'Two ventures, co-founded', color: '#56613a', motif: 'sprout' },
+    ] satisfies Book[],
   },
 
   /* ----------------------------------------------------------------- helix

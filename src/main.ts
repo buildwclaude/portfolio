@@ -12,6 +12,7 @@ import './styles/components/playground.css';
 import './styles/components/about.css';
 import './styles/components/records.css';
 import './styles/components/experiments.css';
+import './styles/components/shelf.css';
 import './styles/components/footer.css';
 import './styles/components/rail.css';
 import './styles/motion.css';
@@ -65,12 +66,14 @@ function initThemeToggle() {
 
 import { initHeroCards } from './components/hero-cards';
 import { initRail } from './lib/rail';
+import { chapterId } from './lib/chapter';
 
 initThemeToggle();
 initNav();
 initRail();
 
 mountHelix();
+mountShelf();
 initHeroCards();
 
 if (reducedMotion) {
@@ -117,6 +120,72 @@ function mountHelix() {
     { rootMargin: '30% 0px' },
   );
   observer.observe(target);
+}
+
+/**
+ * "More about me": one volume per About-page chapter, built like the helix
+ * only when it is nearly in view. Without WebGL the section keeps its plain
+ * index and nothing else changes.
+ */
+function mountShelf() {
+  const stage = document.querySelector<HTMLElement>('[data-shelf]');
+  if (!stage) return;
+
+  // The index always works: each chapter opens the About page at its section.
+  document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openChapter(link.dataset.chapter || '');
+    });
+  });
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (!entry?.isIntersecting) return;
+      observer.disconnect();
+      import('./components/bookshelf')
+        .then(({ createBookshelf }) =>
+          createBookshelf(stage, {
+            books: site.shelf.books.map((book) => ({
+              ...book,
+              items: site.records.groups.find((g) => g.label === book.group)?.items ?? [],
+            })),
+            brand: site.meta.name,
+            onOpen: (book) => openChapter(book.group),
+          }),
+        )
+        .catch(() => undefined);
+    },
+    { rootMargin: '40% 0px' },
+  );
+  observer.observe(stage.closest('section') ?? stage);
+}
+
+/**
+ * Opens the About page (#me) through the case-study window, then scrolls it
+ * to one chapter once the window has settled.
+ */
+function openChapter(label: string) {
+  const link = Object.assign(document.createElement('a'), { href: '#me', hidden: true });
+  link.dataset.study = 'me';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  const id = chapterId(label);
+  const started = performance.now();
+  const seek = () => {
+    const panel = document.querySelector<HTMLElement>('#warp-detail .detail__panel');
+    const target = panel?.querySelector<HTMLElement>(`#${id}`);
+    // Wait out the window's opening move, so the scroll lands where it should.
+    if (!panel || !target || performance.now() - started < 900) {
+      if (performance.now() - started < 4000) requestAnimationFrame(seek);
+      return;
+    }
+    const top = target.getBoundingClientRect().top - panel.getBoundingClientRect().top + panel.scrollTop;
+    panel.scrollTo({ top: top - 48, behavior: reducedMotion ? 'auto' : 'smooth' });
+  };
+  requestAnimationFrame(seek);
 }
 
 /* The scroll layer waits until the page has painted. */
