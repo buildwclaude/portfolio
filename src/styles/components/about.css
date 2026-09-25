@@ -1,74 +1,200 @@
 /* ==========================================================================
-   About — typography and space, no container.
+   About — everything about me in one section, in the site's frosted glass:
+   an introduction beside what I practise and use, and the chapters under
+   them, each opening the reader.
    ========================================================================== */
 
-.about__text {
-  grid-column: 1 / span 6;
+.about {
+  --about-blue: #2f6cf2;
+}
+
+/* The glass both cards are made of — the reader's and the chapter cards'. */
+.about__intro,
+.about__skills {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(247, 249, 253, 0.74));
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 1px 2px rgba(30, 45, 90, 0.05),
+    0 16px 36px rgba(30, 45, 90, 0.08);
+}
+
+/* --- Introduction ---------------------------------------------------------- */
+
+.about__intro {
+  grid-column: 1 / span 7;
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  padding: 32px;
+}
+
+.about__portrait {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(30, 45, 90, 0.16);
+}
+
+.about__hello {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.about__hi { font-weight: 300; }
+
+.about__lead {
+  margin: 16px 0 0;
+  font-size: var(--text-body);
+  line-height: 1.65;
   color: var(--ink-secondary);
 }
 
-/* Opens the full About page (#me) in the case-study window. */
-.about__more {
+.about__facts {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0 0;
+}
+.about__fact {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #e9f0fe;
+}
+.about__fact dt {
+  padding-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--about-blue);
+}
+.about__fact dd {
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 1.45;
+}
+
+.about__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.about__cta,
+.about__ghost {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
-  margin-top: var(--space-32);
-  padding-bottom: var(--space-4);
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
   font-size: var(--text-small);
-  color: var(--ink);
+  font-weight: 600;
   text-decoration: none;
-  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  transition: transform var(--dur-mid) var(--ease-out), box-shadow var(--dur-mid) var(--ease-out);
 }
-.about__more-arrow { transition: transform var(--dur-mid) var(--ease-out); }
-.about__more:hover .about__more-arrow,
-.about__more:focus-visible .about__more-arrow { transform: translateX(4px); }
+.about__cta {
+  background: linear-gradient(180deg, #4f8ff7, var(--about-blue));
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 16px rgba(47, 108, 242, 0.3);
+}
+.about__cta span { transition: transform var(--dur-mid) var(--ease-out); }
+.about__cta:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 22px rgba(47, 108, 242, 0.38); }
+.about__cta:hover span { transform: translateX(3px); }
+.about__ghost {
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(30, 45, 90, 0.12), 0 4px 12px rgba(30, 45, 90, 0.06);
+}
+.about__ghost:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(47, 108, 242, 0.35), 0 8px 18px rgba(47, 108, 242, 0.14); }
+.about__cta:focus-visible,
+.about__ghost:focus-visible { outline: 2px solid var(--about-blue); outline-offset: 3px; }
 
-.about__columns {
+/* --- What I practise, use and do ------------------------------------------ */
+
+.about__skills {
   grid-column: 8 / -1;
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
+  gap: 24px;
+  margin: 0;
+  padding: 28px;
   --reveal-delay: 120ms;
 }
 
-.about__column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--rule);
+.about__label {
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
 }
+.about__group dd { margin: 0; }
 
-.about__list {
+.about__chips {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* What drives the work, set at the foot of the card. */
+.about__group--note {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(30, 45, 90, 0.08);
+}
+.about__note {
+  margin: 0;
   font-size: var(--text-small);
+  line-height: 1.6;
   color: var(--ink-secondary);
 }
 
+.about__chip {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(30, 45, 90, 0.09), 0 2px 6px rgba(30, 45, 90, 0.05);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+/* --- Narrower -------------------------------------------------------------- */
+
 @media (max-width: 1100px) {
-  .about__text {
-    grid-column: 1 / span 7;
-  }
-}
-
-@media (max-width: 860px) {
-  .about__text {
-    grid-column: 1 / -1;
-  }
-
-  .about__columns {
-    grid-column: 1 / -1;
-    margin-top: var(--space-48);
+  .about__intro,
+  .about__skills { grid-column: 1 / -1; }
+  .about__skills {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-32) var(--grid-gutter);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 16px;
   }
+  .about__group--note { grid-column: 1 / -1; }
 }
 
-@media (max-width: 520px) {
-  .about__columns {
+@media (max-width: 760px) {
+  .about__intro {
     grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px;
   }
+  .about__portrait { width: 120px; }
+  .about__fact { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .about__skills { grid-template-columns: minmax(0, 1fr); padding: 24px; }
 }

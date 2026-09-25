@@ -17,7 +17,8 @@ import './styles/components/footer.css';
 import './styles/components/rail.css';
 import './styles/motion.css';
 
-import { site } from './content/site';
+import { site, type Book } from './content/site';
+import { motif } from './lib/motif';
 import { initNav } from './lib/nav';
 import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
@@ -70,15 +71,10 @@ function mountHeroScene() {
 }
 
 /**
- * "More about me": one volume per chapter, built only when it is nearly
- * in view. Without WebGL the section keeps its plain index and
- * nothing else changes. Every way in opens the sketchbook.
+ * "More about me": one card per chapter. Every card opens the reader at its
+ * chapter, and each card's tile gets the chapter's line drawing, in white.
  */
 function mountShelf() {
-  const stage = document.querySelector<HTMLElement>('[data-shelf]');
-  if (!stage) return;
-
-  // The index always works: each chapter opens the sketchbook at its spread.
   document.querySelectorAll<HTMLElement>('[data-chapter]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
@@ -86,26 +82,17 @@ function mountShelf() {
     });
   });
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (!entry?.isIntersecting) return;
-      observer.disconnect();
-      import('./components/bookshelf')
-        .then(({ createBookshelf }) =>
-          createBookshelf(stage, {
-            books: site.shelf.books.map((book) => ({
-              ...book,
-              items: site.records.groups.find((g) => g.label === book.group)?.items ?? [],
-            })),
-            brand: site.meta.name,
-            onOpen: (book) => openSketchbook(book.group),
-          }),
-        )
-        .catch(() => undefined);
-    },
-    { rootMargin: '40% 0px' },
-  );
-  observer.observe(stage.closest('section') ?? stage);
+  document.querySelectorAll<HTMLElement>('[data-motif]').forEach((tile) => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 200;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 7;
+    ctx.lineJoin = ctx.lineCap = 'round';
+    motif(ctx, tile.dataset.motif as Book['motif'], 100, 100, 66);
+    tile.style.setProperty('--motif', `url(${c.toDataURL('image/png')})`);
+  });
 }
 
 /* ══════════════════════════════════════════════════════════════════════

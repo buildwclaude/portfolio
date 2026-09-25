@@ -53,18 +53,17 @@ export type Entry = {
 };
 
 /**
- * A volume on the "More about me" shelf. Its contents are the `records`
- * group with the same label, so the shelf and the About page always agree.
+ * A chapter of "More about me". Its contents are the `records` group with the
+ * same label, so the cards, the reader and the About page always agree.
  */
 export type Book = {
   /** A `records.groups` label. */
   group: string;
-  /** Printed under the title on the cover. */
+  /** Shown under the chapter's title. */
   tagline: string;
-  /** The line drawing stamped on the cover. */
+  /** The chapter's line drawing, on its tile. */
   motif: 'steps' | 'rosette' | 'circles' | 'waves' | 'sprout';
-  /** The colour of the solid core seen through the book's glass — the blues
-   *  of the landing page's folder, one shade per volume. */
+  /** The chapter's tile colour — the blues of the landing page's folder. */
   color: string;
 };
 
@@ -439,11 +438,10 @@ export const site = {
   },
 
   /* ----------------------------------------------------------------- shelf
-     "More about me" in the About section: one volume per `records` group.
-     Order is shelf order, left to right. */
+     "More about me" in the About section: one chapter card per `records`
+     group, left to right; each opens the reader at that chapter. */
   shelf: {
-    title: 'More about me',
-    hint: 'Drag to turn the shelf · click a spine to pull it out',
+    title: 'In more detail',
     books: [
       { group: 'Experience', tagline: 'Four roles, 2021 — present', motif: 'steps', color: '#2f6cf2' },
       { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette', color: '#4c8df6' },
