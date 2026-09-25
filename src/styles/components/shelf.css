@@ -39,42 +39,7 @@
 .shelf__canvas {
   position: relative;
   height: clamp(380px, 36vw, 540px);
-  /* The drawing sheet: the page's grid, ruled at its own pitch. */
-  background-image:
-    linear-gradient(var(--rule-soft) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
-  background-size: var(--dot-pitch) var(--dot-pitch);
-  background-position: center;
 }
-
-/* Crop marks at the four corners of the sheet. */
-.shelf__canvas::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  --m: 14px;
-  background:
-    linear-gradient(var(--ink), var(--ink)) 0 0 / var(--m) 1px,
-    linear-gradient(var(--ink), var(--ink)) 0 0 / 1px var(--m),
-    linear-gradient(var(--ink), var(--ink)) 100% 0 / var(--m) 1px,
-    linear-gradient(var(--ink), var(--ink)) 100% 0 / 1px var(--m),
-    linear-gradient(var(--ink), var(--ink)) 0 100% / var(--m) 1px,
-    linear-gradient(var(--ink), var(--ink)) 0 100% / 1px var(--m),
-    linear-gradient(var(--ink), var(--ink)) 100% 100% / var(--m) 1px,
-    linear-gradient(var(--ink), var(--ink)) 100% 100% / 1px var(--m);
-  background-repeat: no-repeat;
-}
-
-.shelf__fig {
-  position: absolute;
-  color: var(--ink-muted);
-  pointer-events: none;
-}
-
-.shelf__fig--tl { top: var(--space-16); left: var(--space-24); }
-.shelf__fig--tr { top: var(--space-16); right: var(--space-24); }
-.shelf__fig--bl { bottom: var(--space-16); left: var(--space-24); }
 
 .shelf__canvas canvas {
   display: block;
@@ -100,9 +65,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  padding: var(--space-4) var(--space-8);
-  background: var(--ink);
-  color: var(--paper);
+  padding: var(--space-4) var(--space-12);
+  border-radius: 999px;
+  background: rgba(20, 30, 60, 0.82);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -134,9 +102,17 @@
   flex-direction: column;
   gap: var(--space-12);
   padding: var(--space-24);
-  /* A sheet laid on the drawing: paper and a hairline, no lift. */
-  background: var(--paper);
-  border: 1px solid var(--ink);
+  /* Frosted glass, lit like the landing page's folder and tools. */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(246, 248, 252, 0.72));
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 2px 4px rgba(30, 45, 90, 0.06),
+    0 18px 40px rgba(30, 45, 90, 0.12),
+    0 30px 60px rgba(70, 110, 230, 0.08);
   opacity: 0;
   visibility: hidden;
   transform: translate(12px, -50%);
@@ -215,9 +191,21 @@
   align-items: center;
   gap: var(--space-8);
   padding: var(--space-8) var(--space-16);
-  background: var(--ink);
-  color: var(--paper);
   border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #4f8ff7, #2f6cf2);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 16px rgba(47, 108, 242, 0.3);
+  transition: box-shadow var(--dur-mid) var(--ease-out), transform var(--dur-mid) var(--ease-out);
+}
+
+.shelf__open:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 22px rgba(47, 108, 242, 0.38);
 }
 
 .shelf__open span:last-child {
@@ -322,13 +310,6 @@
   }
 
   .shelf__stage.has-focus .shelf__hint {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  /* No margin for the drawing's labels at this width; the crop marks stay. */
-  .shelf__fig {
     display: none;
   }
 }

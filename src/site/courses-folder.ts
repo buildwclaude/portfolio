@@ -3,24 +3,23 @@ import { site } from '../content/site';
 import { logos, type Logo } from '../content/logos';
 
 /**
- * The folder on the right of the landing screen. Paper surfaces with a soft raised shadow, like
- * the playground's artworks, edged in a fine ink line like the bookshelf;
- * the folder itself is blue: a gradient back panel behind a frosted,
- * blue-tinted glass front, with the hidden back edges dashed on it.
- * Clicking the folder tucks the
- * tools away and fans them out again; clicking a tool picks it.
- * Positions are in a 736 × 920 frame and scale with the stage. Behaviour
- * lives in `lib/courses-folder`.
+ * The folder on the right of the landing screen: a blue glass folder with two
+ * sheets of paper in its mouth, and the tools I work with scattered out of it
+ * as bare logos on dotted threads. Clicking the folder tucks the tools away
+ * and fans them out again. Positions are in a 736 × 920 frame and scale with
+ * the stage. Behaviour lives in `lib/courses-folder`.
  */
 export function coursesFolder() {
-  const { label, marks, tools } = site.hero.folder;
+  const { marks, tools } = site.hero.folder;
 
   return html`
     <div class="folder folder--${marks}" data-folder>
       <div class="folder__stage is-open" data-folder-stage>
         <svg class="folder__lines" viewBox="0 0 736 920" aria-hidden="true">
-          ${tools.map((t, i) => {
-            const x0 = 230 + i * 30;
+          ${tools.map((t) => {
+            // Each line leaves the folder's mouth on the side its tool is on,
+            // spread across the mouth so neighbouring lines don't run together.
+            const x0 = Math.round(Math.min(475, Math.max(185, 330 + (t.x - 330) * 0.55)));
             return html`<path d="M${x0} 610 C${x0} 500 ${t.x} ${t.y + 140} ${t.x} ${t.y + 44}"></path>`;
           })}
         </svg>
@@ -38,15 +37,12 @@ export function coursesFolder() {
         <ul class="folder__tools" aria-label="Tools">
           ${tools.map(
             (t, i) => html`
-              <li class="folder__slot" style="--x:${t.x};--y:${t.y};--r:${t.tilt}deg;--i:${i};--brand:${t.color}">
+              <li class="folder__slot" style="--x:${t.x};--y:${t.y};--r:${t.tilt}deg;--s:${t.size};--i:${i};--brand:${t.color}">
                 <span class="folder__bob">
-                  <button class="folder__tile" type="button" aria-pressed="false" data-folder-tool>
+                  <span class="folder__tile">
                     <span class="folder__mark" aria-hidden="true">${marks === 'original' ? html`<img class="folder__art" src="${t.art}" alt="" width="48" height="48" decoding="async" />` : mark(t)}</span>
-                    <span class="visually-hidden">${t.name} — add to ${label}</span>
-                    <span class="folder__check" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"></polyline></svg>
-                    </span>
-                  </button>
+                    <span class="visually-hidden">${t.name}</span>
+                  </span>
                 </span>
               </li>
             `,

@@ -63,7 +63,8 @@ export type Book = {
   tagline: string;
   /** The line drawing stamped on the cover. */
   motif: 'steps' | 'rosette' | 'circles' | 'waves' | 'sprout';
-  /** The colour of the solid core seen through the book's glass. */
+  /** The colour of the solid core seen through the book's glass — the blues
+   *  of the landing page's folder, one shade per volume. */
   color: string;
 };
 
@@ -108,29 +109,27 @@ export const site = {
       'Speaker at **Hult Prize**, advisory board at **Girls in Tech Nepal**',
     ],
     /**
-     * The folder on the right. `tools` fly out of it and can be picked;
-     * A tool's `logo` names an entry in `content/logos.ts` (empty:
-     * initials only).
+     * The folder on the right. `tools` fly out of it and scatter: `x`, `y`
+     * place each in the folder's 736 × 920 frame, `tilt` turns it and `size`
+     * scales its logo, so no two sit alike.
      */
     folder: {
-      label: 'Your Courses',
       /**
-       * How each tool is marked: `'original'` shows its full-colour logo
-       * (`art`, a file in public/logos) on clear glass; `'logo'` its
-       * one-colour logo in white on glass of its brand colour (initials
-       * where there is no logo); `'color'` its initials the same way.
-       * The cards in the folder always use the one-colour logo.
+       * How each tool is shown: `'original'` its full-colour logo (`art`, a
+       * file in public/logos); `'logo'` its one-colour logo (`logo`, an entry
+       * in content/logos.ts) in its brand colour; `'color'` its initials on
+       * its brand colour. Where there is no `logo`, the initials stand in.
        */
       marks: 'original' as 'original' | 'logo' | 'color',
       tools: [
-        { name: 'Figma', initials: 'Fi', logo: 'figma', color: '#f24e1e', art: 'logos/figma.svg', x: 378, y: 160, tilt: 6 },
-        { name: 'FigJam', initials: 'FJ', logo: '', color: '#9747ff', art: 'logos/figjam.svg', x: 182, y: 258, tilt: -8 },
-        { name: 'Creative Cloud', initials: 'Cc', logo: 'adobecreativecloud', color: '#da1f26', art: 'logos/adobe-creative-cloud.svg', x: 620, y: 165, tilt: -10 },
-        { name: 'AI Studio', initials: 'AI', logo: '', color: '#4285f4', art: 'logos/google-ai-studio.svg', x: 333, y: 377, tilt: 4 },
-        { name: 'TouchDesigner', initials: 'TD', logo: '', color: '#1e1e1e', art: 'logos/touchdesigner.svg', x: 500, y: 305, tilt: 12 },
-        { name: 'Jira', initials: 'Ji', logo: 'jira', color: '#0052cc', art: 'logos/jira.svg', x: 170, y: 440, tilt: -6 },
-        { name: 'Slack', initials: 'Sl', logo: 'slack', color: '#4a154b', art: 'logos/slack.svg', x: 468, y: 448, tilt: 8 },
-        { name: 'Illustrator', initials: 'Ai', logo: 'adobeillustrator', color: '#ff9a00', art: 'logos/adobe-illustrator.svg', x: 640, y: 330, tilt: 6 },
+        { name: 'Figma', initials: 'Fi', logo: 'figma', color: '#f24e1e', art: 'logos/figma.svg', x: 603, y: 312, tilt: 9, size: 1.1 },
+        { name: 'FigJam', initials: 'FJ', logo: '', color: '#9747ff', art: 'logos/figjam.svg', x: 77, y: 430, tilt: -13, size: 0.9 },
+        { name: 'Creative Cloud', initials: 'Cc', logo: 'adobecreativecloud', color: '#da1f26', art: 'logos/adobe-creative-cloud.svg', x: 475, y: 292, tilt: -7, size: 1.0 },
+        { name: 'AI Studio', initials: 'AI', logo: '', color: '#4285f4', art: 'logos/google-ai-studio.svg', x: 269, y: 254, tilt: 9, size: 1.12 },
+        { name: 'TouchDesigner', initials: 'TD', logo: '', color: '#1e1e1e', art: 'logos/touchdesigner.svg', x: 238, y: 434, tilt: -10, size: 0.84 },
+        { name: 'Jira', initials: 'Ji', logo: 'jira', color: '#0052cc', art: 'logos/jira.svg', x: 564, y: 185, tilt: 8, size: 0.86 },
+        { name: 'Slack', initials: 'Sl', logo: 'slack', color: '#4a154b', art: 'logos/slack.svg', x: 355, y: 123, tilt: -5, size: 1.05 },
+        { name: 'Illustrator', initials: 'Ai', logo: 'adobeillustrator', color: '#ff9a00', art: 'logos/adobe-illustrator.svg', x: 68, y: 175, tilt: -9, size: 0.92 },
       ],
     },
     /** Margin notes. Leave any value empty to hide the row. */
@@ -447,10 +446,10 @@ export const site = {
     hint: 'Drag to turn the shelf · click a spine to pull it out',
     books: [
       { group: 'Experience', tagline: 'Four roles, 2021 — present', motif: 'steps', color: '#2f6cf2' },
-      { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette', color: '#f59e0b' },
-      { group: 'Community', tagline: 'Advisory and mentorship', motif: 'circles', color: '#14b8a6' },
-      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', motif: 'waves', color: '#8b5cf6' },
-      { group: 'Initiatives', tagline: 'Two ventures, co-founded', motif: 'sprout', color: '#f43f5e' },
+      { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette', color: '#4c8df6' },
+      { group: 'Community', tagline: 'Advisory and mentorship', motif: 'circles', color: '#3aa3f2' },
+      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', motif: 'waves', color: '#5b6ff0' },
+      { group: 'Initiatives', tagline: 'Two ventures, co-founded', motif: 'sprout', color: '#6aa8ff' },
     ] satisfies Book[],
   },
 

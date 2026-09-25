@@ -78,20 +78,6 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   tip.className = 'shelf__tip meta';
   tip.setAttribute('aria-hidden', 'true');
   wrap.appendChild(tip);
-  // The drawing's labels, set in the page's type rather than in the canvas.
-  const title = stage.parentElement?.querySelector('.shelf__title')?.textContent?.trim() ?? '';
-  const pad = (n: number) => String(n).padStart(2, '0');
-  for (const [cls, text] of [
-    ['shelf__fig--tl', `Fig. 02 — ${title}`],
-    ['shelf__fig--tr', `Vol. 01 – ${pad(books.length)}`],
-    ['shelf__fig--bl', 'Elevation, not to scale'],
-  ]) {
-    const label = document.createElement('span');
-    label.className = `shelf__fig ${cls} meta`;
-    label.setAttribute('aria-hidden', 'true');
-    label.textContent = text!;
-    wrap.appendChild(label);
-  }
   stage.prepend(wrap);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -113,15 +99,6 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
   const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
-
-  /* ---------------------------------------------------------------- ink */
-  // The ledge and its scale stay a line drawing in the page's ink: the glass
-  // volumes stand on it.
-  const inkLine = new THREE.LineBasicMaterial();
-  // Faint lines are faint by colour (ink mixed into paper), not by opacity:
-  // that keeps them opaque, so draw order alone decides what covers them.
-  const ruleLine = new THREE.LineBasicMaterial();
-  const hiddenLine = new THREE.LineDashedMaterial({ dashSize: 0.05, gapSize: 0.05, depthTest: false });
 
   /* --------------------------------------------------------------- shelf */
   const shelf = new THREE.Group();
@@ -184,49 +161,38 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
     v.mesh.position.copy(v.home);
   }
 
-  // The ledge, in outline, with a scale ruled along the front: a mark at
-  // every tenth, a longer one where each book starts and ends — the same
-  // language as the ruler down the page's left edge.
+  // The ledge: a plank of frosted white glass with a bright edge, and a soft
+  // shadow on the page beneath it — the same light as the landing page's folder.
   const ledgeW = width + 1.4;
   const ledgeD = DEPTH + 0.3;
-  const ledgeGeo = new THREE.BoxGeometry(ledgeW, 0.05, ledgeD);
+  const ledgeGeo = new THREE.BoxGeometry(ledgeW, 0.1, ledgeD);
   const ledgeFace = new THREE.Mesh(
     ledgeGeo,
-    new THREE.MeshBasicMaterial({ polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+    new THREE.MeshBasicMaterial({
+      color: '#ffffff',
+      transparent: true,
+      opacity: 0.78,
+      polygonOffset: true,
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 1,
+    }),
   );
-  ledgeFace.position.y = -0.025;
-  const ledgeEdges = new THREE.LineSegments(new THREE.EdgesGeometry(ledgeGeo), inkLine);
+  ledgeFace.position.y = -0.05;
+  const ledgeEdges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(ledgeGeo),
+    new THREE.LineBasicMaterial({ color: '#cfdaf0', transparent: true, opacity: 0.9 }),
+  );
   ledgeEdges.renderOrder = 2;
   ledgeFace.add(ledgeEdges);
   shelf.add(ledgeFace);
 
-  const scale: number[] = [];
-  const front = ledgeD / 2;
-  const rulerY = -0.22;
-  const seg = (ax: number, ay: number, az: number, bx: number, by: number, bz: number) =>
-    scale.push(ax, ay, az, bx, by, bz);
-  seg(-ledgeW / 2, rulerY, front, ledgeW / 2, rulerY, front);
-  for (let k = 0, n = Math.round(ledgeW / 0.1); k <= n; k++) {
-    const tx = -ledgeW / 2 + k * 0.1;
-    seg(tx, rulerY, front, tx, rulerY + (k % 5 === 0 ? 0.07 : 0.035), front);
-  }
-  const bounds = [...volumes.map((v) => v.home.x - v.t / 2), volumes.at(-1)!.home.x + volumes.at(-1)!.t / 2];
-  for (const bx of bounds) seg(bx, rulerY - 0.06, front, bx, rulerY + 0.12, front);
-  const ruler = new THREE.LineSegments(
-    new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(scale, 3)),
-    ruleLine,
+  const ledgeShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(ledgeW + 1.2, ledgeD + 1.4),
+    new THREE.MeshBasicMaterial({ map: glowMap, color: '#5a6f9e', transparent: true, depthWrite: false, opacity: 0.22 }),
   );
-  shelf.add(ruler);
-
-  // Projection lines: each book's edge carried down to the scale.
-  const proj: number[] = [];
-  for (const bx of bounds) proj.push(bx, -0.05, front, bx, rulerY, front);
-  const projection = new THREE.LineSegments(
-    new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(proj, 3)),
-    hiddenLine,
-  );
-  projection.computeLineDistances();
-  shelf.add(projection);
+  ledgeShadow.rotation.x = -Math.PI / 2;
+  ledgeShadow.position.y = -0.32;
+  shelf.add(ledgeShadow);
 
   /** Every surface and line is repainted from the page's tokens when the theme flips. */
   const applyTheme = () => {
@@ -241,10 +207,6 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
       paintGlass(v.faces.bottom, 256, Math.round((256 * DEPTH) / v.t), color);
       for (const m of v.mesh.material as THREE.MeshBasicMaterial[]) if (m.map) m.map.needsUpdate = true;
     }
-    (ledgeFace.material as THREE.MeshBasicMaterial).color.set(pal.paper);
-    inkLine.color.set(pal.ink);
-    ruleLine.color.set(pal.paper).lerp(new THREE.Color(pal.muted), 0.6);
-    hiddenLine.color.set(pal.paper).lerp(new THREE.Color(pal.ink), 0.28);
   };
   applyTheme();
   new MutationObserver(applyTheme).observe(document.documentElement, {
@@ -578,7 +540,8 @@ function paintGlow(c: HTMLCanvasElement) {
 function paintGlass(c: HTMLCanvasElement, W: number, H: number, color: string) {
   const ctx = size(c, W, H);
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  // Frosted enough that one book never shows through another.
+  ctx.fillStyle = 'rgba(255,255,255,0.86)';
   ctx.fillRect(0, 0, W, H);
 
   const m = Math.min(W, H);
