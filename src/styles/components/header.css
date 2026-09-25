@@ -159,19 +159,3 @@
   }
 }
 
-.nav__theme-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--ink-secondary);
-  transition: color var(--dur-fast) var(--ease-out);
-}
-
-.nav__theme-btn:hover,
-.nav__theme-btn:focus-visible {
-  color: var(--ink);
-}

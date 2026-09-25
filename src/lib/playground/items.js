@@ -22,7 +22,7 @@
 //            field · moire · rings · strata · dots · grid
 //   ratio    width / height. 0.667 = portrait 2:3 · 1.0 square ·
 //            1.5 = landscape 3:2 · 0.78 tall · 1.42 wide
-//   featured mark 3–4 to fill the homepage's "Selected work" list.
+//   featured mark 3–4 to fill the homepage's "Featured projects" list.
 //            With none marked, the first four are used
 //
 // → Replace the placeholder copy below with your own work.

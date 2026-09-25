@@ -35,7 +35,7 @@ export function warp() {
   const right = selectedWork.slice(3);
   return html`
     <section class="warp-work" id="warp-work">
-      <div class="shell sectionbar"><b>Selected work</b><span>${pad2(selectedWork.length)} pieces</span></div>
+      <div class="shell sectionbar"><b>Featured projects</b><span>${pad2(selectedWork.length)} pieces</span></div>
       <div class="shell warp-grid">
         <div class="warp-col">${left.map((w, i) => card(w, i, '0.06'))}</div>
         <div class="warp-col warp-col--offset">${right.map((w, i) => card(w, i + left.length, '-0.05'))}</div>

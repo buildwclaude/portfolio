@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import { ITEMS } from './playground/items';
 
 /**
- * Opens a "Selected work" card into the case-study window. A copy of the
+ * Opens a "Featured projects" card into the case-study window. A copy of the
  * card's image lifts out of the grid and lands on the case study's hero
  * picture, then hands over to the page underneath it.
  *

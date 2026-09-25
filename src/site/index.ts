@@ -27,7 +27,7 @@ export function renderPage(): string {
         <span class="rail__fill"></span>
         ${[
           { href: '#intro', label: 'Intro' },
-          { href: '#warp-work', label: 'Selected work' },
+          { href: '#warp-work', label: 'Featured projects' },
           { href: '#about', label: 'About' },
           { href: '#experiments', label: 'Experiments' },
         ].map(

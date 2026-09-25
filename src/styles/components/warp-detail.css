@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Case-study window — opened from a "Selected work" card.
+   Case-study window — opened from a "Featured projects" card.
    The panel is a transparent full-screen scroller; the hero and the sheet
    below it are centred inside it, so the scrim shows at the sides and the
    hero can fly in from anywhere on screen without being clipped.
@@ -13,8 +13,6 @@
   opacity: 0;
   cursor: pointer;
 }
-[data-theme='dark'] .detail__scrim { background: rgba(0, 0, 0, 0.86); }
-
 .detail__panel {
   position: absolute;
   inset: 0;

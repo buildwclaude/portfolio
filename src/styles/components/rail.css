@@ -118,8 +118,6 @@
 }
 .rail__readout::after { content: ' %'; opacity: 0.6; }
 
-[data-theme='dark'] .rail { --rail-accent: #8f94ff; }
-
 @media (max-width: 860px) {
   .rail {
     left: 8px;

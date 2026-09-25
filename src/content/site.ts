@@ -105,6 +105,28 @@ export const site = {
       'Award-winning designer, recognized with the **Figma Warrior Award** and **EntrepreneurHer**',
       'Speaker at **Hult Prize**, advisory board at **Girls in Tech Nepal**',
     ],
+    /**
+     * The folder on the right. `tools` fly out of it and can be picked;
+     * `tucked` are the cards that always peek over its lip. Each mark is
+     * the tool's initials on its colour, with `ink` for the letters.
+     */
+    folder: {
+      label: 'Your Courses',
+      tools: [
+        { name: 'Airtable', initials: 'At', color: '#fcb400', ink: '#2a2420', x: 182, y: 258, tilt: -8 },
+        { name: 'Figma', initials: 'Fi', color: '#a259ff', ink: '#ffffff', x: 378, y: 160, tilt: 6 },
+        { name: 'Webflow', initials: 'W', color: '#146ef5', ink: '#ffffff', x: 620, y: 165, tilt: -10 },
+        { name: 'Zapier', initials: 'Za', color: '#e84700', ink: '#ffffff', x: 333, y: 377, tilt: 4 },
+        { name: 'Sheets', initials: 'Sh', color: '#0f9d58', ink: '#ffffff', x: 500, y: 305, tilt: 12 },
+        { name: 'Excel', initials: 'X', color: '#107c41', ink: '#ffffff', x: 170, y: 440, tilt: -6 },
+        { name: 'Tableau', initials: 'Tb', color: '#c05a12', ink: '#ffffff', x: 468, y: 448, tilt: 8 },
+      ],
+      tucked: [
+        { initials: 'b', color: '#2a2420' },
+        { initials: 'Ui', color: '#d9401a' },
+        { initials: 'AI', color: '#0d8a6a' },
+      ],
+    },
     /** Margin notes. Leave any value empty to hide the row. */
     notes: [
       {

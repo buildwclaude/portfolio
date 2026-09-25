@@ -54,7 +54,7 @@ export function createConsole(host: HTMLElement) {
     pal.paper.set(token('--paper', '#F3F1E9'));
     pal.ink.set(token('--ink', '#111111'));
     pal.accent.set(token('--accent', '#d94f38'));
-    pal.pen.set(document.documentElement.dataset.theme === 'dark' ? '#8f94ff' : '#3d42c8');
+    pal.pen.set('#3d42c8');
     pal.faint.copy(pal.paper).lerp(pal.ink, 0.25);
     inkLine.color.copy(pal.ink);
     hiddenLine.color.copy(pal.faint);

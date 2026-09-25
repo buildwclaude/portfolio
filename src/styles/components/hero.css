@@ -13,8 +13,6 @@
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
 }
 
-[data-theme='dark'] .hero { --doodle-ink: #8f94ff; }
-
 .hero__strip {
   display: flex;
   justify-content: space-between;
