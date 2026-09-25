@@ -63,6 +63,8 @@ export type Book = {
   tagline: string;
   /** The line drawing stamped on the cover. */
   motif: 'steps' | 'rosette' | 'circles' | 'waves' | 'sprout';
+  /** The colour of the solid core seen through the book's glass. */
+  color: string;
 };
 
 /** A photo on the About page. Files live in /public/me/. */
@@ -107,24 +109,32 @@ export const site = {
     ],
     /**
      * The folder on the right. `tools` fly out of it and can be picked;
-     * `tucked` are the cards that always peek over its lip. Each mark is
-     * the tool's initials on its colour, with `ink` for the letters.
+     * `tucked` are the cards that always peek over its lip. `logo` names
+     * an entry in `content/logos.ts` (empty: initials only).
      */
     folder: {
       label: 'Your Courses',
+      /**
+       * How each tool is marked: `'original'` shows its full-colour logo
+       * (`art`, a file in public/logos) on clear glass; `'logo'` its
+       * one-colour logo in white on glass of its brand colour (initials
+       * where there is no logo); `'color'` its initials the same way.
+       * The cards in the folder always use the one-colour logo.
+       */
+      marks: 'original' as 'original' | 'logo' | 'color',
       tools: [
-        { name: 'Airtable', initials: 'At', color: '#fcb400', ink: '#2a2420', x: 182, y: 258, tilt: -8 },
-        { name: 'Figma', initials: 'Fi', color: '#a259ff', ink: '#ffffff', x: 378, y: 160, tilt: 6 },
-        { name: 'Webflow', initials: 'W', color: '#146ef5', ink: '#ffffff', x: 620, y: 165, tilt: -10 },
-        { name: 'Zapier', initials: 'Za', color: '#e84700', ink: '#ffffff', x: 333, y: 377, tilt: 4 },
-        { name: 'Sheets', initials: 'Sh', color: '#0f9d58', ink: '#ffffff', x: 500, y: 305, tilt: 12 },
-        { name: 'Excel', initials: 'X', color: '#107c41', ink: '#ffffff', x: 170, y: 440, tilt: -6 },
-        { name: 'Tableau', initials: 'Tb', color: '#c05a12', ink: '#ffffff', x: 468, y: 448, tilt: 8 },
+        { name: 'Airtable', initials: 'At', logo: 'airtable', color: '#18bfff', art: 'logos/airtable.svg', x: 182, y: 258, tilt: -8 },
+        { name: 'Figma', initials: 'Fi', logo: 'figma', color: '#f24e1e', art: 'logos/figma.svg', x: 378, y: 160, tilt: 6 },
+        { name: 'Webflow', initials: 'W', logo: 'webflow', color: '#146ef5', art: 'logos/webflow.svg', x: 620, y: 165, tilt: -10 },
+        { name: 'Zapier', initials: 'Za', logo: 'zapier', color: '#ff4f00', art: 'logos/zapier.svg', x: 333, y: 377, tilt: 4 },
+        { name: 'Sheets', initials: 'Sh', logo: 'googlesheets', color: '#34a853', art: 'logos/google-sheets.svg', x: 500, y: 305, tilt: 12 },
+        { name: 'Excel', initials: 'X', logo: '', color: '#107c41', art: 'logos/microsoft-excel.svg', x: 170, y: 440, tilt: -6 },
+        { name: 'Tableau', initials: 'Tb', logo: 'tableau', color: '#e97627', art: 'logos/tableau.svg', x: 468, y: 448, tilt: 8 },
       ],
       tucked: [
-        { initials: 'b', color: '#2a2420' },
-        { initials: 'Ui', color: '#d9401a' },
-        { initials: 'AI', color: '#0d8a6a' },
+        { initials: 'b', logo: '', color: '#1a1a1a' },
+        { initials: 'Ui', logo: 'uipath', color: '#fa4616' },
+        { initials: 'AI', logo: 'openai', color: '#412991' },
       ],
     },
     /** Margin notes. Leave any value empty to hide the row. */
@@ -440,11 +450,11 @@ export const site = {
     title: 'More about me',
     hint: 'Drag to turn the shelf · click a spine to pull it out',
     books: [
-      { group: 'Experience', tagline: 'Four roles, 2021 — present', motif: 'steps' },
-      { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette' },
-      { group: 'Community', tagline: 'Advisory and mentorship', motif: 'circles' },
-      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', motif: 'waves' },
-      { group: 'Initiatives', tagline: 'Two ventures, co-founded', motif: 'sprout' },
+      { group: 'Experience', tagline: 'Four roles, 2021 — present', motif: 'steps', color: '#2f6cf2' },
+      { group: 'Recognition', tagline: 'Awards and wins', motif: 'rosette', color: '#f59e0b' },
+      { group: 'Community', tagline: 'Advisory and mentorship', motif: 'circles', color: '#14b8a6' },
+      { group: 'Speaking & workshops', tagline: 'A talk and a workshop', motif: 'waves', color: '#8b5cf6' },
+      { group: 'Initiatives', tagline: 'Two ventures, co-founded', motif: 'sprout', color: '#f43f5e' },
     ] satisfies Book[],
   },
 

@@ -9,8 +9,10 @@ export type ShelfBook = Book & { items: readonly Entry[] };
  * A WebGL bookshelf, after componentry.dev's Newsletter Bookshelf — here,
  * one volume per chapter of the About page.
  *
- * Every volume is a box with a cloth spine and cover drawn onto a canvas
- * (no image files). Hover lifts a book off the shelf, a click pulls it out,
+ * Every volume is built like the landing page's folder: frosted glass with
+ * a solid core of the chapter's colour blurred inside it, a bright rim and a
+ * glow beneath, the type set in white on the glass. The blur is painted onto
+ * each face's canvas (no image files, and no refraction pass to go wrong). Hover lifts a book off the shelf, a click pulls it out,
  * turns its cover to you and lists the chapter on a card, a second click
  * opens it. The shelf sways on
  * its own and can be turned by dragging. Arrow keys step through the
@@ -28,14 +30,14 @@ type Volume = {
   book: ShelfBook;
   index: number;
   mesh: THREE.Mesh;
-  /** The visible outline, re-inked in accent while the book is picked. */
+  /** The glass's rim, brightened while the book is picked. */
   edges: THREE.LineSegments;
-  /** Its hidden edges, dashed, seen through everything in front. */
-  hidden: THREE.LineSegments;
+  rim: THREE.LineBasicMaterial;
+  rimHot: THREE.LineBasicMaterial;
   h: number;
   t: number;
   /** The painted faces, kept so a theme change can repaint them in place. */
-  faces: { cover: HTMLCanvasElement; back: HTMLCanvasElement; spine: HTMLCanvasElement };
+  faces: Record<'cover' | 'back' | 'top' | 'bottom' | 'spine' | 'fore', HTMLCanvasElement>;
   home: THREE.Vector3;
   pos: THREE.Vector3;
   rot: THREE.Euler;
@@ -113,10 +115,9 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 
   /* ---------------------------------------------------------------- ink */
-  // Visible edges in ink; the one you are pointing at in accent; hidden
-  // edges dashed and faint, drawn through everything as a drawing would.
+  // The ledge and its scale stay a line drawing in the page's ink: the glass
+  // volumes stand on it.
   const inkLine = new THREE.LineBasicMaterial();
-  const accentLine = new THREE.LineBasicMaterial();
   // Faint lines are faint by colour (ink mixed into paper), not by opacity:
   // that keeps them opaque, so draw order alone decides what covers them.
   const ruleLine = new THREE.LineBasicMaterial();
@@ -127,11 +128,8 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   scene.add(shelf);
 
   const anisotropy = renderer.capabilities.getMaxAnisotropy();
-  // Faces are flat paper, pushed back a hair so their outlines sit cleanly on top.
-  const surface = (map: THREE.Texture) =>
-    new THREE.MeshBasicMaterial({ map, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
-  const pageCanvas = document.createElement('canvas');
-  const pageMat = surface(canvasTexture(pageCanvas, anisotropy));
+  const glass = (map: THREE.Texture) => new THREE.MeshBasicMaterial({ map, transparent: true });
+  const glowMap = canvasTexture(paintGlow(document.createElement('canvas')), anisotropy);
 
   // Deterministic variety: a fuller chapter makes a thicker book.
   const rand = mulberry(7);
@@ -139,37 +137,44 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   const volumes: Volume[] = books.map((book, i) => {
     const h = 2.1 + rand() * 0.5;
     const t = 0.34 + heft(book) * 0.07 + rand() * 0.08;
-    const faces = {
-      cover: document.createElement('canvas'),
-      back: document.createElement('canvas'),
-      spine: document.createElement('canvas'),
-    };
+    const tint = new THREE.Color(book.color);
+    const canvas = () => document.createElement('canvas');
+    const faces = { cover: canvas(), back: canvas(), top: canvas(), bottom: canvas(), spine: canvas(), fore: canvas() };
     const geometry = new THREE.BoxGeometry(t, h, DEPTH);
     geometry.translate(0, h / 2, 0);
     // Faces: +x front cover, -x back cover, +y top, -y bottom, +z spine, -z fore-edge.
-    const mesh = new THREE.Mesh(geometry, [
-      surface(canvasTexture(faces.cover, anisotropy)),
-      surface(canvasTexture(faces.back, anisotropy)),
-      pageMat,
-      pageMat,
-      surface(canvasTexture(faces.spine, anisotropy)),
-      pageMat,
-    ]);
-    const outline = new THREE.EdgesGeometry(geometry);
-    // Draw order: faces, then the dashed hidden edges through them, then the
-    // solid outlines over the dashes.
-    const edges = new THREE.LineSegments(outline, inkLine);
+    const mesh = new THREE.Mesh(
+      geometry,
+      (['cover', 'back', 'top', 'bottom', 'spine', 'fore'] as const).map((f) =>
+        glass(canvasTexture(faces[f], anisotropy)),
+      ),
+    );
+
+    // A glow of its colour on the ledge beneath it.
+    const glow = new THREE.Mesh(
+      new THREE.PlaneGeometry(t + 0.9, DEPTH + 0.7),
+      new THREE.MeshBasicMaterial({ map: glowMap, color: tint, transparent: true, depthWrite: false, opacity: 0.5 }),
+    );
+    glow.rotation.x = -Math.PI / 2;
+    glow.position.y = 0.004;
+
+    // The rim: a bright edge of the chapter's colour, full strength when picked.
+    const rim = new THREE.LineBasicMaterial({
+      color: new THREE.Color('#ffffff').lerp(tint, 0.45),
+      transparent: true,
+      opacity: 0.9,
+    });
+    const rimHot = new THREE.LineBasicMaterial({ color: tint });
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), rim);
     edges.renderOrder = 2;
-    const hidden = new THREE.LineSegments(outline, hiddenLine);
-    hidden.computeLineDistances();
-    hidden.renderOrder = 1;
-    mesh.add(edges, hidden);
+
+    mesh.add(glow, edges);
     mesh.userData.index = i;
     x += t / 2;
     const home = new THREE.Vector3(x, 0, 0);
     x += t / 2 + GAP;
     shelf.add(mesh);
-    return { book, index: i, mesh, edges, hidden, h, t, faces, home, pos: home.clone(), rot: new THREE.Euler() };
+    return { book, index: i, mesh, edges, rim, rimHot, h, t, faces, home, pos: home.clone(), rot: new THREE.Euler() };
   });
 
   const width = x - GAP;
@@ -226,18 +231,18 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
   /** Every surface and line is repainted from the page's tokens when the theme flips. */
   const applyTheme = () => {
     const pal = readPalette();
-    paintPages(pageCanvas, pal);
     for (const v of volumes) {
-      paintSpine(v.faces.spine, v.book, v.index, v.h, v.t, pal);
+      const { color } = v.book;
+      paintSpine(v.faces.spine, v.book, v.index, v.h, v.t);
       paintCover(v.faces.cover, v.book, v.index, v.h, brand, pal);
-      paintBack(v.faces.back, v.h, pal);
-    }
-    for (const m of [pageMat, ...volumes.flatMap((v) => v.mesh.material as THREE.MeshBasicMaterial[])]) {
-      if (m.map) m.map.needsUpdate = true;
+      paintGlass(v.faces.back, 320, Math.round((320 * v.h) / DEPTH), color);
+      paintGlass(v.faces.fore, 200, Math.round((200 * v.h) / v.t), color);
+      paintGlass(v.faces.top, 256, Math.round((256 * DEPTH) / v.t), color);
+      paintGlass(v.faces.bottom, 256, Math.round((256 * DEPTH) / v.t), color);
+      for (const m of v.mesh.material as THREE.MeshBasicMaterial[]) if (m.map) m.map.needsUpdate = true;
     }
     (ledgeFace.material as THREE.MeshBasicMaterial).color.set(pal.paper);
     inkLine.color.set(pal.ink);
-    accentLine.color.set(pal.accent);
     ruleLine.color.set(pal.paper).lerp(new THREE.Color(pal.muted), 0.6);
     hiddenLine.color.set(pal.paper).lerp(new THREE.Color(pal.ink), 0.28);
   };
@@ -498,13 +503,7 @@ export async function createBookshelf(stage: HTMLElement, options: BookshelfOpti
       v.rot.z += (tmpRot.z - v.rot.z) * s;
       v.mesh.position.copy(v.pos);
       v.mesh.rotation.copy(v.rot);
-      v.edges.material = v === hovered || v === focused || v === indexHover ? accentLine : inkLine;
-      // A pulled-out book is a sheet in front of the drawing: it is painted
-      // after every hidden line, so none of them run across its cover.
-      const lifted = v === focused;
-      v.mesh.renderOrder = lifted ? 3 : 0;
-      v.edges.renderOrder = lifted ? 4 : 2;
-      v.hidden.visible = !lifted;
+      v.edges.material = v === hovered || v === focused || v === indexHover ? v.rimHot : v.rim;
     }
 
     renderer.render(scene, camera);
@@ -558,48 +557,79 @@ function size(c: HTMLCanvasElement, w: number, h: number) {
   return c.getContext('2d')!;
 }
 
-/** A registration mark: a small circle with a cross through it. */
-function register(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.moveTo(x - r * 1.7, y);
-  ctx.lineTo(x + r * 1.7, y);
-  ctx.moveTo(x, y - r * 1.7);
-  ctx.lineTo(x, y + r * 1.7);
-  ctx.stroke();
+/** A soft round glow, white at the centre, tinted by each book's material. */
+function paintGlow(c: HTMLCanvasElement) {
+  const ctx = size(c, 128, 128);
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.45, 'rgba(255,255,255,0.45)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  return c;
 }
 
-function paintSpine(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number, t: number, pal: Palette) {
+/**
+ * One face of frosted glass, as on the landing page's folder: milky
+ * translucent white with the solid core of `color` blurred behind it, a
+ * white haze low down and a bright rim along the top. The blur is a
+ * shadow cast from off-canvas, which every browser's canvas can draw.
+ */
+function paintGlass(c: HTMLCanvasElement, W: number, H: number, color: string) {
+  const ctx = size(c, W, H);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillRect(0, 0, W, H);
+
+  const m = Math.min(W, H);
+  const inset = m * 0.2;
+  const blur = m * 0.16;
+  const light = '#' + new THREE.Color(color).lerp(new THREE.Color('#ffffff'), 0.4).getHexString();
+  const blob = (x: number, y: number, w: number, h: number, fill: string, alpha: number) => {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = fill;
+    ctx.shadowBlur = blur;
+    ctx.shadowOffsetX = W * 4;
+    ctx.fillStyle = fill;
+    ctx.fillRect(x - W * 4, y, w, h);
+    ctx.restore();
+  };
+  // The core, and a lighter band across its top where it catches the light.
+  blob(inset, inset, W - inset * 2, H - inset * 2, color, 0.9);
+  blob(inset, inset, W - inset * 2, (H - inset * 2) * 0.35, light, 0.7);
+
+  const haze = ctx.createLinearGradient(0, H * 0.6, 0, H);
+  haze.addColorStop(0, 'rgba(255,255,255,0)');
+  haze.addColorStop(1, 'rgba(255,255,255,0.4)');
+  ctx.fillStyle = haze;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillRect(0, 0, W, Math.max(3, H * 0.005));
+  return ctx;
+}
+
+const WHITE = '#ffffff';
+const WHITE_SOFT = 'rgba(255,255,255,0.78)';
+
+function paintSpine(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number, t: number) {
   const H = 1024;
   const W = Math.round((H * t) / h);
-  const ctx = size(c, W, H);
-  ctx.fillStyle = pal.paper;
-  ctx.fillRect(0, 0, W, H);
+  const ctx = paintGlass(c, W, H, book.color);
+  ctx.shadowColor = 'rgba(0,0,0,0.18)';
+  ctx.shadowBlur = 6;
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = pal.muted;
-  ctx.font = `400 ${Math.round(W * 0.15)}px ${SANS}`;
+  ctx.fillStyle = WHITE_SOFT;
+  ctx.font = `500 ${Math.round(W * 0.15)}px ${SANS}`;
   ctx.fillText(String(i + 1).padStart(2, '0'), W / 2, 70);
-
-  // Construction lines framing the title, like guides left on a drawing.
-  ctx.strokeStyle = pal.muted;
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6, 6]);
-  ctx.beginPath();
-  for (const y of [112, H - 112]) {
-    ctx.moveTo(W * 0.18, y);
-    ctx.lineTo(W * 0.82, y);
-  }
-  ctx.stroke();
-  ctx.setLineDash([]);
-  register(ctx, W / 2, H - 66, Math.max(6, W * 0.06));
 
   // Title, set along the spine and read top to bottom.
   ctx.save();
   ctx.translate(W / 2, H / 2);
   ctx.rotate(Math.PI / 2);
-  ctx.fillStyle = pal.ink;
+  ctx.fillStyle = WHITE;
   let px = Math.round(W * 0.42);
   ctx.font = `${px}px ${SERIF}`;
   while (ctx.measureText(book.group).width > H * 0.6 && px > 12) {
@@ -613,25 +643,19 @@ function paintSpine(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number,
 function paintCover(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number, brand: string, pal: Palette) {
   const W = 640;
   const H = Math.round((W * h) / DEPTH);
-  const ctx = size(c, W, H);
-  ctx.fillStyle = pal.paper;
-  ctx.fillRect(0, 0, W, H);
+  const ctx = paintGlass(c, W, H, book.color);
+  ctx.shadowColor = 'rgba(0,0,0,0.16)';
+  ctx.shadowBlur = 8;
 
   const left = 72;
   const right = W - 56;
   ctx.textBaseline = 'alphabetic';
-  ctx.strokeStyle = pal.ink;
+  ctx.strokeStyle = WHITE_SOFT;
   ctx.lineWidth = 1.5;
 
-  // The hinge, as a single ruled line.
-  ctx.beginPath();
-  ctx.moveTo(36, 0);
-  ctx.lineTo(36, H);
-  ctx.stroke();
-
   // Head: the series and the volume number over a rule.
-  ctx.fillStyle = pal.muted;
-  ctx.font = `400 20px ${SANS}`;
+  ctx.fillStyle = WHITE_SOFT;
+  ctx.font = `500 20px ${SANS}`;
   ctx.letterSpacing = '3px';
   ctx.textAlign = 'left';
   ctx.fillText('MORE ABOUT ME', left, 100);
@@ -645,42 +669,30 @@ function paintCover(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number,
   ctx.stroke();
 
   // Title and tagline.
-  ctx.fillStyle = pal.ink;
+  ctx.fillStyle = WHITE;
   ctx.font = `92px ${SERIF}`;
   let y = 236;
   for (const line of wrap(ctx, book.group, right - left)) {
     ctx.fillText(line, left, y);
     y += 88;
   }
-  ctx.fillStyle = pal.muted;
+  ctx.fillStyle = WHITE_SOFT;
   ctx.font = `400 26px ${SANS}`;
   ctx.fillText(book.tagline, left, y - 28);
 
-  // The chapter's glyph, set in a dashed construction square with centre lines.
+  // The chapter's glyph.
   const cx = W / 2 + 8;
   const cy = H * 0.64;
   const r = Math.min(W, H) * 0.19;
   ctx.save();
-  ctx.strokeStyle = pal.muted;
-  ctx.lineWidth = 1;
-  ctx.setLineDash([5, 6]);
-  ctx.strokeRect(cx - r * 1.3, cy - r * 1.3, r * 2.6, r * 2.6);
-  ctx.beginPath();
-  ctx.moveTo(cx - r * 1.5, cy);
-  ctx.lineTo(cx + r * 1.5, cy);
-  ctx.moveTo(cx, cy - r * 1.5);
-  ctx.lineTo(cx, cy + r * 1.5);
-  ctx.stroke();
-  ctx.restore();
-  ctx.save();
-  ctx.strokeStyle = pal.ink;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = WHITE;
+  ctx.lineWidth = 2.5;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   motif(ctx, book.motif, cx, cy, r * 0.9);
   ctx.restore();
 
-  // Foot: a title block — the name, with the header's dot beside it.
+  // Foot: the name, with the header's dot beside it.
   ctx.beginPath();
   ctx.moveTo(left, H - 124);
   ctx.lineTo(right, H - 124);
@@ -689,42 +701,14 @@ function paintCover(c: HTMLCanvasElement, book: ShelfBook, i: number, h: number,
   ctx.beginPath();
   ctx.arc(left + 6, H - 84, 6, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = pal.ink;
+  ctx.fillStyle = WHITE;
   ctx.font = `500 24px ${SANS}`;
   ctx.fillText(brand, left + 24, H - 76);
-  ctx.fillStyle = pal.muted;
+  ctx.fillStyle = WHITE_SOFT;
   ctx.font = `400 20px ${SANS}`;
   ctx.textAlign = 'right';
   ctx.fillText(`${book.items.length} ${book.items.length === 1 ? 'entry' : 'entries'}`, right, H - 76);
   ctx.textAlign = 'left';
-}
-
-function paintBack(c: HTMLCanvasElement, h: number, pal: Palette) {
-  const W = 320;
-  const H = Math.round((W * h) / DEPTH);
-  const ctx = size(c, W, H);
-  ctx.fillStyle = pal.paper;
-  ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = pal.muted;
-  ctx.lineWidth = 1.5;
-  register(ctx, W / 2, H - 60, 8);
-}
-
-/** Page edges read as a cut section: fine 45° hatching, as on a drawing. */
-function paintPages(c: HTMLCanvasElement, pal: Palette) {
-  const ctx = size(c, 256, 256);
-  ctx.fillStyle = pal.paper;
-  ctx.fillRect(0, 0, 256, 256);
-  ctx.strokeStyle = pal.muted;
-  ctx.globalAlpha = 0.55;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  for (let k = -256; k < 256; k += 14) {
-    ctx.moveTo(k, 256);
-    ctx.lineTo(k + 256, 0);
-  }
-  ctx.stroke();
-  ctx.globalAlpha = 1;
 }
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, max: number) {
