@@ -151,7 +151,7 @@ than as proficiency levels.
 facilitation · Product design · Product management · HITL testing
 
 **Tools:** Figma · FigJam · Adobe Creative Suite · Google AI Studio ·
-TouchDesigner · Jira
+TouchDesigner · Jira · Slack
 
 **Focus areas** (stated verbatim on /15/ and /16/): Human–Computer Interaction,
 AI-mediated communication, emotional wellbeing, socio-technical harms

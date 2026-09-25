@@ -1,8 +1,8 @@
 /* ==========================================================================
    Courses folder — the right of the landing screen.
    A blue glass folder — a solid gradient back behind a frosted front that
-   blurs it and fades out at the foot — with glossy 3D app-icon cards in
-   its mouth and the tools as the same icons, fanned out above.
+   blurs it and fades out at the foot — with a few files peeking out of its
+   mouth and the tools' bare logos fanned out above.
    Everything is placed in a 736 × 920 frame; --u is one unit of that
    frame, so the whole piece scales with the room it is given.
    ========================================================================== */
@@ -153,58 +153,41 @@
 
 /* --- Cards tucked in its mouth -------------------------------------------- */
 
-/* Every tile and card mixes its highlights and shades from its brand colour. */
-.folder__slot,
-.folder__card {
+/* Every tool mixes its highlights and shades from its brand colour. */
+.folder__slot {
   --brand-hi: color-mix(in srgb, var(--brand) 62%, #ffffff);
   --brand-lo: color-mix(in srgb, var(--brand) 82%, #000000);
 }
 
-/* Taller versions of the tools' icons, standing in the folder's mouth and
-   seen blurred through its glass below the lip. */
+/* Its contents: two sheets of paper, nearly the folder's width, standing in
+   its mouth a little apart — the way macOS draws a folder that isn't empty.
+   Below the lip they show blurred through the glass. */
 .folder__tucked { inset: 0; isolation: isolate; }
 .folder__card {
   position: absolute;
-  top: calc(546 * var(--u));
-  width: calc(118 * var(--u));
+  top: calc(560 * var(--u));
+  left: calc(180 * var(--u));
+  width: calc(300 * var(--u));
   height: calc(150 * var(--u));
   transition: transform 600ms var(--ease-elastic);
 }
-.folder__card--0 { left: calc(180 * var(--u)); --rise: -34; --tilt: -6deg; }
-.folder__card--1 { left: calc(270 * var(--u)); --rise: -52; --tilt: 0deg; z-index: 1; }
-.folder__card--2 { left: calc(360 * var(--u)); --rise: -38; --tilt: 6deg; }
-.folder__stage.is-open .folder__card { transform: translateY(calc(var(--rise) * var(--u))) rotate(var(--tilt)); }
+.folder__card--0 { --rise: -34; --tilt: -4deg; --shift: -12; }
+.folder__card--1 { --rise: -46; --tilt: 2deg; --shift: 8; z-index: 1; }
+.folder__stage.is-open .folder__card {
+  transform: translate(calc(var(--shift) * var(--u)), calc(var(--rise) * var(--u))) rotate(var(--tilt));
+}
 
-
-/* A glossy white card, like the tools' icons: a rounded bevel, bright
-   along the top, and a soft shadow; the logo in the tool's colour. */
+/* A plain white sheet: a soft top-lit gradient, a hairline edge and a shadow. */
 .folder__sheet {
   position: absolute;
   inset: 0;
-  display: flex;
-  justify-content: center;
-  padding-top: calc(24 * var(--u));
-  box-sizing: border-box;
-  border-radius: calc(20 * var(--u));
-  background:
-    radial-gradient(120% 70% at 30% 0%, #ffffff 0%, #ffffff 40%, rgba(255, 255, 255, 0) 75%),
-    linear-gradient(180deg, #fbfcfe, #eceff5);
+  border-radius: calc(10 * var(--u));
+  background: linear-gradient(180deg, #ffffff, #f1f3f8);
   box-shadow:
-    inset 0 calc(2 * var(--u)) calc(1 * var(--u)) rgba(255, 255, 255, 1),
-    inset 0 calc(-6 * var(--u)) calc(10 * var(--u)) rgba(120, 135, 170, 0.14),
-    0 calc(1 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.12),
-    0 calc(10 * var(--u)) calc(22 * var(--u)) rgba(30, 45, 90, 0.14);
-  color: var(--brand);
-  font-size: calc(44 * var(--u));
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-.folder__sheet .folder__logo {
-  width: calc(48 * var(--u));
-  height: calc(48 * var(--u));
-  fill: var(--brand);
-  filter: drop-shadow(0 calc(2 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.14));
+    inset 0 0 0 1px rgba(160, 175, 205, 0.35),
+    inset 0 calc(2 * var(--u)) 0 rgba(255, 255, 255, 1),
+    0 calc(1 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.1),
+    0 calc(6 * var(--u)) calc(14 * var(--u)) rgba(30, 45, 90, 0.12);
 }
 
 /* --- Tools ---------------------------------------------------------------- */
@@ -248,68 +231,52 @@
 }
 
 
-/* The tile: a glossy 3D app icon rather than glass — a solid, soft white
-   squircle with a rounded bevel (bright along the top, shaded underneath)
-   and a layered shadow with a hint of the folder's blue, the logo set on it. */
+/* The tool: just its logo, floating free — no box, no label (the name is
+   there for screen readers). A soft shadow beneath keeps it off the page. */
 .folder__tile {
   position: absolute;
   inset: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(6 * var(--u));
   padding: 0;
   border: 0;
-  border-radius: calc(28 * var(--u));
-  background:
-    radial-gradient(120% 90% at 30% 0%, #ffffff 0%, #ffffff 35%, rgba(255, 255, 255, 0) 70%),
-    linear-gradient(180deg, #fbfcfe, #eceff5);
-  box-shadow:
-    inset 0 calc(2 * var(--u)) calc(1 * var(--u)) rgba(255, 255, 255, 1),
-    inset 0 calc(-5 * var(--u)) calc(8 * var(--u)) rgba(120, 135, 170, 0.16),
-    0 calc(1 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.12),
-    0 calc(10 * var(--u)) calc(18 * var(--u)) rgba(30, 45, 90, 0.12),
-    0 calc(22 * var(--u)) calc(36 * var(--u)) rgba(70, 110, 230, 0.12);
+  border-radius: 50%;
+  background: none;
   color: #4a4f5c;
   font: inherit;
   cursor: pointer;
-  transition:
-    transform 300ms var(--ease-elastic),
-    box-shadow 300ms var(--ease-out);
+  transition: transform 300ms var(--ease-elastic);
 }
 .folder__stage.is-open .folder__tile { pointer-events: auto; }
-.folder__tile:hover {
-  transform: translateY(calc(-6 * var(--u))) scale(1.04);
-  box-shadow:
-    inset 0 calc(2 * var(--u)) calc(1 * var(--u)) rgba(255, 255, 255, 1),
-    inset 0 calc(-5 * var(--u)) calc(8 * var(--u)) rgba(120, 135, 170, 0.16),
-    0 calc(2 * var(--u)) calc(3 * var(--u)) rgba(30, 45, 90, 0.12),
-    0 calc(18 * var(--u)) calc(28 * var(--u)) rgba(30, 45, 90, 0.14),
-    0 calc(32 * var(--u)) calc(48 * var(--u)) rgba(70, 110, 230, 0.16);
-}
-.folder__tile:active { transform: translateY(calc(-2 * var(--u))) scale(0.97); }
+.folder__tile:hover { transform: translateY(calc(-6 * var(--u))) scale(1.08); }
+.folder__tile:active { transform: translateY(calc(-2 * var(--u))) scale(0.96); }
 .folder__tile:focus-visible { outline: var(--focus-ring) solid var(--brand); outline-offset: 4px; }
-/* Picked: a ring of the tool's own colour round the icon. */
-.folder__tile[aria-pressed='true'] {
-  box-shadow:
-    0 0 0 calc(3 * var(--u)) var(--brand),
-    inset 0 calc(2 * var(--u)) calc(1 * var(--u)) rgba(255, 255, 255, 1),
-    inset 0 calc(-5 * var(--u)) calc(8 * var(--u)) rgba(120, 135, 170, 0.16),
-    0 calc(14 * var(--u)) calc(28 * var(--u)) color-mix(in srgb, var(--brand) 30%, transparent);
-}
 
 .folder__mark {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(52 * var(--u));
-  height: calc(52 * var(--u));
-  font-size: calc(26 * var(--u));
+  width: calc(78 * var(--u));
+  height: calc(78 * var(--u));
+  font-size: calc(40 * var(--u));
   font-weight: 700;
   letter-spacing: -0.02em;
-  /* The logo sits on the surface, casting a whisper of a shadow. */
-  filter: drop-shadow(0 calc(2 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.14));
+  filter:
+    drop-shadow(0 calc(2 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.16))
+    drop-shadow(0 calc(12 * var(--u)) calc(14 * var(--u)) rgba(30, 45, 90, 0.16));
+  transition: filter 300ms var(--ease-out);
+}
+.folder__tile:hover .folder__mark {
+  filter:
+    drop-shadow(0 calc(3 * var(--u)) calc(3 * var(--u)) rgba(30, 45, 90, 0.16))
+    drop-shadow(0 calc(20 * var(--u)) calc(20 * var(--u)) rgba(30, 45, 90, 0.2));
+}
+/* Picked: a glow of the tool's own colour under the logo. */
+.folder__tile[aria-pressed='true'] .folder__mark {
+  filter:
+    drop-shadow(0 calc(2 * var(--u)) calc(2 * var(--u)) rgba(30, 45, 90, 0.16))
+    drop-shadow(0 0 calc(14 * var(--u)) color-mix(in srgb, var(--brand) 60%, transparent));
 }
 
 /* Logo or initials — `marks` in content/site.ts picks the style. */
@@ -330,23 +297,17 @@
 }
 .folder__art {
   display: block;
-  width: 88%;
-  height: 88%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
-.folder__name {
-  font-family: var(--font-mono);
-  font-size: calc(11 * var(--u));
-  font-weight: 600;
-  letter-spacing: var(--tracking-meta);
-  text-transform: uppercase;
-}
 
 .folder__check {
   position: absolute;
-  top: calc(-8 * var(--u));
-  right: calc(-8 * var(--u));
+  /* On the logo's corner, now that there is no box round it. */
+  top: calc(8 * var(--u));
+  right: calc(8 * var(--u));
   display: flex;
   align-items: center;
   justify-content: center;

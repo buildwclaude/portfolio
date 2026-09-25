@@ -13,7 +13,7 @@ import { logos, type Logo } from '../content/logos';
  * lives in `lib/courses-folder`.
  */
 export function coursesFolder() {
-  const { label, marks, tools, tucked } = site.hero.folder;
+  const { label, marks, tools } = site.hero.folder;
 
   return html`
     <div class="folder folder--${marks}" data-folder>
@@ -21,7 +21,7 @@ export function coursesFolder() {
         <svg class="folder__lines" viewBox="0 0 736 920" aria-hidden="true">
           ${tools.map((t, i) => {
             const x0 = 230 + i * 30;
-            return html`<path d="M${x0} 610 C${x0} 500 ${t.x} ${t.y + 150} ${t.x} ${t.y + 56}"></path>`;
+            return html`<path d="M${x0} 610 C${x0} 500 ${t.x} ${t.y + 140} ${t.x} ${t.y + 44}"></path>`;
           })}
         </svg>
 
@@ -42,8 +42,7 @@ export function coursesFolder() {
                 <span class="folder__bob">
                   <button class="folder__tile" type="button" aria-pressed="false" data-folder-tool>
                     <span class="folder__mark" aria-hidden="true">${marks === 'original' ? html`<img class="folder__art" src="${t.art}" alt="" width="48" height="48" decoding="async" />` : mark(t)}</span>
-                    <span class="folder__name">${t.name}</span>
-                    <span class="visually-hidden"> — add to ${label}</span>
+                    <span class="visually-hidden">${t.name} — add to ${label}</span>
                     <span class="folder__check" aria-hidden="true">
                       <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"></polyline></svg>
                     </span>
@@ -54,14 +53,11 @@ export function coursesFolder() {
           )}
         </ul>
 
+        <!-- Sheets of paper peeking out of its mouth, as on a macOS folder that has
+             something in it. -->
         <div class="folder__tucked" aria-hidden="true">
-          ${tucked.map(
-            (c, i) => html`
-              <span class="folder__card folder__card--${i}" style="--brand:${c.color}">
-                <span class="folder__sheet">${mark(c)}</span>
-              </span>
-            `,
-          )}
+          <span class="folder__card folder__card--0"><span class="folder__sheet"></span></span>
+          <span class="folder__card folder__card--1"><span class="folder__sheet"></span></span>
         </div>
 
         <button class="folder__front" type="button" aria-expanded="true" data-folder-toggle>

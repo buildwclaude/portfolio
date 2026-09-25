@@ -109,8 +109,8 @@ export const site = {
     ],
     /**
      * The folder on the right. `tools` fly out of it and can be picked;
-     * `tucked` are the cards that always peek over its lip. `logo` names
-     * an entry in `content/logos.ts` (empty: initials only).
+     * A tool's `logo` names an entry in `content/logos.ts` (empty:
+     * initials only).
      */
     folder: {
       label: 'Your Courses',
@@ -123,18 +123,14 @@ export const site = {
        */
       marks: 'original' as 'original' | 'logo' | 'color',
       tools: [
-        { name: 'Airtable', initials: 'At', logo: 'airtable', color: '#18bfff', art: 'logos/airtable.svg', x: 182, y: 258, tilt: -8 },
         { name: 'Figma', initials: 'Fi', logo: 'figma', color: '#f24e1e', art: 'logos/figma.svg', x: 378, y: 160, tilt: 6 },
-        { name: 'Webflow', initials: 'W', logo: 'webflow', color: '#146ef5', art: 'logos/webflow.svg', x: 620, y: 165, tilt: -10 },
-        { name: 'Zapier', initials: 'Za', logo: 'zapier', color: '#ff4f00', art: 'logos/zapier.svg', x: 333, y: 377, tilt: 4 },
-        { name: 'Sheets', initials: 'Sh', logo: 'googlesheets', color: '#34a853', art: 'logos/google-sheets.svg', x: 500, y: 305, tilt: 12 },
-        { name: 'Excel', initials: 'X', logo: '', color: '#107c41', art: 'logos/microsoft-excel.svg', x: 170, y: 440, tilt: -6 },
-        { name: 'Tableau', initials: 'Tb', logo: 'tableau', color: '#e97627', art: 'logos/tableau.svg', x: 468, y: 448, tilt: 8 },
-      ],
-      tucked: [
-        { initials: 'b', logo: '', color: '#1a1a1a' },
-        { initials: 'Ui', logo: 'uipath', color: '#fa4616' },
-        { initials: 'AI', logo: 'openai', color: '#412991' },
+        { name: 'FigJam', initials: 'FJ', logo: '', color: '#9747ff', art: 'logos/figjam.svg', x: 182, y: 258, tilt: -8 },
+        { name: 'Creative Cloud', initials: 'Cc', logo: 'adobecreativecloud', color: '#da1f26', art: 'logos/adobe-creative-cloud.svg', x: 620, y: 165, tilt: -10 },
+        { name: 'AI Studio', initials: 'AI', logo: '', color: '#4285f4', art: 'logos/google-ai-studio.svg', x: 333, y: 377, tilt: 4 },
+        { name: 'TouchDesigner', initials: 'TD', logo: '', color: '#1e1e1e', art: 'logos/touchdesigner.svg', x: 500, y: 305, tilt: 12 },
+        { name: 'Jira', initials: 'Ji', logo: 'jira', color: '#0052cc', art: 'logos/jira.svg', x: 170, y: 440, tilt: -6 },
+        { name: 'Slack', initials: 'Sl', logo: 'slack', color: '#4a154b', art: 'logos/slack.svg', x: 468, y: 448, tilt: 8 },
+        { name: 'Illustrator', initials: 'Ai', logo: 'adobeillustrator', color: '#ff9a00', art: 'logos/adobe-illustrator.svg', x: 640, y: 330, tilt: 6 },
       ],
     },
     /** Margin notes. Leave any value empty to hide the row. */
@@ -241,7 +237,7 @@ export const site = {
       },
       {
         label: 'Tools',
-        items: ['Figma', 'FigJam', 'Adobe Creative Suite', 'Google AI Studio', 'TouchDesigner'],
+        items: ['Figma', 'FigJam', 'Adobe Creative Suite', 'Google AI Studio', 'TouchDesigner', 'Jira', 'Slack'],
       },
       {
         label: 'Beyond design',
