@@ -6,7 +6,7 @@
 .rail {
   --rail-h: min(46vh, 420px);
   /* The ink blue of the hero's hand-drawn doodles. */
-  --rail-accent: #3d42c8;
+  --rail-accent: var(--accent);
   position: fixed;
   left: clamp(12px, 1.6vw, 26px);
   top: 50%;

@@ -1,8 +1,7 @@
 /**
  * The trail at the foot of the page (site/footer): a stream of light rising
  * out of the bottom edge, wide there and drawn in to a narrow stream as it
- * climbs, fading into the paper at the top. Two looks, set by TRAIL_STYLE;
- * the echo up the page (lib/trail-echo) follows the same setting:
+ * climbs, fading into the paper at the top. Its look is set by TRAIL_STYLE:
  *
  *   - 'aurora': the northern lights — soft teal, green and violet curtains,
  *     swaying gently, with soft rays and light rising slowly up them.
@@ -12,6 +11,10 @@
  *     red, its flames licking sideways, and flickering tongues racing up.
  *   - 'cobalt-flare' (Cobalt Flare): the same flames in blue — an icy white
  *     core through sky blue and cobalt to navy, with pale ice-blue tongues.
+ *
+ * Both flares move with the animation called Stream: the lanes ripple
+ * sideways as they rise, like water, and flickering pale streaks race up
+ * them, like light glinting off it.
  *
  * Drawn only while on screen; under reduced motion it is drawn once, still.
  */
@@ -84,8 +87,9 @@ void main() {
   // How far across, for the edge: the flare's own flames move it.
   float edge = s;
   if (u_style > 1.5) {
-    // --- Flare: the flames lick sideways as they rise; white-yellow at the
-    // core, through orange, to deep red at the flanks.
+    // --- Flare, in either colouring (FLARE_COLOURS), moving with Stream:
+    // the lanes ripple sideways as they rise, like water, and flickering
+    // pale streaks race up them, like light glinting off it.
     float sw = s + 0.025 * sin(along * 7.0 - t * 2.6 + s * 9.0)
                  + 0.012 * sin(along * 19.0 - t * 4.3 + s * 21.0);
     edge = sw;
@@ -142,8 +146,7 @@ void main() {
   float top = 1.0 - smoothstep(0.62, 1.0, y);
   float inside = 1.0 - smoothstep(1.0 - ds * 1.5, 1.0 + ds * 1.5, edge);
   float halo = (1.0 - smoothstep(1.0, 1.16, edge)) * 0.4 * (1.0 - inside);
-  // Clear wherever it is only the page, so the echo's streaks (lib/
-  // trail-echo) carry on behind its faded top; colour premultiplied.
+  // Clear wherever it is only the page; colour premultiplied.
   float a2 = inside * top;
   float a1 = halo * top * (1.0 - a2);
   gl_FragColor = vec4(col * a2 + glow * a1, a2 + a1);

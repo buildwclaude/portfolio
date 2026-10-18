@@ -7,7 +7,8 @@ import { shelf } from './shelf';
  * hairlines. A spread introduces me — the portrait on the left, the greeting,
  * the opening paragraph and a few facts on the right — then what I practise,
  * the tools and what I do beyond design as three plain lists, what drives
- * the work as a pull quote, and an index of chapters that opens the reader
+ * the work as a pull quote — on frosted glass, with the trail's Stream
+ * flowing behind it (lib/stream) — and an index of chapters that opens the reader
  * (#me), where the whole story lives.
  */
 export function about() {
@@ -67,7 +68,8 @@ export function about() {
 
         ${paragraphs[1] &&
         html`
-          <figure class="about__quote" data-reveal>
+          <figure class="about__quote stream-glass" data-reveal>
+            <canvas class="stream-glass__flow" data-stream aria-hidden="true"></canvas>
             <figcaption class="kicker">What drives me</figcaption>
             <blockquote><p>${paragraphs[1]}</p></blockquote>
           </figure>

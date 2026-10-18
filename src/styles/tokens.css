@@ -18,9 +18,15 @@
   --rule: rgba(0, 0, 0, 0.12);
   --rule-soft: rgba(0, 0, 0, 0.06);
 
-  /* Accent */
-  --accent: #d94f38; /* Muted orange/red accent */
-  --selection: rgba(217, 79, 56, 0.2);
+  /* Accent: Cobalt, the trail's colour (lib/trail, Cobalt Flare), with the
+     navy, sky and ice it runs through. */
+  --accent: #2F5BEA; /* Cobalt */
+  --accent-deep: #14226B; /* Navy */
+  --accent-sky: #8CB4FF;
+  --accent-ice: #EEF3FF;
+  --selection: rgba(47, 91, 234, 0.16);
+  /* The Stream as a line: navy, cobalt, sky. */
+  --stream-line: linear-gradient(90deg, var(--accent-deep), var(--accent) 45%, var(--accent-sky));
 
   /* Clean UI Tokens */
   --border-thick: 1px solid var(--rule);

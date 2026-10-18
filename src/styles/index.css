@@ -12,10 +12,11 @@
 @import './components/warp-detail.css';
 @import './components/playground.css';
 @import './components/about.css';
+@import './components/stream-glass.css';
 @import './components/records.css';
 @import './components/experiments.css';
 @import './components/shelf.css';
 @import './components/footer.css';
-@import './components/trail-echo.css';
 @import './components/rail.css';
+@import './components/stream-theme.css';
 @import './motion.css';

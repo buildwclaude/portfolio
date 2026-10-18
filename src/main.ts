@@ -5,7 +5,7 @@ import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
 import { initPalace } from './lib/palace';
 import { initTrail } from './lib/trail';
-import { initTrailEcho } from './lib/trail-echo';
+import { initStream } from './lib/stream';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -21,7 +21,7 @@ initRail();
 mountHeroScene();
 initPalace();
 initTrail(reducedMotion);
-initTrailEcho(reducedMotion);
+initStream(reducedMotion);
 mountShelf();
 
 if (reducedMotion) {
