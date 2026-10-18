@@ -43,36 +43,52 @@
   scroll-margin-top: calc(var(--space-section) * -0.66);
 }
 
-/* The hairline that opens each section, drawn edge to edge inside the shell. */
-.section__rule {
-  grid-column: 1 / -1;
-  height: 1px;
-  background: var(--rule);
-  margin-bottom: var(--space-24);
-}
-
+/* Every section opens the way Featured projects does: a large bold title
+   with its count opposite, and a hairline under both that draws itself
+   across as the section arrives (lib/motion). */
 .section__head {
   grid-column: 1 / -1;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-24);
-  margin-bottom: var(--space-64);
+  padding-bottom: var(--space-12);
 }
 
 .section__title {
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  letter-spacing: 0.01em;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 2.75rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
 .section__index {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.section__rule {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--rule);
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* A small mono label over a group: "Practice", "Focus", "01". */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--ink-muted);
 }
 
 @media (max-width: 860px) {
-  .section__head {
+  .section__rule {
     margin-bottom: var(--space-48);
   }
 }

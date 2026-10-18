@@ -17,6 +17,8 @@ export function renderPage(): string {
     <a class="skip-link" href="#main">Skip to content</a>
 
     <span id="top" class="visually-hidden"></span>
+    <!-- the trail's echo: faint streaks rising up the page behind it (lib/trail-echo) -->
+    <canvas class="trail-echo" data-trail-echo aria-hidden="true"></canvas>
     ${header()} 
 
     <main class="page" id="main" tabindex="-1">

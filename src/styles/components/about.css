@@ -1,200 +1,167 @@
 /* ==========================================================================
-   About — everything about me in one section, in the site's frosted glass:
-   an introduction beside what I practise and use, and the chapters under
-   them, each opening the reader.
+   About — set like the hero and the work: ink on paper, the twelve columns
+   and hairlines. No boxes.
    ========================================================================== */
 
-.about {
-  --about-blue: #2f6cf2;
-}
+/* --- The spread: portrait left, greeting and facts right ------------------ */
 
-/* The glass both cards are made of — the reader's and the chapter cards'. */
-.about__intro,
-.about__skills {
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 26px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(247, 249, 253, 0.74));
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
-  backdrop-filter: blur(16px) saturate(1.3);
-  box-shadow:
-    inset 0 1px 0 #ffffff,
-    0 1px 2px rgba(30, 45, 90, 0.05),
-    0 16px 36px rgba(30, 45, 90, 0.08);
-}
-
-/* --- Introduction ---------------------------------------------------------- */
-
-.about__intro {
-  grid-column: 1 / span 7;
-  display: grid;
-  grid-template-columns: 168px minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
-  padding: 32px;
+.about__figure {
+  grid-column: 1 / span 4;
+  margin: 0;
+  align-self: start;
 }
 
 .about__portrait {
+  display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 22px;
-  box-shadow: 0 10px 24px rgba(30, 45, 90, 0.16);
+  background: var(--paper-sunk);
+  filter: saturate(0.85);
 }
 
-.about__hello {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.5rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+.about__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-16);
+  margin-top: var(--space-12);
 }
-.about__hi { font-weight: 300; }
+
+.about__body {
+  grid-column: 6 / -1;
+}
+
+/* The hero's statement, smaller: a light greeting over the name in bold. */
+.about__hello {
+  margin: 0 0 clamp(1.5rem, 3vw, 2.5rem);
+  font-family: 'Geist', var(--font-display);
+  font-size: clamp(2.75rem, 1.6rem + 4vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+.about__hello-light,
+.about__hello-bold { display: block; }
+.about__hello-light { font-weight: 300; }
+.about__hello-bold { font-weight: 600; }
 
 .about__lead {
-  margin: 16px 0 0;
-  font-size: var(--text-body);
-  line-height: 1.65;
+  max-width: 38em;
+  font-size: var(--text-lead);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   color: var(--ink-secondary);
+  text-wrap: pretty;
 }
 
+/* Facts as a spec sheet: label, value, a hairline between. */
 .about__facts {
-  display: grid;
-  gap: 8px;
-  margin: 20px 0 0;
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  border-top: 1px solid var(--rule);
 }
 .about__fact {
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  gap: 12px;
-  padding: 11px 14px;
-  border-radius: 12px;
-  background: #e9f0fe;
+  grid-template-columns: minmax(7rem, 1fr) 3fr;
+  gap: var(--space-24);
+  padding-block: var(--space-12);
+  border-bottom: 1px solid var(--rule);
 }
-.about__fact dt {
-  padding-top: 2px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--about-blue);
-}
-.about__fact dd {
-  margin: 0;
-  font-size: var(--text-small);
-  line-height: 1.45;
-}
+.about__fact dt { padding-top: 0.2em; }
+.about__fact dd { margin: 0; color: var(--ink); }
 
+/* Calls to action as the hero's "Featured projects ↓": words and an arrow. */
 .about__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 24px;
+  gap: var(--space-12) var(--space-48);
+  margin-top: var(--space-32);
 }
-.about__cta,
-.about__ghost {
+.about__link {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 20px;
-  border-radius: 999px;
-  font-size: var(--text-small);
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform var(--dur-mid) var(--ease-out), box-shadow var(--dur-mid) var(--ease-out);
-}
-.about__cta {
-  background: linear-gradient(180deg, #4f8ff7, var(--about-blue));
-  color: #ffffff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 16px rgba(47, 108, 242, 0.3);
-}
-.about__cta span { transition: transform var(--dur-mid) var(--ease-out); }
-.about__cta:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 22px rgba(47, 108, 242, 0.38); }
-.about__cta:hover span { transform: translateX(3px); }
-.about__ghost {
-  background: #ffffff;
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1px rgba(30, 45, 90, 0.12), 0 4px 12px rgba(30, 45, 90, 0.06);
-}
-.about__ghost:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(47, 108, 242, 0.35), 0 8px 18px rgba(47, 108, 242, 0.14); }
-.about__cta:focus-visible,
-.about__ghost:focus-visible { outline: 2px solid var(--about-blue); outline-offset: 3px; }
-
-/* --- What I practise, use and do ------------------------------------------ */
-
-.about__skills {
-  grid-column: 8 / -1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin: 0;
-  padding: 28px;
-  --reveal-delay: 120ms;
-}
-
-.about__label {
-  margin-bottom: 10px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  align-items: baseline;
+  gap: var(--space-8);
+  padding-bottom: 3px;
+  font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-muted);
+  color: var(--ink);
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  transition: background-size var(--dur-mid) var(--ease-out);
 }
-.about__group dd { margin: 0; }
+.about__link:hover { background-size: 0% 1px; background-position: 100% 100%; }
+.about__arrow { transition: transform var(--dur-mid) var(--ease-out); }
+.about__link:hover .about__arrow { transform: translateX(4px); }
 
-.about__chips {
+/* --- What I practise, the tools, beyond design ---------------------------- */
+
+.about__index {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  margin-top: clamp(5rem, 10vw, 9rem);
+}
+
+.about__group { border-top: 1px solid var(--ink); padding-top: var(--space-16); }
+
+.about__group-label {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-16);
+  margin: 0 0 var(--space-24);
+  font-weight: var(--weight-regular);
+}
+.about__group-label span { color: var(--ink); }
+
+.about__list {
   margin: 0;
   padding: 0;
   list-style: none;
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.5rem);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
 }
-/* What drives the work, set at the foot of the card. */
-.about__group--note {
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid rgba(30, 45, 90, 0.08);
-}
-.about__note {
-  margin: 0;
-  font-size: var(--text-small);
-  line-height: 1.6;
-  color: var(--ink-secondary);
-}
+.about__list li { padding-block: 0.12em; }
 
-.about__chip {
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(30, 45, 90, 0.09), 0 2px 6px rgba(30, 45, 90, 0.05);
-  font-size: 0.82rem;
+/* --- What drives me: a pull quote ------------------------------------------ */
+
+.about__quote {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  margin: clamp(5rem, 10vw, 9rem) 0 0;
+}
+.about__quote figcaption { grid-column: 1 / span 3; padding-top: 0.9em; }
+.about__quote blockquote { grid-column: 4 / span 8; margin: 0; }
+.about__quote p {
+  font-family: 'Geist', var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.6rem);
+  font-weight: 300;
   line-height: 1.2;
-  color: var(--ink);
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
 }
+.about__quote p::before { content: '“'; position: absolute; transform: translateX(-0.5em); color: var(--accent); }
+.about__quote p::after { content: '”'; color: var(--accent); }
 
-/* --- Narrower -------------------------------------------------------------- */
+/* --- Smaller screens ------------------------------------------------------- */
 
 @media (max-width: 1100px) {
-  .about__intro,
-  .about__skills { grid-column: 1 / -1; }
-  .about__skills {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: 16px;
-  }
-  .about__group--note { grid-column: 1 / -1; }
+  .about__figure { grid-column: 1 / span 5; }
+  .about__body { grid-column: 6 / -1; }
+  .about__quote blockquote { grid-column: 3 / -1; }
+  .about__quote figcaption { grid-column: 1 / span 2; }
 }
 
-@media (max-width: 760px) {
-  .about__intro {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-    padding: 24px;
-  }
-  .about__portrait { width: 120px; }
-  .about__fact { grid-template-columns: minmax(0, 1fr); gap: 2px; }
-  .about__skills { grid-template-columns: minmax(0, 1fr); padding: 24px; }
+@media (max-width: 860px) {
+  .about__figure { grid-column: 1 / span 4; margin-bottom: var(--space-48); }
+  .about__body { grid-column: 1 / -1; }
+  .about__index { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-48); }
+  .about__quote { display: block; }
+  .about__quote figcaption { margin-bottom: var(--space-16); }
+}
+
+@media (max-width: 520px) {
+  .about__figure { grid-column: 1 / -1; }
+  .about__caption span + span { display: none; }
 }

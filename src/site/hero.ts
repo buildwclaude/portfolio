@@ -1,13 +1,15 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
-import { coursesFolder } from './courses-folder';
+import { palace } from './palace';
 
 /**
  * The landing screen: a hairline strip, then — between the rules — the
  * statement with three credential lines under it, and the way into the
- * work along the foot. The right side holds the courses folder
- * (site/courses-folder).
- * Set aside, ready to swap back in: the interaction loop (site/interaction),
+ * work along the foot. The right side holds the palace (site/palace).
+ * Set aside, ready to swap back in: the temple (site/temple), the glass
+ * grid (site/glass-grid), the
+ * courses folder (site/courses-folder),
+ * the interaction loop (site/interaction),
  * the vine (site/vine) and the WebGL scenes (components/ribbon,
  * components/console, via data-scene).
  * Copy comes from `content/site.ts`.
@@ -38,7 +40,7 @@ export function hero() {
         </ul>
       </div>
 
-      ${coursesFolder()}
+      ${palace()}
 
       <div class="hero__foot" data-reveal>
         <a class="hero__cta meta" href="#warp-work">

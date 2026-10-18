@@ -1,38 +1,16 @@
-import './styles/tokens.css';
-import './styles/base.css';
-import './styles/layout.css';
-import './styles/components/header.css';
-import './styles/components/kodama.css';
-import './styles/components/hero.css';
-import './styles/components/courses-folder.css';
-import './styles/components/work.css';
-import './styles/components/warp.css';
-import './styles/components/warp-detail.css';
-import './styles/components/playground.css';
-import './styles/components/about.css';
-import './styles/components/records.css';
-import './styles/components/experiments.css';
-import './styles/components/shelf.css';
-import './styles/components/footer.css';
-import './styles/components/rail.css';
-import './styles/motion.css';
-
 import { site, type Book } from './content/site';
 import { motif } from './lib/motif';
 import { initNav } from './lib/nav';
 import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
-import { initCoursesFolder } from './lib/courses-folder';
+import { initPalace } from './lib/palace';
+import { initTrail } from './lib/trail';
+import { initTrailEcho } from './lib/trail-echo';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 root.dataset.booted = '';
-
-window.addEventListener('mousemove', (e) => {
-  root.style.setProperty('--mouse-x', `${e.clientX}px`);
-  root.style.setProperty('--mouse-y', `${e.clientY}px`);
-});
 
 import { initRail } from './lib/rail';
 import type { Sketchbook } from './components/sketchbook';
@@ -41,7 +19,9 @@ initNav();
 initRail();
 
 mountHeroScene();
-initCoursesFolder();
+initPalace();
+initTrail(reducedMotion);
+initTrailEcho(reducedMotion);
 mountShelf();
 
 if (reducedMotion) {

@@ -8,21 +8,27 @@ export function footer() {
   return html`
     <footer class="footer" id="contact">
       <div class="shell grid">
+        <div class="section__head">
+          <h2 class="section__title">${title}</h2>
+          <span class="section__index">Say hello</span>
+        </div>
         <div class="section__rule" aria-hidden="true"></div>
 
-        <h2 class="footer__title title" data-reveal>${title}</h2>
-        <p class="footer__line" data-reveal>${line}</p>
+        <div class="footer__lead" data-reveal>
+          <p class="footer__line kicker">${line}</p>
+          <p class="footer__email">
+            <a href="mailto:${email}"><span>${email}</span><span class="footer__email-arrow" aria-hidden="true">↗</span></a>
+          </p>
+        </div>
 
-        <p class="footer__email" data-reveal>
-          <a class="link link--underlined" href="mailto:${email}">${email}</a>
-        </p>
-
-        <ul class="footer__links" data-reveal>
+        <ul class="footer__links" data-reveal-stagger>
           ${links.map(
-            (link) => html`
-              <li>
-                <a class="link" href="${link.href}" rel="me noreferrer" target="_blank">
-                  ${link.label}
+            (link, i) => html`
+              <li data-reveal>
+                <a href="${link.href}" rel="me noreferrer" target="_blank">
+                  <span class="kicker">${String(i + 1).padStart(2, '0')}</span>
+                  <span>${link.label}</span>
+                  <span class="footer__link-arrow" aria-hidden="true">↗</span>
                 </a>
               </li>
             `,
@@ -33,6 +39,9 @@ export function footer() {
           <span>© ${year} ${site.meta.name}</span>
           <span>${site.meta.role}</span>
         </p>
+      </div>
+      <div class="footer__trail" aria-hidden="true">
+        <canvas class="footer__trail-canvas" data-trail-canvas></canvas>
       </div>
     </footer>
   `;

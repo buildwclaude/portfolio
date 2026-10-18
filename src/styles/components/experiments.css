@@ -3,9 +3,14 @@
    ========================================================================== */
 
 .experiments__intro {
-  grid-column: 1 / span 5;
-  margin-bottom: var(--space-64);
-  color: var(--ink-secondary);
+  grid-column: 1 / span 6;
+  margin-bottom: clamp(3rem, 7vw, 5.5rem);
+  font-family: 'Geist', var(--font-display);
+  font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2.1rem);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--ink);
 }
 
 /* Four sub-columns over twelve: the items land on columns 1, 4, 7 and 10. */
@@ -18,7 +23,7 @@
 }
 
 .xp {
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--ink);
 }
 
 .xp__inner {
@@ -67,10 +72,11 @@
 }
 
 .xp__title {
-  font-size: var(--text-body);
-  font-weight: var(--weight-medium);
-  letter-spacing: -0.004em;
-  line-height: 1.3;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.45rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
 }
 
 .xp__note {

@@ -49,12 +49,12 @@ export function experiments() {
       aria-labelledby="experiments-title"
     >
       <div class="shell grid">
-        <div class="section__rule" aria-hidden="true"></div>
         <div class="section__head">
           <h2 class="section__title" id="experiments-title">${title}</h2>
-          <span class="section__index meta">03</span>
+          <span class="section__index">${String(items.length).padStart(2, '0')} pieces</span>
         </div>
-        <p class="experiments__intro lead" data-reveal>${intro}</p>
+        <div class="section__rule" aria-hidden="true"></div>
+        <p class="experiments__intro" data-reveal>${intro}</p>
         <ul class="experiments__list" data-reveal-stagger>${items.map((x, i) => item(x, i))}</ul>
       </div>
     </section>

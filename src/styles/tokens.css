@@ -7,9 +7,9 @@
 :root {
   /* --- Colour ------------------------------------------------------------
      Clean, minimal palette (Apple/Google style) with pure white and soft grays. */
-  --paper: #F3F1E9; /* Warm off-white paper */
-  --paper-raised: #fcfbf8;
-  --paper-sunk: #e9e6dc;
+  --paper: #FDFDFC; /* Light white */
+  --paper-raised: #ffffff;
+  --paper-sunk: #f1f1ef;
 
   --ink: #111111; /* Dark charcoal */
   --ink-secondary: #555555;
@@ -17,12 +17,6 @@
 
   --rule: rgba(0, 0, 0, 0.12);
   --rule-soft: rgba(0, 0, 0, 0.06);
-
-  /* Grid lines */
-  --dot: transparent;
-  --dot-hover: rgba(0, 0, 0, 0.07);
-  --dot-pitch: 32px;
-  --dot-size: 1px;
 
   /* Accent */
   --accent: #d94f38; /* Muted orange/red accent */

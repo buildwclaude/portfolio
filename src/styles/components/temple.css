@@ -1,0 +1,35 @@
+/* ==========================================================================
+   Temple — the right of the landing screen.
+   A canvas the size of the room beside the statement; the drawing itself
+   is painted by lib/temple.
+   ========================================================================== */
+
+.hero .temple {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--header-height) + var(--space-16));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  /* Inside the page margin, flush with the rules above and below. */
+  right: var(--shell-margin);
+  width: min(44%, 640px);
+  /* The canvas only reads the pointer; it never takes it. */
+  pointer-events: none;
+}
+
+.temple__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Small screens: the temple joins the flow under the statement --------- */
+
+@media (max-width: 860px) {
+  .hero .temple {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(100vw, 440px);
+    margin-block: var(--space-16) var(--space-32);
+  }
+}

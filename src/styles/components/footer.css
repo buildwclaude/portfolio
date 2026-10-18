@@ -5,39 +5,62 @@
 .footer {
   position: relative;
   z-index: 1;
-  padding-block: var(--space-section) var(--space-32);
+  padding-top: var(--space-section);
   scroll-margin-top: calc(var(--space-section) * -0.66);
 }
 
-.footer__title {
-  grid-column: 1 / span 6;
-  grid-row: 2;
-  margin-bottom: var(--space-16);
-}
-
-.footer__line {
-  grid-column: 1 / span 6;
+/* The line and the address, stacked; the address is the point of the
+   section, so it is set as display type. */
+.footer__lead {
+  grid-column: 1 / span 8;
   grid-row: 3;
-  color: var(--ink-secondary);
-  margin-bottom: var(--space-32);
 }
-
-.footer__email {
-  grid-column: 1 / span 6;
-  grid-row: 4;
-  font-size: var(--text-lead);
-  letter-spacing: -0.008em;
+.footer__line { margin-bottom: var(--space-24); }
+.footer__email a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+  font-family: 'Geist', var(--font-display);
+  font-size: clamp(1.75rem, 0.6rem + 3.6vw, 4.25rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0% 2px no-repeat;
+  padding-bottom: 0.08em;
+  transition: background-size var(--dur-slow) var(--ease-reveal);
 }
+.footer__email a:hover,
+.footer__email a:focus-visible { background-size: 100% 2px; }
+.footer__email-arrow {
+  font-weight: 300;
+  color: var(--ink-muted);
+  transition: transform var(--dur-mid) var(--ease-out), color var(--dur-mid) var(--ease-out);
+}
+.footer__email a:hover .footer__email-arrow { transform: translate(4px, -4px); color: var(--accent); }
 
+/* The elsewhere links: a short ruled index. */
 .footer__links {
   grid-column: 9 / -1;
-  grid-row: 2 / span 3;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-12);
-  font-size: var(--text-small);
+  grid-row: 3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ink);
 }
+.footer__links li { border-bottom: 1px solid var(--rule); }
+.footer__links a {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  align-items: baseline;
+  padding-block: var(--space-12);
+  color: var(--ink);
+  text-decoration: none;
+}
+.footer__link-arrow { color: var(--ink-muted); transition: transform var(--dur-mid) var(--ease-out), color var(--dur-mid) var(--ease-out); }
+.footer__links a:hover .footer__link-arrow { transform: translate(3px, -3px); color: var(--accent); }
 
 .footer__legal {
   grid-column: 1 / -1;
@@ -51,21 +74,31 @@
   border-top: 1px solid var(--rule-soft);
 }
 
-@media (max-width: 860px) {
-  .footer__title,
-  .footer__line,
-  .footer__email {
-    grid-column: 1 / -1;
-  }
+/* The trail: bands of light rising out of the bottom edge of the page,
+   painted by lib/trail. Full bleed, under the legal line. */
+.footer__trail {
+  margin-top: var(--space-32);
+  height: clamp(18rem, 55vh, 38rem);
+}
+.footer__trail-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-reveal);
+}
+.footer__trail-canvas.is-drawn { opacity: 1; }
 
+@media (max-width: 860px) {
+  .footer__trail { height: clamp(14rem, 45vh, 24rem); }
+
+  .footer__lead,
   .footer__links {
     grid-column: 1 / -1;
     grid-row: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--space-24);
-    margin-top: var(--space-32);
   }
+
+  .footer__links { margin-top: var(--space-48); }
 
   .footer__legal {
     grid-row: auto;
