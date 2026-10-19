@@ -146,13 +146,9 @@ async function enhance() {
   const wantsScrollMotion = !reducedMotion && matchMedia('(min-width: 861px)').matches;
   if (!wantsScrollMotion) return;
 
-  // The media planes want scroll velocity, so they are built first and the
-  // scroll layer is handed their sink.
-  const media = await import('./lib/warp-gl')
-    .then(({ initWarpGl }) => initWarpGl())
-    .catch(() => null);
-
-  await initScrollMotion({ onVelocity: media?.setVelocity }).catch(() => undefined);
+  // The featured-project thumbnails are plain images: the WebGL planes
+  // (lib/warp-gl) that bent and tinted them are set aside.
+  await initScrollMotion().catch(() => undefined);
 }
 
 if (document.readyState === 'complete') requestIdleCallbackShim(enhance);

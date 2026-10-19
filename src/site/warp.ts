@@ -6,11 +6,11 @@ import { html } from '../lib/html';
  * the case study `lib/warp-detail.ts` opens.
  */
 export const selectedWork = [
-  { key: 'yatri-hub', title: 'Yatri Hub', disciplines: 'Product Design · UX Research', year: '2025', cover: '/work/yatrihub/cover.webp', shape: 'tall', fallback: 'field', blurb: 'A companion app for electric-bike riders that cut trip-planning uncertainty by 67%.' },
-  { key: 'ar-hud', title: 'AR Head-Up Display', disciplines: 'AR · Research', year: '2026', cover: '/work/ar-hud/3abae169-38f525.webp', shape: 'wide', fallback: 'moire', blurb: 'Augmented-reality interfaces for astronaut spacesuits, with Moon-to-Mars missions in mind.' },
-  { key: 'yatri-energy', title: 'Yatri Energy', disciplines: 'Product Design · UX', year: '2023', cover: '/work/yatri-energy/cover.webp', shape: 'tall', fallback: 'rings', blurb: 'Finding, paying for and using EV charging in Nepal, with the friction taken out.' },
-  { key: 'eduquest', title: 'EduQuest', disciplines: 'UX Research · Product Design', year: '2024', cover: '/work/eduquest/59d0b409-7a3941.webp', shape: 'wide', fallback: 'strata', blurb: 'A home for structured mentorship, replacing scattered social-media threads.' },
-  { key: 'dashboard', title: 'Dynamic Dashboard', disciplines: 'UX Research · Product Design', year: '2024', cover: '/work/dashboard/f5f971ba-fda800.webp', shape: 'tall', fallback: 'dots', blurb: 'An interactive motorcycle dashboard riders actually engage with.' },
+  { key: 'yatri-hub', title: 'Yatri Hub', disciplines: 'Product Design · UX Research', year: '2025', cover: '/work/yatrihub/41e0eb98-67ccc7.webp', shape: 'wide', fallback: 'field', blurb: 'A companion app for electric-bike riders that cut trip-planning uncertainty by 67%.' },
+  { key: 'ar-hud', title: 'AR Head-Up Display', disciplines: 'AR · Research', year: '2026', cover: '/work/ar-hud.webp', shape: 'wide', fallback: 'moire', tone: 'sketch', blurb: 'Augmented-reality interfaces for astronaut spacesuits, with Moon-to-Mars missions in mind.' },
+  { key: 'yatri-energy', title: 'Yatri Energy', disciplines: 'Product Design · UX', year: '2023', cover: '/work/yatri-energy/4bfbc0b6-6d6f66.webp', shape: 'wide', fallback: 'rings', blurb: 'Finding, paying for and using EV charging in Nepal, with the friction taken out.' },
+  { key: 'eduquest', title: 'EduQuest', disciplines: 'UX Research · Product Design', year: '2024', cover: '/work/eduquest/f66cce46-56c348.webp', shape: 'wide', fallback: 'strata', blurb: 'A home for structured mentorship, replacing scattered social-media threads.' },
+  { key: 'dashboard', title: 'Dynamic Dashboard', disciplines: 'UX Research · Product Design', year: '2024', cover: '/work/dashboard/edb34e0b-4271df.webp', shape: 'wide', fallback: 'dots', blurb: 'An interactive motorcycle dashboard riders actually engage with.' },
 ] as const;
 
 export type Work = (typeof selectedWork)[number];
@@ -20,7 +20,7 @@ export const pad2 = (n: number) => String(n).padStart(2, '0');
 function card(w: Work, i: number, speed: string) {
   return html`
     <a class="warp-card" href="#" data-speed="${speed}" data-case="${w.key}">
-      <figure class="media media--${w.shape}" data-gl>
+      <figure class="media media--${w.shape}${'tone' in w ? ` media--${w.tone}` : ''}" data-gl>
         <img src="${w.cover}" alt="${w.title}" data-fallback="${w.fallback}" />
       </figure>
       <div class="meta"><span class="title">${w.title}</span><span class="idx">${pad2(i + 1)}</span></div>

@@ -4,11 +4,13 @@
 .warp-col--offset { margin-top: 16vh; }
 .warp-card { display: block; text-decoration: none; color: inherit; }
 .warp-card:focus-visible { outline: 1px solid var(--ink); outline-offset: 12px; }
-.media { position: relative; background: var(--ink-2); overflow: hidden; }
+.media { position: relative; background: var(--paper-raised); overflow: hidden; }
 .media--tall { aspect-ratio: 4/5; }
 .media--wide { aspect-ratio: 16/11; }
-.media img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .4s ease; }
-body:not(.gl-ready) .media img { opacity: .25; }
+.media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* A dark cover with no light counterpart, turned into a pencil-like negative
+   so it sits with the sketches beside it. */
+.media--sketch img { filter: grayscale(1) invert(1) contrast(1.25) brightness(1.05); }
 .warp-card .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 10px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
 .warp-card .meta:first-of-type { margin-top: 18px; }
 .warp-card .title { font-family: var(--font-display); font-weight: var(--weight-bold); font-size: clamp(17px, 1.5vw, 23px); letter-spacing: -0.02em; text-transform: none; color: var(--ink); transition: color .3s ease; }
@@ -33,7 +35,6 @@ body:not(.gl-ready) .media img { opacity: .25; }
 }
 @media (prefers-reduced-motion: reduce) {
   #gl { display: none; }
-  .media img { opacity: 1 !important; }
 }
 
 .warp-canvas {

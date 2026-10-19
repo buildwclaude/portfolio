@@ -12,7 +12,6 @@ export async function initWarpGl() {
   /* ---------------- shaders ---------------- */
   const vert = `
   uniform float uVelocity;
-  uniform float uHover;
   uniform float uEnter;
   varying vec2 vUv;
   varying float vBow;
@@ -27,7 +26,6 @@ export async function initWarpGl() {
     pos.z -= bowY * v * 0.8;
     pos.y *= 1.0 + abs(v) * 0.0022;
     pos.z -= (1.0 - uEnter) * 240.0;
-    pos.z += uHover * 26.0;
     vBow = bowX * v;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }`;
@@ -38,7 +36,6 @@ export async function initWarpGl() {
   uniform vec2 uCover;
   uniform float uVelocity;
   uniform float uEnter;
-  uniform float uHover;
   varying vec2 vUv;
   varying float vBow;
   void main(){
@@ -49,7 +46,6 @@ export async function initWarpGl() {
     float b = texture2D(uTexture, uv - vec2(amt, 0.0)).b;
     vec3 col = vec3(r, g.g, b);
     col *= 1.0 - abs(vBow) * 0.004;
-    col += uHover * 0.05;
     col *= mix(0.15, 1.0, uEnter);
     gl_FragColor = vec4(col, uEnter * g.a);
   }`;
@@ -115,14 +111,12 @@ export async function initWarpGl() {
       vertexShader: vert, fragmentShader: frag, transparent: true,
       uniforms: {
         uTexture:{value:texture}, uCover:{value:new THREE.Vector2(1,1)},
-        uVelocity:{value:0}, uEnter:{value:0}, uHover:{value:0}
+        uVelocity:{value:0}, uEnter:{value:0}
       }
     });
     const mesh = new THREE.Mesh(GEO, material);
     const card = el.closest('.card') || el;
-    const p = { el, mesh, material, imgAspect, speed:parseFloat(card.getAttribute('data-speed')||'0'), enter:0, hover:0, hoverTarget:0 };
-    card.addEventListener('mouseenter', () => p.hoverTarget = 1);
-    card.addEventListener('mouseleave', () => p.hoverTarget = 0);
+    const p = { el, mesh, material, imgAspect, speed:parseFloat(card.getAttribute('data-speed')||'0'), enter:0 };
     scene.add(mesh);
     planes.push(p);
   }
@@ -162,11 +156,9 @@ export async function initWarpGl() {
 
       const visible = r.top < vp.h * 0.92 && r.bottom > 0;
       p.enter += ((visible ? 1 : 0) - p.enter) * 0.06;
-      p.hover += (p.hoverTarget - p.hover) * 0.12;
 
       p.material.uniforms.uVelocity.value = v;
       p.material.uniforms.uEnter.value = p.enter;
-      p.material.uniforms.uHover.value = p.hover;
       p.mesh.visible = r.bottom > -200 && r.top < vp.h + 200 && !p.el.closest('.warp-card')?.classList.contains('is-lifting');
     }
 
