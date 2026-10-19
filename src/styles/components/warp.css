@@ -4,7 +4,8 @@
 .warp-col--offset { margin-top: 16vh; }
 .warp-card { display: block; text-decoration: none; color: inherit; }
 .warp-card:focus-visible { outline: 1px solid var(--ink); outline-offset: 12px; }
-.media { position: relative; background: var(--paper-raised); overflow: hidden; }
+/* A single pencil-weight hairline, flush to the picture, like a sketch's page edge. */
+.media { position: relative; background: var(--paper-raised); border: 1px solid var(--rule); overflow: hidden; }
 .media--tall { aspect-ratio: 4/5; }
 .media--wide { aspect-ratio: 16/11; }
 .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
