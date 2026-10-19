@@ -3,7 +3,6 @@ import { motif } from './lib/motif';
 import { initNav } from './lib/nav';
 import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
-import { initPalace } from './lib/palace';
 import { initTrail } from './lib/trail';
 import { initStream } from './lib/stream';
 
@@ -19,7 +18,6 @@ initNav();
 initRail();
 
 mountHeroScene();
-initPalace();
 initTrail(reducedMotion);
 initStream(reducedMotion);
 mountShelf();

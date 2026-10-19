@@ -1,12 +1,12 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
-import { palace } from './palace';
 
 /**
  * The landing screen: a hairline strip, then — between the rules — the
  * statement with three credential lines under it, and the way into the
- * work along the foot. The right side holds the palace (site/palace).
- * Set aside, ready to swap back in: the temple (site/temple), the glass
+ * work along the foot.
+ * Set aside, ready to swap back in: the palace (site/palace, lib/palace),
+ * the temple (site/temple), the glass
  * grid (site/glass-grid), the
  * courses folder (site/courses-folder),
  * the interaction loop (site/interaction),
@@ -39,8 +39,6 @@ export function hero() {
           ${credentials.map((line) => html`<li>${raw(emphasise(line))}</li>`)}
         </ul>
       </div>
-
-      ${palace()}
 
       <div class="hero__foot" data-reveal>
         <a class="hero__cta meta" href="#warp-work">
