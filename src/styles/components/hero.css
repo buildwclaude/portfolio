@@ -13,12 +13,6 @@
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
 }
 
-/* Just the hairline under the menu: the top of the first frame. */
-.hero__strip {
-  padding-bottom: var(--space-12);
-  border-bottom: 1px solid var(--rule);
-}
-
 /* --- Statement ------------------------------------------------------------ */
 
 /* The statement and its credentials, together between the two rules. */
@@ -34,7 +28,6 @@
   font-size: var(--text-display);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-display);
-  text-transform: lowercase;
 }
 
 /* Each line is masked so the statement rises into place on load. */
@@ -52,7 +45,7 @@
   animation-delay: calc(var(--line-index) * 90ms + 180ms);
 }
 
-/* A light greeting over the name in semibold. */
+/* The name in light over the role in semibold. */
 .hero__line--light { font-weight: 300; letter-spacing: -0.035em; }
 .hero__line--bold { font-weight: 600; letter-spacing: -0.035em; }
 

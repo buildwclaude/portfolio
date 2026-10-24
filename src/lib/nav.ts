@@ -1,28 +1,13 @@
 /**
- * Navigation behaviour: the header's scrolled state, the current section
- * marker, and the mobile menu. All of it is progressive — the links work
- * with none of this running.
+ * Navigation behaviour: the current section marker and the menu. All of
+ * it is progressive — the links work with none of this running.
  */
 
 export function initNav(root: ParentNode = document) {
-  const header = root.querySelector<HTMLElement>('[data-header]');
   const toggle = root.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const toggleLabel = root.querySelector<HTMLElement>('[data-menu-label]');
   const menu = root.querySelector<HTMLElement>('[data-menu]');
   const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
-
-  /* --- Header separator ------------------------------------------------
-     A 1px sentinel at the top of the document tells us when the page has
-     left the very top. Cheaper and steadier than a scroll listener. */
-  if (header) {
-    const sentinel = document.createElement('div');
-    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:1px;';
-    document.body.prepend(sentinel);
-    new IntersectionObserver(
-      ([entry]) => header.toggleAttribute('data-scrolled', !entry?.isIntersecting),
-      { threshold: 0 },
-    ).observe(sentinel);
-  }
 
   /* --- Current section -------------------------------------------------- */
   const sections = links

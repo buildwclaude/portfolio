@@ -1,0 +1,70 @@
+/* --- The landing screen's dial (lib/hero-dial) ---------------------------
+   The right of the landing screen: a dial of the pages, its wheel coming in
+   from the right edge, sitting where the overgrown walker stood. The dial's
+   own look lives with the menu's, in header.css. */
+
+.hero { position: relative; }
+.hero__body,
+.hero__foot { position: relative; z-index: 1; }
+
+.hero .hero-dial {
+  position: absolute;
+  /* Above the statement; kept to the right of it, so the whole dial can be
+     scrolled and dragged without covering the credentials. */
+  z-index: 2;
+  top: calc(var(--header-height) + var(--space-32));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  right: var(--shell-margin);
+  width: min(50%, 640px);
+  /* A page's height of scrolling still scrolls the page; only dragging turns it. */
+  touch-action: pan-y;
+}
+
+/* Wide screens: the dial is the menu here, so the Menu button steps aside
+   (see header.css) and the dial takes nearly the screen's full height —
+   down to just above the foot, whose link stays clickable. */
+@media (min-width: 1101px) {
+  .hero .hero-dial {
+    top: var(--space-24);
+    width: min(44%, 640px);
+    /* The tilted first and last names may lean out past the box's left
+       edge; the wheel is cut off at the screen's edge instead (.hero). */
+    overflow: visible;
+  }
+  .hero { overflow-x: clip; }
+  /* No button above the statement either, so it needn't keep the header's
+     room: it centres in the whole screen, level with the dial. */
+  .hero { padding-top: var(--space-24); }
+}
+
+/* Narrower desktops: a little less room beside the credentials. */
+@media (max-width: 1280px) {
+  .hero .hero-dial { width: min(42%, 520px); }
+}
+
+/* Smaller screens: no room beside the statement, so the dial joins the flow under it. */
+@media (max-width: 1100px) {
+  .hero .hero-dial {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(95vw, 400px);
+    margin-block: var(--space-16) var(--space-32);
+  }
+}
+
+/* Its hint shows once scrolling would turn it (lib/dial: .is-armed), so
+   it's clear when the scroll goes to the dial and when to the page. */
+.hero .hero-dial .dial__hint {
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity var(--dur-mid) var(--ease-out);
+}
+.hero .hero-dial.is-armed .dial__hint { opacity: 1; }
+.hero .hero-dial .dial__ticks { transition: opacity var(--dur-mid) var(--ease-out); opacity: 0.6; }
+.hero .hero-dial.is-armed .dial__ticks { opacity: 1; }
+/* Only within its reach does it look grabbable (lib/dial: inPage). */
+.hero .hero-dial { cursor: default; }
+.hero .hero-dial.is-armed { cursor: grab; }
+.hero .hero-dial.is-turning { cursor: grabbing; }

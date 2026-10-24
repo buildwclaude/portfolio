@@ -1,12 +1,14 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
-import { overgrown } from './overgrown';
+import { dialParts } from './dial';
+import { workedWith } from './worked-with';
 
 /**
- * The landing screen: a hairline under the menu, then — between the rules — the
- * statement with three credential lines under it, and the way into the
- * work along the foot. The right side holds the overgrown walker
- * (site/overgrown).
+ * The landing screen: the statement with the places worked with under it
+ * (site/worked-with), and the way into the work along the foot. The right
+ * side holds a dial of the pages, its wheel coming in from the right edge
+ * (site/dial, lib/hero-dial). The portfolio description (credential lines)
+ * and the overgrown walker (site/overgrown) are set aside.
  * Set aside, ready to swap back in: the palace (site/palace, lib/palace),
  * the temple (site/temple), the glass
  * grid (site/glass-grid), the
@@ -17,11 +19,10 @@ import { overgrown } from './overgrown';
  * Copy comes from `content/site.ts`.
  */
 export function hero() {
-  const { lines, credentials } = site.hero;
+  const { lines } = site.hero;
 
   return html`
     <section class="hero shell" id="intro" aria-labelledby="hero-title">
-      <div class="hero__strip" data-reveal aria-hidden="true"></div>
 
       <div class="hero__body">
         <h1 class="hero__display" id="hero-title">
@@ -34,12 +35,13 @@ export function hero() {
           )}
         </h1>
 
-        <ul class="hero__creds" data-reveal>
-          ${credentials.map((line) => html`<li>${raw(emphasise(line))}</li>`)}
-        </ul>
+        ${workedWith()}
       </div>
 
-      ${overgrown()}
+      <div class="hero-dial dial" data-hero-dial>
+        ${dialParts()}
+        <p class="dial__hint" aria-hidden="true">Scroll to turn · click to go</p>
+      </div>
 
       <div class="hero__foot" data-reveal>
         <a class="hero__cta meta" href="#warp-work">
@@ -47,6 +49,19 @@ export function hero() {
         </a>
       </div>
     </section>
+  `;
+}
+
+/**
+ * The portfolio description (site.hero.portfolioDescription): credential
+ * lines, set aside for now. Drop `${portfolioDescription()}` back under the
+ * statement to show them.
+ */
+export function portfolioDescription() {
+  return html`
+    <ul class="hero__creds" data-reveal>
+      ${site.hero.portfolioDescription.map((line) => html`<li>${raw(emphasise(line))}</li>`)}
+    </ul>
   `;
 }
 

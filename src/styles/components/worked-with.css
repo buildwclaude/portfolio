@@ -1,0 +1,52 @@
+/* --- "Worked with" (site/worked-with) ----------------------------------------
+   The places worked with, under the landing screen's statement: grey
+   wordmarks, each in its own lettering, like a wall of logos. They sit in a
+   tidy grid — three to a row, in columns, all on one centre line — and
+   darken under the pointer. */
+
+.worked__label { margin: 0 0 var(--space-12); color: var(--ink-muted); }
+
+.worked__names {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  align-items: center;
+  gap: var(--space-12) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (max-width: 480px) {
+  .worked__names { grid-template-columns: repeat(2, max-content); }
+}
+
+.worked__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  font-size: 18px;
+  line-height: 1;
+  color: #A3A3A0;
+  white-space: nowrap;
+  transition: color var(--dur-mid) var(--ease-out);
+}
+.worked__name:hover { color: var(--ink-secondary); }
+.worked__name img { display: block; height: 22px; width: auto; opacity: 0.55; filter: grayscale(1); }
+
+.worked__name--sans { font-weight: 400; letter-spacing: -0.02em; }
+.worked__name--serif { font-family: Georgia, 'Times New Roman', serif; font-style: italic; letter-spacing: -0.01em; }
+.worked__name--caps { font-weight: 700; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
+/* Reversed out of a grey block, which darkens like the others' lettering. */
+.worked__name--boxed span {
+  padding: 5px 7px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: #B4B4B1;
+  transition: background-color var(--dur-mid) var(--ease-out);
+}
+.worked__name--boxed:hover span { background: var(--ink-secondary); }
+.worked__name--icon { font-weight: 500; letter-spacing: -0.02em; }
+.worked__name svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }

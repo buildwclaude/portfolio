@@ -1,6 +1,7 @@
 /* ==========================================================================
    Header / navigation
-   Just a Menu button. It opens the menu as a dial (lib/dial-menu): the pages
+   Just a Menu button, floating at the top right — no bar behind it. It
+   opens the menu as a dial (lib/dial-menu): the pages
    around the rim of a large wheel coming in from the left, the one at the
    pointer upright and full, the rest tilting away along the curve.
    ========================================================================== */
@@ -12,20 +13,12 @@
   height: var(--header-height);
   display: flex;
   align-items: center;
-  background-color: transparent;
-  border-bottom: 1px solid transparent;
-  transition:
-    background-color var(--dur-mid) var(--ease-out),
-    border-color var(--dur-mid) var(--ease-out);
+  /* The strip itself is empty: clicks go through to the page, except on the
+     button and the open menu. */
+  pointer-events: none;
 }
-
-/* Once the page leaves the top the header takes the paper with it, so
-   type never runs underneath the button. */
-.header[data-scrolled] {
-  background-color: var(--paper);
-  border-bottom-color: var(--rule-soft);
-}
-[data-menu-open] .header { border-bottom-color: transparent; }
+.nav__toggle,
+.nav .dial { pointer-events: auto; }
 
 /* Just the button, at the right. */
 .header__inner {
@@ -49,6 +42,14 @@
   color: var(--ink);
   cursor: pointer;
 }
+/* On the landing screen the dial there is the menu, so the button steps
+   aside until it scrolls away. (Small screens keep the button: the dial
+   sits further down the page there.) */
+.nav__toggle { transition: opacity var(--dur-mid) var(--ease-out), visibility var(--dur-mid); }
+@media (min-width: 1101px) {
+  [data-hero-dial-in-view]:not([data-menu-open]) .nav__toggle { opacity: 0; visibility: hidden; }
+}
+
 /* A small dial: a ring with its pointer, which turns as the menu opens. */
 .nav__dial-icon {
   width: 14px;
@@ -62,51 +63,34 @@
 .nav__toggle:hover .nav__dial-icon { transform: rotate(30deg); }
 [data-menu-open] .nav__dial-icon { transform: rotate(90deg); }
 
-/* --- The dial ------------------------------------------------------------ */
+/* --- A dial (lib/dial; site/dial) -------------------------------------------
+   Shared by the menu and the landing screen. The script places the rim's
+   centre (off the box, behind the pointer), each page and the pointer. */
 
 .dial {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
   overflow: hidden;
-  background: var(--paper);
-  touch-action: none;
   user-select: none;
   cursor: grab;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.35s var(--ease-out), visibility 0.35s;
 }
-[data-menu-open] .dial { visibility: visible; opacity: 1; }
 .dial.is-turning { cursor: grabbing; }
 
-/* The wheel: a point at its centre, off-screen to the left (placed by the script). */
-.dial__wheel {
-  position: absolute;
-  left: var(--dial-x);
-  top: 50%;
-  width: 0;
-  height: 0;
-  transform: translateX(-48px);
-  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-[data-menu-open] .dial__wheel { transform: none; }
+.dial__wheel { position: absolute; inset: 0; }
 
-.dial__ticks { position: absolute; left: 0; top: 0; max-width: none; translate: -50% -50%; overflow: visible; }
-.dial__rim { fill: none; stroke: var(--rule); }
-.dial__ticks line { stroke: var(--ink-muted); stroke-opacity: 0.4; stroke-width: 1; }
-.dial__ticks line.is-major { stroke: var(--ink); stroke-opacity: 0.65; stroke-width: 1.2; }
+/* Only drawn: it never takes the pointer from what lies beneath. */
+.dial__ticks { position: absolute; max-width: none; translate: -50% -50%; overflow: visible; pointer-events: none; }
+.dial__ticks line { stroke: var(--ink); stroke-opacity: 0.2; stroke-width: 2; stroke-linecap: round; }
+.dial__ticks line.is-major { stroke-opacity: 0.42; }
 
 .dial__items { margin: 0; padding: 0; list-style: none; }
 
-/* Each page: placed on the rim and tilted with it by the script. */
+/* Each page: placed on the rim and tilted with it by the script, turning
+   about the end that meets the rim. */
 .dial__item {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: max-content; /* the wheel is a point; each page sizes to itself */
-  transform-origin: 0 0;
+  width: max-content;
+  transform-origin: 0 50%;
 }
+.dial--right .dial__item { transform-origin: 100% 50%; }
 
 .dial__link {
   display: flex;
@@ -120,24 +104,28 @@
 }
 .dial__link:focus-visible { outline: none; }
 
-/* The round chip with its icon; filled at the pointer. */
+/* Each page's mark: nothing off the pointer (the ring's dashes do), opening
+   into a filled chip with its icon at it. */
 .dial__chip {
   display: grid;
   place-items: center;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 6px;
+  height: 6px;
+  margin-inline: 15px;
   border-radius: 50%;
-  color: var(--ink-secondary);
-  background: var(--paper-sunk);
-  box-shadow: inset 0 0 0 1px var(--rule);
-  transition: background-color 0.3s var(--ease-out), color 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+  color: transparent;
+  background: var(--ink-muted);
+  opacity: 0;
+  transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out), margin 0.35s var(--ease-out),
+    background-color 0.3s var(--ease-out), color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
 }
-.dial__chip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.dial__item.is-selected .dial__chip { color: var(--paper); background: var(--ink); box-shadow: none; }
+.dial__chip svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.dial__item.is-selected .dial__chip { width: 36px; height: 36px; margin-inline: 0; color: var(--paper); background: var(--ink); opacity: 1; }
+.dial__link:hover .dial__chip { opacity: 0.6; }
 .dial__link:focus-visible .dial__chip { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--ink); }
 
-.dial__num { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--ink-muted); }
+.dial__num { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-muted); opacity: 0.7; }
 
 .dial__text { display: grid; }
 .dial__label {
@@ -161,17 +149,21 @@
 }
 .dial__item.is-selected .dial__note { opacity: 1; transform: none; }
 
-/* The pointer: a short bar on the rim, where the chosen page stands. */
+/* On a right-hand wheel the pages read toward the rim: chip nearest it. */
+.dial--right .dial__link { flex-direction: row-reverse; padding: 6px 0 6px 12px; }
+.dial--right .dial__text { justify-items: end; text-align: right; }
+
+/* The pointer: the ring's dash at the chosen page, drawn solid and a little
+   longer, reaching past the rim toward the page. */
 .dial__pointer {
   position: absolute;
-  left: var(--pointer-x);
-  top: 50%;
-  width: 20px;
-  height: 6px;
-  translate: -50% -50%;
-  border-radius: 3px;
+  width: 26px;
+  height: 2px;
+  border-radius: 1px;
   background: var(--ink);
 }
+.dial--left .dial__pointer { translate: calc(-100% + 8px) -50%; }
+.dial--right .dial__pointer { translate: -8px -50%; }
 
 .dial__hint {
   position: absolute;
@@ -185,13 +177,33 @@
   color: var(--ink-muted);
 }
 
+/* --- The menu's dial: a full screen over the page, while open -------------- */
+
+.nav .dial {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: var(--paper);
+  touch-action: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out), visibility 0.35s;
+}
+[data-menu-open] .nav .dial { visibility: visible; opacity: 1; }
+/* The wheel rolls in a little from the edge as it opens. */
+.nav .dial__wheel {
+  transform: translateX(-48px);
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+[data-menu-open] .nav .dial__wheel { transform: none; }
+
 @media (prefers-reduced-motion: reduce) {
-  .dial,
-  .dial__wheel,
+  .nav .dial,
+  .nav .dial__wheel,
   .nav__dial-icon { transition: none; }
 }
 
 @media (max-width: 860px) {
   .dial__hint { left: var(--shell-margin); right: auto; }
-  .dial__chip { width: 38px; height: 38px; }
+  .dial__item.is-selected .dial__chip { width: 32px; height: 32px; }
 }

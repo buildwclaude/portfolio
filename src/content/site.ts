@@ -97,16 +97,37 @@ export const site = {
      * The display statement. Each array entry is one rendered line, so you
      * control the line breaks. Keep it to three or four lines.
      */
-    lines: ['Hello,', 'This is Sony'],
+    lines: ['Sony,', 'Product', 'Builder'],
     /**
-     * Credentials under the statement, one line each. **Names** are set in
-     * ink against the muted line, so the eye lands on who and where.
+     * Portfolio description: credential lines, one each. **Names** are set
+     * in ink against the muted line, so the eye lands on who and where.
+     * Set aside for now — the landing screen shows `workedWith` in their
+     * place; site/hero's portfolioDescription() renders them when wanted.
      */
-    credentials: [
+    portfolioDescription: [
       'UX Research Assistant at **Open XR Lab, Wichita State** · ex-**Yatri Motorcycles**',
       'Award-winning designer, recognized with the **Figma Warrior Award** and **EntrepreneurHer**',
       'Speaker at **Hult Prize**, advisory board at **Girls in Tech Nepal**',
     ],
+    /**
+     * The places worked with, under the statement, as quiet grey wordmarks.
+     * `mark` picks each one's lettering — `'sans'`, `'serif'` (italic),
+     * `'caps'` (bold, tracked), `'boxed'` (reversed out of a grey block) or
+     * `'icon'` (a small line glyph, `glyph`, before the name) — so the row
+     * reads like a wall of logos without borrowing anyone's. To use a real
+     * logo instead, give `logo` a file in public/logos.
+     */
+    workedWith: {
+      label: 'Worked with',
+      names: [
+        { name: 'Open XR Lab', mark: 'icon', glyph: 'cube' },
+        { name: 'Wichita State', mark: 'serif' },
+        { name: 'Yatri', mark: 'caps' },
+        { name: 'Girls in Tech', mark: 'boxed' },
+        { name: 'Hult Prize', mark: 'sans' },
+        { name: 'EntrepreneurHer', mark: 'icon', glyph: 'spark' },
+      ] as { name: string; mark: 'sans' | 'serif' | 'caps' | 'boxed' | 'icon'; glyph?: string; logo?: string }[],
+    },
     /**
      * The folder on the right. `tools` fly out of it and scatter: `x`, `y`
      * place each in the folder's 736 × 920 frame, `tilt` turns it and `size`

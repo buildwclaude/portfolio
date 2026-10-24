@@ -13,10 +13,12 @@ root.dataset.booted = '';
 
 import { initRail } from './lib/rail';
 import { initDialMenu } from './lib/dial-menu';
+import { initHeroDial } from './lib/hero-dial';
 import type { Sketchbook } from './components/sketchbook';
 
 initNav();
 initDialMenu();
+initHeroDial();
 initRail();
 
 mountHeroScene();
