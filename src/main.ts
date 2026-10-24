@@ -12,9 +12,11 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 root.dataset.booted = '';
 
 import { initRail } from './lib/rail';
+import { initDialMenu } from './lib/dial-menu';
 import type { Sketchbook } from './components/sketchbook';
 
 initNav();
+initDialMenu();
 initRail();
 
 mountHeroScene();

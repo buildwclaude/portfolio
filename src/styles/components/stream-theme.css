@@ -56,18 +56,6 @@
   color: var(--accent);
 }
 
-/* --- The header's mark ----------------------------------------------------- */
-
-.header__seal {
-  animation: stream-breathe 4.5s ease-in-out infinite;
-}
-
-@keyframes stream-breathe {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 91, 234, 0); }
-  50% { box-shadow: 0 0 0 5px rgba(47, 91, 234, 0.14); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .section__rule::after { display: none; }
-  .header__seal { animation: none; }
 }

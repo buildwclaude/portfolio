@@ -13,21 +13,53 @@ export function el<K extends keyof SVGElementTagNameMap>(parent: Element, tag: K
   return node;
 }
 
+type Ramp = [string, string, string];
+
 /**
- * Writes the ivy's gradients into an svg, under ids prefixed with `id` so
- * each drawing carries its own (a gradient in a hidden svg doesn't paint
- * anywhere else). Returns the fills to paint with.
+ * The ivy's colour themes, picked by name (the rail's data-ivy-theme). Each
+ * gives the vine's shading across, the three leaf shadings (highlight, middle,
+ * edge) and the fine lines drawn over them.
  */
-export function ivyDefs(svg: SVGSVGElement, id: string) {
+export const IVY_THEMES = {
+  /** Soft, slightly yellow greens and a weathered olive stem, from the overgrown walker in the hero. */
+  default: {
+    vine: ['#6f6a4e', '#a39d7a', '#5f5a40'],
+    leaf: ['#dbe7a9', '#99b46d', '#5f8650'],
+    leafNow: ['#aec875', '#6f9a4a', '#3f6a34'],
+    young: ['#f0f4d6', '#c4d98f', '#99ae55'],
+    lines: { stalk: '#7a7256', blade: '#4a6a3a', vein: '#f6f4e2', tendril: '#a39d7a' },
+  },
+  /** The page's ink: near-black leaves shaded in greys, like a charcoal drawing; the current one darkest. */
+  black: {
+    vine: ['#2a2a28', '#5e5e5a', '#1f1f1d'],
+    leaf: ['#9a9a95', '#4a4a47', '#232321'],
+    leafNow: ['#5c5c58', '#1f1f1e', '#0a0a0a'],
+    young: ['#e4e3de', '#b2b1ab', '#7d7c77'],
+    lines: { stalk: '#3a3a38', blade: '#000000', vein: '#f2f1ec', tendril: '#6a6a66' },
+  },
+} satisfies Record<string, { vine: Ramp; leaf: Ramp; leafNow: Ramp; young: Ramp; lines: Record<string, string> }>;
+
+export type IvyTheme = keyof typeof IVY_THEMES;
+
+/**
+ * Writes the ivy's gradients for a theme into an svg, under ids prefixed
+ * with `id` so each drawing carries its own (a gradient in a hidden svg
+ * doesn't paint anywhere else), and sets the theme's line colours on it for
+ * ivy.css. Returns the fills to paint with.
+ */
+export function ivyDefs(svg: SVGSVGElement, id: string, theme: IvyTheme = 'default') {
+  const t = IVY_THEMES[theme] ?? IVY_THEMES.default;
+  const stops = (ramp: Ramp, at: string[]) => ramp.map((c, i) => `<stop offset="${at[i]}" stop-color="${c}"/>`).join('');
   svg.insertAdjacentHTML(
     'afterbegin',
     `<defs>
-      <linearGradient id="${id}-vine" x1="0" x2="1"><stop offset="0" stop-color="#4a3a22"/><stop offset=".5" stop-color="#7d6a3f"/><stop offset="1" stop-color="#3b2e1a"/></linearGradient>
-      <radialGradient id="${id}-leaf" cx=".25" cy=".35" r=".95"><stop offset="0" stop-color="#9fcf6a"/><stop offset=".45" stop-color="#4f8f2e"/><stop offset="1" stop-color="#22521a"/></radialGradient>
-      <radialGradient id="${id}-leaf-now" cx=".25" cy=".35" r=".95"><stop offset="0" stop-color="#7fbf4a"/><stop offset=".5" stop-color="#2f7322"/><stop offset="1" stop-color="#143c10"/></radialGradient>
-      <radialGradient id="${id}-young" cx=".3" cy=".35" r=".9"><stop offset="0" stop-color="#d6ec9c"/><stop offset=".6" stop-color="#9ccc5c"/><stop offset="1" stop-color="#5f9a32"/></radialGradient>
+      <linearGradient id="${id}-vine" x1="0" x2="1">${stops(t.vine, ['0', '.5', '1'])}</linearGradient>
+      <radialGradient id="${id}-leaf" cx=".25" cy=".35" r=".95">${stops(t.leaf, ['0', '.45', '1'])}</radialGradient>
+      <radialGradient id="${id}-leaf-now" cx=".25" cy=".35" r=".95">${stops(t.leafNow, ['0', '.5', '1'])}</radialGradient>
+      <radialGradient id="${id}-young" cx=".3" cy=".35" r=".9">${stops(t.young, ['0', '.6', '1'])}</radialGradient>
     </defs>`,
   );
+  for (const [part, colour] of Object.entries(t.lines)) svg.style.setProperty(`--ivy-${part}`, colour);
   return {
     vine: `url(#${id}-vine)`,
     leaf: `url(#${id}-leaf)`,

@@ -1,6 +1,6 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { gsap } from 'gsap';
-import { el, ivyDefs, ivyLeaf, tendril } from './ivy';
+import { el, ivyDefs, ivyLeaf, tendril, type IvyTheme } from './ivy';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,7 +24,7 @@ export function initRail(onProgress?: (p: number) => void) {
     el.style.setProperty('--y', String(LEAF_Y[i]! / H));
     return { el, target: document.querySelector<HTMLElement>(el.getAttribute('href') || ''), at: 0 };
   });
-  const ivy = growIvy(svg);
+  const ivy = growIvy(svg, (rail.dataset.ivyTheme || 'default') as IvyTheme);
   let shown = -1;
 
   const apply = (p: number) => {
@@ -77,8 +77,8 @@ function reachAt(p: number, starts: number[]) {
 }
 
 /** Draws the ivy into the rail's svg and returns a way to grow it. */
-function growIvy(svg: SVGSVGElement) {
-  const fill = ivyDefs(svg, 'rail');
+function growIvy(svg: SVGSVGElement, theme: IvyTheme) {
+  const fill = ivyDefs(svg, 'rail', theme);
 
   // Where the vine will go, then the vine itself, drawn as far as it has grown.
   el(svg, 'path', { d: VINE, class: 'rail__guide' });

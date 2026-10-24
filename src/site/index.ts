@@ -21,8 +21,9 @@ export function renderPage(): string {
 
     <main class="page" id="main" tabindex="-1">
       <!-- where you are: an ivy that climbs down as the page scrolls, one big
-           leaf per section (grown by lib/rail) -->
-      <div class="rail" aria-hidden="true">
+           leaf per section (grown by lib/rail). Its colours: "default" (the
+           walker's greens) or "black" (the page's ink), from lib/ivy. -->
+      <div class="rail" aria-hidden="true" data-ivy-theme="black">
         <svg class="rail__ivy" viewBox="0 0 90 440"></svg>
         ${[
           { href: '#intro', label: 'Intro' },

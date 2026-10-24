@@ -1,5 +1,6 @@
 /* --- Ivy -----------------------------------------------------------------
-   The ivy's parts (lib/ivy), as the climbing rail uses them. Leaves and tendrils start folded on their stalks and unfurl
+   The ivy's parts (lib/ivy), as the climbing rail uses them; their line
+   colours come from the chosen theme (IVY_THEMES) as --ivy-* on the svg. Leaves and tendrils start folded on their stalks and unfurl
    with .is-grown; a section's leaf grows largest with .is-current. */
 
 .ivy__leaf,
@@ -13,10 +14,10 @@
 .ivy__leaf.is-grown.is-current { transform: scale(1.3); }
 .ivy__tendril.is-grown { opacity: 1; transform: scale(1); }
 
-.ivy__stalk { stroke: #5a4a2a; stroke-width: 1.2; }
-.ivy__blade { stroke: #1f4a14; stroke-opacity: 0.35; stroke-width: 0.5; }
-.ivy__vein { stroke: #e6f2cf; stroke-opacity: 0.55; stroke-width: 0.6; }
-.ivy__tendril { fill: none; stroke: #7d6a3f; stroke-width: 0.8; stroke-linecap: round; }
+.ivy__stalk { stroke: var(--ivy-stalk); stroke-width: 1.2; }
+.ivy__blade { stroke: var(--ivy-blade); stroke-opacity: 0.3; stroke-width: 0.5; }
+.ivy__vein { stroke: var(--ivy-vein); stroke-opacity: 0.6; stroke-width: 0.6; }
+.ivy__tendril { fill: none; stroke: var(--ivy-tendril); stroke-width: 0.8; stroke-linecap: round; }
 
 @media (prefers-reduced-motion: reduce) {
   .ivy__leaf,

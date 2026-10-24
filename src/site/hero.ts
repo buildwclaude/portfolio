@@ -3,7 +3,7 @@ import { site } from '../content/site';
 import { overgrown } from './overgrown';
 
 /**
- * The landing screen: a hairline strip, then — between the rules — the
+ * The landing screen: a hairline under the menu, then — between the rules — the
  * statement with three credential lines under it, and the way into the
  * work along the foot. The right side holds the overgrown walker
  * (site/overgrown).
@@ -17,14 +17,11 @@ import { overgrown } from './overgrown';
  * Copy comes from `content/site.ts`.
  */
 export function hero() {
-  const { eyebrow, lines, credentials } = site.hero;
+  const { lines, credentials } = site.hero;
 
   return html`
     <section class="hero shell" id="intro" aria-labelledby="hero-title">
-      <div class="hero__strip meta" data-reveal>
-        <span>${eyebrow}</span>
-        <span class="hero__strip-role">${site.meta.role}</span>
-      </div>
+      <div class="hero__strip" data-reveal aria-hidden="true"></div>
 
       <div class="hero__body">
         <h1 class="hero__display" id="hero-title">
