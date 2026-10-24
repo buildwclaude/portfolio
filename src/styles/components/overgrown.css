@@ -1,0 +1,65 @@
+/* ==========================================================================
+   Overgrown — the right of the landing screen.
+   A painted walker, cut out of its ground, standing beside the statement.
+   It settles in on load, then holds still.
+   ========================================================================== */
+
+.hero { position: relative; }
+
+.hero .overgrown {
+  position: absolute;
+  z-index: 0;
+  margin: 0;
+  top: calc(var(--header-height) + var(--space-32));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  /* Inside the page margin, flush with the rules above and below. */
+  right: var(--shell-margin);
+  /* Small and low, so it reads as standing some way off. */
+  width: min(24%, 350px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+/* The statement and credentials stay above the painting where they meet. */
+.hero__body,
+.hero__foot { position: relative; z-index: 1; }
+
+.overgrown__img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  animation: overgrown-in 1400ms var(--ease-out) 320ms backwards;
+}
+
+@keyframes overgrown-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overgrown__img { animation: none; }
+}
+
+/* --- Narrower desktops: less room beside the credentials ------------------ */
+
+@media (max-width: 1280px) {
+  .hero .overgrown { width: min(22%, 300px); }
+}
+
+/* --- Small screens: the walker joins the flow under the statement --------- */
+
+@media (max-width: 860px) {
+  .hero .overgrown {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(50vw, 230px);
+    justify-content: center;
+    margin-block: var(--space-16) var(--space-32);
+  }
+}

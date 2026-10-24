@@ -1,10 +1,12 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
+import { overgrown } from './overgrown';
 
 /**
  * The landing screen: a hairline strip, then — between the rules — the
  * statement with three credential lines under it, and the way into the
- * work along the foot.
+ * work along the foot. The right side holds the overgrown walker
+ * (site/overgrown).
  * Set aside, ready to swap back in: the palace (site/palace, lib/palace),
  * the temple (site/temple), the glass
  * grid (site/glass-grid), the
@@ -39,6 +41,8 @@ export function hero() {
           ${credentials.map((line) => html`<li>${raw(emphasise(line))}</li>`)}
         </ul>
       </div>
+
+      ${overgrown()}
 
       <div class="hero__foot" data-reveal>
         <a class="hero__cta meta" href="#warp-work">
