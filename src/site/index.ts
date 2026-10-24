@@ -88,15 +88,14 @@ export function renderPage(): string {
     <div class="detail" id="warp-detail" hidden>
       <div class="detail__scrim" data-detail-close></div>
       <div class="detail__panel" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="detail-title">
-        <!-- reading progress -->
-        <div class="detail-rail" aria-hidden="true">
-          <span class="detail-rail__track"></span>
-          <span class="detail-rail__fill"></span>
-        </div>
+        <!-- the way back, and the study's sections -->
+        <nav class="detail__rail" aria-label="Case study">
+          <button class="detail__close" type="button" data-detail-close>
+            <span aria-hidden="true">←</span> Back
+          </button>
+          <ol class="detail__sections" id="detail-sections"></ol>
+        </nav>
 
-        <button class="detail__close" type="button" data-detail-close data-cursor-label="Close">
-          <span aria-hidden="true">✕</span><span class="visually-hidden">Close</span>
-        </button>
         <figure class="detail__figure">
           <img id="detail-img" src="" alt="" decoding="async" />
         </figure>

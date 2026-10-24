@@ -2,21 +2,22 @@ import { gsap } from 'gsap';
 import { ITEMS } from './playground/items';
 
 /**
- * Opens a "Featured projects" card into the case-study window. A copy of the
- * card's image lifts out of the grid and lands on the case study's hero
- * picture, then hands over to the page underneath it.
+ * Opens a "Featured projects" card into its case study: a white page that
+ * rises over the site, read top to bottom in one narrow column, with the
+ * way back and its sections in a rail on the left and the neighbouring
+ * projects at the foot.
  *
- * Cards with `data-case="<key>"` show that project's full case study: the
- * original Readymag page, rebuilt widget for widget by
- * `scripts/import-readymag.py` into `src/content/studies/`. The rest fall
- * back to their short playground description until they have one.
+ * Cards with `data-case="<key>"` show that project's case study, rebuilt
+ * from the original Readymag page by `scripts/readymag-to-case.py` into
+ * `src/content/cases/`. The rest fall back to their short playground
+ * description until they have one.
  */
 const STUDIES: Record<string, () => Promise<string>> = {
-  'yatri-hub': () => import('../content/studies/yatrihub.html?raw').then((m) => m.default),
-  'ar-hud': () => import('../content/studies/ar-hud.html?raw').then((m) => m.default),
-  'yatri-energy': () => import('../content/studies/yatri-energy.html?raw').then((m) => m.default),
-  eduquest: () => import('../content/studies/eduquest.html?raw').then((m) => m.default),
-  dashboard: () => import('../content/studies/dashboard.html?raw').then((m) => m.default),
+  'yatri-hub': () => import('../content/cases/yatrihub.html?raw').then((m) => m.default),
+  'ar-hud': () => import('../content/cases/ar-hud.html?raw').then((m) => m.default),
+  'yatri-energy': () => import('../content/cases/yatri-energy.html?raw').then((m) => m.default),
+  eduquest: () => import('../content/cases/eduquest.html?raw').then((m) => m.default),
+  dashboard: () => import('../content/cases/dashboard.html?raw').then((m) => m.default),
 };
 
 /**
@@ -26,33 +27,20 @@ const STUDIES: Record<string, () => Promise<string>> = {
  */
 const HASHES: Record<string, string> = {};
 
-/**
- * The Readymag pages are set in these, loaded the first time one opens. The
- * variable versions, since the pages set weight with font-variation-settings.
- */
-const STUDY_FONTS =
-  'https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Inter:wght@100..900&family=Manrope:wght@200..800&family=Mulish:wght@200..1000&family=Open+Sans:wght@300..800&display=swap';
+/** The case studies are set in Inter, loaded the first time one opens. */
+const STUDY_FONTS = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap';
 
 const BASE = import.meta.env.BASE_URL;
-/** Readymag's desktop canvas width; the page is scaled to the window from it. */
-const CANVAS = 1024;
-/**
- * Readymag zooms the canvas to fill the window's width (1.4x on a 1440px
- * laptop), so the case studies do the same. Capped where a 1920px screen
- * lands, so an ultra-wide monitor doesn't turn 12px body text into 30px.
- */
-const MAX_SCALE = 1.875;
 
 export function initWarpDetail() {
   const root = document.getElementById('warp-detail');
   if (!root) return;
   const scrim = root.querySelector<HTMLElement>('.detail__scrim')!;
   const panel = root.querySelector<HTMLElement>('.detail__panel')!;
-  const figure = root.querySelector<HTMLElement>('.detail__figure')!;
   const img = root.querySelector<HTMLImageElement>('#detail-img')!;
   const closeBtn = root.querySelector<HTMLElement>('.detail__close')!;
   const content = root.querySelector<HTMLElement>('#detail-rich-content')!;
-  const railFill = root.querySelector<HTMLElement>('.detail-rail__fill');
+  const sectionList = root.querySelector<HTMLElement>('#detail-sections')!;
   const cards = Array.from(document.querySelectorAll<HTMLElement>('.warp-card'));
   const inertTargets = ['.header', '#main', '.footer', 'header', 'footer']
     .map((s) => document.querySelector<HTMLElement>(s))
@@ -65,8 +53,8 @@ export function initWarpDetail() {
   let busy = false;
   let lastFocus: HTMLElement | null = null;
   let tl: gsap.core.Timeline | null = null;
-  let ghost: HTMLImageElement | null = null;
   let reveals: IntersectionObserver | null = null;
+  let spy: IntersectionObserver | null = null;
 
   cards.forEach((card) => {
     card.addEventListener('click', (e) => {
@@ -80,6 +68,23 @@ export function initWarpDetail() {
 
   root.querySelectorAll('[data-detail-close]').forEach((el) => {
     el.addEventListener('click', () => closeCard());
+  });
+
+  // The rail's section links and the foot's neighbouring projects.
+  root.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const jump = target.closest<HTMLAnchorElement>('[data-cs-jump]');
+    if (jump) {
+      e.preventDefault();
+      const section = content.querySelector<HTMLElement>(`#${jump.dataset.csJump}`);
+      section?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      return;
+    }
+    const next = target.closest<HTMLElement>('[data-cs-go]');
+    if (next) {
+      e.preventDefault();
+      switchTo(next.dataset.csGo || '');
+    }
   });
 
   // Links that open a study by name, e.g. "More about me".
@@ -100,21 +105,6 @@ export function initWarpDetail() {
   window.addEventListener('popstate', syncToHash);
   window.addEventListener('hashchange', syncToHash);
   if (HASHES[location.hash]) syncToHash();
-
-  panel.addEventListener(
-    'scroll',
-    () => {
-      const max = panel.scrollHeight - panel.clientHeight;
-      const p = max > 0 ? Math.min(1, Math.max(0, panel.scrollTop / max)) : 0;
-      if (railFill) gsap.set(railFill, { scaleY: p });
-      panel.classList.toggle('is-scrolled', p > 0.02);
-    },
-    { passive: true },
-  );
-
-  window.addEventListener('resize', () => {
-    if (open) fitStudy();
-  });
 
   document.addEventListener('keydown', (e) => {
     if (!open) return;
@@ -142,13 +132,7 @@ export function initWarpDetail() {
     }
   }
 
-  /** Scales the fixed-width Readymag canvas to fill the window, as Readymag does. */
-  function fitStudy() {
-    const page = content.querySelector<HTMLElement>('.rm');
-    if (page) page.style.setProperty('--rm-s', String(Math.min(MAX_SCALE, content.clientWidth / CANVAS)));
-  }
-
-  /** Readymag's scroll animation: widgets grow and fade in as they arrive. */
+  /** Each block rises and fades in as it scrolls into view. */
   function watchReveals() {
     reveals?.disconnect();
     const observer = new IntersectionObserver(
@@ -161,15 +145,58 @@ export function initWarpDetail() {
       },
       { root: panel, rootMargin: '0px 0px -6% 0px' },
     );
-    content.querySelectorAll('[data-rm-reveal]').forEach((el) => {
+    content.querySelectorAll('[data-cs-reveal]').forEach((el) => {
       if (reduced) el.classList.add('is-in');
       else observer.observe(el);
     });
     reveals = observer;
   }
 
+  /**
+   * The rail: one link per section, the one being read set in ink, with a
+   * small arrow beside it that slides along as the reader moves on.
+   */
+  function buildRail() {
+    spy?.disconnect();
+    const sections = Array.from(content.querySelectorAll<HTMLElement>('.cs-section[data-cs-title]'));
+    sectionList.innerHTML =
+      `<li class="detail__marker" aria-hidden="true"><svg viewBox="0 0 6 6"><path d="M1.5 0.5 4 3 1.5 5.5" /></svg></li>` +
+      sections.map((s) => `<li><a href="#${s.id}" data-cs-jump="${s.id}">${s.dataset.csTitle}</a></li>`).join('');
+    const marker = sectionList.querySelector<HTMLElement>('.detail__marker')!;
+    const links = new Map(
+      sections.map((s) => [s, sectionList.querySelector<HTMLElement>(`[data-cs-jump="${s.id}"]`)!]),
+    );
+    const setActive = (section: HTMLElement) => {
+      links.forEach((link, s) => link.classList.toggle('is-active', s === section));
+      // Level with the first line of the active link.
+      const item = links.get(section)?.parentElement;
+      if (item) marker.style.transform = `translateY(${item.offsetTop}px)`;
+    };
+    if (sections[0]) setActive(sections[0]);
+    // A section is "being read" once its top passes the upper third.
+    spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) if (entry.isIntersecting) setActive(entry.target as HTMLElement);
+      },
+      { root: panel, rootMargin: '-30% 0px -65% 0px' },
+    );
+    sections.forEach((s) => spy!.observe(s));
+  }
+
+  /** The foot: the projects before and after this one, in the grid's order. */
+  function neighbours(key: string) {
+    const keys = cards.map((c) => c.dataset.case || '').filter((k) => STUDIES[k]);
+    const at = keys.indexOf(key);
+    const titleOf = (k: string) =>
+      cards.find((c) => c.dataset.case === k)?.querySelector('.title')?.textContent?.trim() || '';
+    const link = (k: string | undefined, label: string, side: string) =>
+      k
+        ? `<a href="#" class="cs-next__link cs-next__link--${side}" data-cs-go="${k}"><span>${label}</span><b>${titleOf(k)}</b></a>`
+        : `<span class="cs-next__link cs-next__link--${side} is-empty"><span>${label}</span><b>More soon</b></span>`;
+    return `<nav class="cs-next" aria-label="More projects">${link(keys[at - 1], 'Previous project', 'prev')}${link(keys[at + 1], 'Next project', 'next')}</nav>`;
+  }
+
   async function fill(key: string, card: HTMLElement | null) {
-    const source = card?.querySelector('img');
     const title = card?.querySelector('.title')?.textContent?.trim() || '';
     const num = card?.querySelector('.idx')?.textContent?.trim() || '';
     const spans = card?.querySelectorAll('.meta')[1]?.querySelectorAll('span');
@@ -184,48 +211,43 @@ export function initWarpDetail() {
     if (load) {
       loadFonts();
       const page = await load();
-      content.innerHTML = page.replace(/src="\//g, `src="${BASE}`);
+      content.innerHTML = page.replace(/src="\//g, `src="${BASE}`) + neighbours(key);
       content.hidden = false;
-      // Native pages (not a Readymag canvas) sit on the site's own paper.
-      root!.classList.toggle('detail--native', !content.querySelector('.rm'));
     } else {
-      // The card's image is already decoded, so the hero appears instantly.
+      const source = card?.querySelector('img');
       img.src = source?.currentSrc || source?.src || '';
       img.alt = source?.alt || '';
       const item = ITEMS.find((it: { title: string }) => it.title === title);
       root!.querySelector('#detail-note')!.textContent = item?.desc || 'Full case study coming soon.';
       content.innerHTML = '';
       content.hidden = true;
-      root!.classList.remove('detail--native');
     }
+    buildRail();
   }
 
-  /**
-   * Where the flying image lands: the study's copy of the card's picture if it
-   * has one, else its first picture; or the plain hero for cards without one.
-   */
-  function landing(card: HTMLElement | null): HTMLElement {
-    if (!root!.classList.contains('detail--study')) return figure;
-    const file = card?.querySelector('img')?.getAttribute('src')?.split('/').pop();
-    const match = file ? content.querySelector(`.rm-pic img[src$="/${file}"]`) : null;
-    return match?.parentElement || content.querySelector<HTMLElement>('.rm-pic') || content;
+  /** Moves to another study from the foot, without closing the page. */
+  async function switchTo(key: string) {
+    if (busy || !STUDIES[key]) return;
+    busy = true;
+    const card = cards.find((c) => c.dataset.case === key) || null;
+    const swap = async () => {
+      current = card;
+      await fill(key, card);
+      panel.scrollTop = 0;
+      watchReveals();
+    };
+    if (reduced) {
+      await swap();
+      busy = false;
+      return;
+    }
+    await gsap.to(content, { opacity: 0, y: 12, duration: 0.25, ease: 'power2.in' });
+    await swap();
+    await gsap.fromTo(content, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out', clearProps: 'all' });
+    busy = false;
   }
 
-  function makeGhost(card: HTMLElement) {
-    const source = card.querySelector('img');
-    const el = document.createElement('img');
-    el.className = 'detail__ghost';
-    el.src = source?.currentSrc || source?.src || '';
-    el.alt = '';
-    document.body.appendChild(el);
-    return el;
-  }
-
-  function rectVars(r: DOMRect) {
-    return { left: r.left, top: r.top, width: r.width, height: r.height };
-  }
-
-  /** Opens a study; from a card the card's image flies in, otherwise it fades. */
+  /** Opens a study: the page rises and fades in over the site. */
   async function openStudy(key: string, card: HTMLElement | null) {
     if (busy || open || (!card && !STUDIES[key])) return;
     busy = true;
@@ -241,9 +263,6 @@ export function initWarpDetail() {
     document.documentElement.classList.add('is-locked');
     inertTargets.forEach((el) => el.setAttribute('inert', ''));
     panel.scrollTop = 0;
-    panel.classList.remove('is-scrolled');
-    if (railFill) gsap.set(railFill, { scaleY: 0 });
-    fitStudy();
     watchReveals();
 
     tl?.kill();
@@ -254,49 +273,29 @@ export function initWarpDetail() {
       return;
     }
 
-    if (!card) {
-      tl = gsap.timeline({
-        onComplete: () => {
-          busy = false;
-          closeBtn.focus({ preventScroll: true });
-        },
-      });
-      tl.fromTo(scrim, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: 'power2.out' }, 0)
-        .fromTo(panel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, 0.1);
-      return;
-    }
-
-    const from = (card.querySelector('figure') || card).getBoundingClientRect();
-    const to = landing(card).getBoundingClientRect();
-
-    card.classList.add('is-lifting');
-    ghost?.remove();
-    ghost = makeGhost(card);
-
     tl = gsap.timeline({
-      defaults: { ease: 'power3.inOut' },
       onComplete: () => {
-        ghost?.remove();
-        ghost = null;
         busy = false;
         closeBtn.focus({ preventScroll: true });
       },
     });
-
-    tl.fromTo(scrim, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0)
-      .fromTo(ghost, rectVars(from), { ...rectVars(to), duration: 0.9 }, 0)
-      .fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.3)
-      .to(ghost, { opacity: 0, duration: 0.35, ease: 'power1.out' }, 0.85);
+    // The page rises, not the panel: a transform on the panel would carry
+    // the fixed rail along with the scroll.
+    tl.fromTo(scrim, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power2.out' }, 0)
+      .fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.05)
+      .fromTo(content, { y: 32 }, { y: 0, duration: 0.7, ease: 'power3.out', clearProps: 'transform' }, 0.05);
   }
 
   function closeCard() {
     if (!open) return;
-    // Closing mid-animation (Back pressed while it opens) finishes it first.
+    // Closing mid-animation (Back pressed while it opens, or while it moves
+    // to the next study) finishes or drops that first.
     if (busy) {
       tl?.progress(1);
-      if (!open || busy) return;
+      gsap.killTweensOf(content);
+      gsap.set(content, { clearProps: 'all' });
+      busy = false;
     }
-    const card = current;
     busy = true;
     if (HASHES[location.hash]) history.pushState(null, '', location.pathname + location.search);
 
@@ -305,10 +304,8 @@ export function initWarpDetail() {
       open = false;
       current = null;
       busy = false;
-      ghost?.remove();
-      ghost = null;
       reveals?.disconnect();
-      card?.classList.remove('is-lifting');
+      spy?.disconnect();
       document.documentElement.classList.remove('is-locked');
       inertTargets.forEach((el) => el.removeAttribute('inert'));
       lastFocus?.focus({ preventScroll: true });
@@ -321,26 +318,12 @@ export function initWarpDetail() {
       return;
     }
 
-    tl = gsap.timeline({ defaults: { ease: 'power3.inOut' }, onComplete: finish });
-
-    // Fly the image back only while the hero is still on screen; deep in the
-    // page a plain fade reads better than an image arriving from above.
-    const to = landing(card).getBoundingClientRect();
-    if (card && to.bottom > to.height * 0.4) {
-      const from = (card.querySelector('figure') || card).getBoundingClientRect();
-      ghost?.remove();
-      ghost = makeGhost(card);
-      tl.fromTo(ghost, { ...rectVars(to), opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'none' }, 0)
-        .to(ghost, { ...rectVars(from), duration: 0.75 }, 0.15)
-        .to(panel, { opacity: 0, duration: 0.35, ease: 'power2.in' }, 0.15)
-        .to(scrim, { opacity: 0, duration: 0.45, ease: 'power2.in' }, 0.4);
-    } else {
-      tl.to(panel, { opacity: 0, y: 24, duration: 0.4, ease: 'power2.in' }, 0).to(
-        scrim,
-        { opacity: 0, duration: 0.45, ease: 'power2.in' },
-        0.1,
-      );
-    }
+    tl = gsap.timeline({ onComplete: finish });
+    tl.to(panel, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 0).to(
+      scrim,
+      { opacity: 0, duration: 0.45, ease: 'power2.in' },
+      0.1,
+    );
   }
 }
 
