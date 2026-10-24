@@ -131,9 +131,12 @@
   --cs-ink: #000;
   --cs-muted: rgb(0 0 0 / 0.52);
   --cs-frame: #f4f4f4;
-  --cs-col: min(560px, 100% - 32px);
-  --cs-wide: min(640px, 100% - 32px);
-  --cs-hero: min(720px, 100% - 32px);
+  /* The page fills the room right of the rail; reading lines stay short. */
+  --cs-col: min(1080px, 100%);
+  --cs-measure: 720px;
+  /* One page box, centred in the room; everything in it shares its left edge. */
+  width: var(--cs-col);
+  margin-inline: auto;
   padding: clamp(4rem, 12vh, 7.5rem) 0 0;
   font-family: 'Inter', var(--font-display);
   font-size: 16px;
@@ -142,17 +145,15 @@
   color: var(--cs-muted);
   -webkit-font-smoothing: antialiased;
 }
-.cs > :not(.cs-section),
-.cs-section > * { width: var(--cs-col); margin-inline: auto; }
 :where(.cs) :where(p, h1, h2, h3, ul, dl, dd, figure, blockquote) { margin: 0; }
 .cs a { color: var(--cs-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgb(0 0 0 / 0.25); }
 
 /* The tag and the headline. */
 .cs-head { display: grid; justify-items: start; gap: 16px; }
 .cs-tag { padding: 4px 10px; border-radius: 999px; font-size: 14px; color: var(--cs-ink); background: #f2f2f2; }
-.cs-title { font-size: clamp(2.25rem, 1.6rem + 1.8vw, 3rem); font-weight: 500; line-height: 1.1; color: var(--cs-ink); text-wrap: balance; }
+.cs-title { max-width: var(--cs-measure); font-size: clamp(2.25rem, 1.6rem + 1.8vw, 3rem); font-weight: 500; line-height: 1.1; color: var(--cs-ink); text-wrap: balance; }
 
-/* Pictures: in a soft grey frame, a little wider than the text. */
+/* Pictures: in a soft grey frame, as wide as the page. */
 .cs-frame {
   display: grid;
   place-items: center;
@@ -161,11 +162,11 @@
   background: var(--cs-frame);
 }
 .cs-frame img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
-.cs > .cs-hero { --pad: clamp(16px, 4vw, 40px); position: relative; width: var(--cs-hero); aspect-ratio: 3 / 2; margin-top: 32px; }
+.cs > .cs-hero { --pad: clamp(16px, 4vw, 48px); position: relative; aspect-ratio: 16 / 9; margin-top: 32px; }
 /* Pinned inside the frame, so a tall cover can't stretch it past 3:2. */
 .cs-hero img { position: absolute; inset: var(--pad); width: calc(100% - 2 * var(--pad)); height: calc(100% - 2 * var(--pad)); }
-.cs-section > .cs-block:has(> .cs-frame:only-child),
-.cs-section > .cs-gallery { width: var(--cs-wide); }
+/* A lone picture is never drawn much past its size on the original page. */
+.cs-block > .cs-frame:only-child { max-width: calc(var(--w, 1024px) * 1.4); }
 .cs-gallery { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 12px; align-items: start; }
 .cs-gallery .cs-frame { padding: clamp(8px, 1.2vw, 14px); border-radius: 12px; }
 
@@ -177,12 +178,20 @@
 /* Sections: a heading over the copy, with room between them. */
 .cs-section { display: grid; gap: 24px; padding-top: clamp(4.5rem, 10vh, 7.5rem); scroll-margin-top: 1rem; }
 .cs-label { font-size: 14px; color: var(--cs-ink); margin-bottom: -12px; }
+.cs-intro,
+.cs-h2,
+.cs-block > p,
+.cs-block > ul,
+.cs-term { max-width: var(--cs-measure); }
 .cs-intro { font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.6rem); font-weight: 500; line-height: 1.25; color: var(--cs-ink); }
 .cs-h2 { font-size: clamp(1.6rem, 1.3rem + 0.9vw, 2rem); font-weight: 500; line-height: 1.2; color: var(--cs-ink); text-wrap: balance; }
 .cs-block { display: grid; gap: 12px; }
+/* Grid items may shrink below a picture's natural width on narrow screens. */
+.cs-section > *,
+.cs-frame { min-width: 0; }
 .cs h3 { font-size: 16px; font-weight: 400; color: var(--cs-ink); }
 .cs-term { display: grid; gap: 2px; }
-.cs ul { display: grid; gap: 6px; padding-left: 1.1em; }
+.cs ul { display: grid; gap: 6px; padding-left: 1.1em; list-style: disc; }
 .cs li::marker { color: rgb(0 0 0 / 0.3); }
 .cs blockquote { padding: 16px 18px; border-radius: 14px; color: var(--cs-ink); background: #f6f6f6; }
 .cs-caption { font-size: 13px; color: var(--cs-muted); }
@@ -207,7 +216,13 @@
   letter-spacing: -0.04em;
   line-height: 1.4;
 }
-#detail-rich-content > .cs-next { width: min(560px, 100% - 32px); margin-inline: auto; }
+#detail-rich-content > .cs-next { width: var(--cs-page, min(1080px, 100%)); margin-inline: auto; }
+
+/* The page's room: the screen, less a gutter, and less the rail where it shows. */
+.detail--study #detail-rich-content { padding-inline: 16px; }
+@media (min-width: 1101px) {
+  .detail--study #detail-rich-content { padding-left: 260px; padding-right: clamp(32px, 5vw, 80px); }
+}
 .cs-next__link { display: grid; color: #000; text-decoration: none; }
 .cs-next__link span { color: rgb(0 0 0 / 0.35); }
 .cs-next__link--next { text-align: right; }

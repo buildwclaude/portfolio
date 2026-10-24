@@ -20,26 +20,22 @@ export function renderPage(): string {
     ${header()} 
 
     <main class="page" id="main" tabindex="-1">
-      <!-- reading progress: a ruler down the left edge, one mark per section -->
+      <!-- where you are: an ivy that climbs down as the page scrolls, one big
+           leaf per section (grown by lib/rail) -->
       <div class="rail" aria-hidden="true">
-        <span class="rail__track"></span>
-        <span class="rail__minor"></span>
-        <span class="rail__fill"></span>
+        <svg class="rail__ivy" viewBox="0 0 90 440"></svg>
         ${[
           { href: '#intro', label: 'Intro' },
           { href: '#warp-work', label: 'Featured projects' },
           { href: '#about', label: 'About' },
           { href: '#experiments', label: 'Experiments' },
         ].map(
-          (s, i) => html`
+          (s) => html`
             <a class="rail__tick" href="${s.href}" tabindex="-1">
-              <span class="rail__num">${String(i + 1).padStart(2, '0')}</span>
               <span class="rail__name">${s.label}</span>
             </a>
           `,
         )}
-        <span class="rail__marker"></span>
-        <span class="rail__readout">000</span>
       </div>
       ${hero()}
       ${warp()}

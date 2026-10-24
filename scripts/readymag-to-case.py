@@ -106,7 +106,9 @@ def is_meta(row):
 
 
 def picture(it, cls='cs-frame'):
-    ratio = f' style="aspect-ratio:{it["width"]}/{it["height"]}"' if it['height'] else ''
+    # Its shape, and its width on the Readymag canvas, so the page can keep
+    # a small picture from being blown up past what it can carry.
+    ratio = f' style="aspect-ratio:{it["width"]}/{it["height"]};--w:{it["width"]}px"' if it['height'] else ''
     return f'<figure class="{cls}"{ratio}><img src="{it["src"]}" alt="" loading="lazy" decoding="async"></figure>'
 
 
