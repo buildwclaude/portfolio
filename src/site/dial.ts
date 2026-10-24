@@ -28,7 +28,7 @@ const NOTES: Record<string, string> = {
 export function dialParts({ navLinks = false } = {}) {
   return html`
     <div class="dial__wheel" data-dial>
-      <svg class="dial__ticks" aria-hidden="true" data-dial-ticks></svg>
+      <div class="dial__ring" aria-hidden="true" data-dial-ring><svg class="dial__ticks" data-dial-ticks></svg></div>
       <ul class="dial__items">
         ${site.nav.map(
           (item, i) => html`

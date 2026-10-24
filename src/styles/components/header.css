@@ -76,8 +76,17 @@
 
 .dial__wheel { position: absolute; inset: 0; }
 
-/* Only drawn: it never takes the pointer from what lies beneath. */
-.dial__ticks { position: absolute; max-width: none; translate: -50% -50%; overflow: visible; pointer-events: none; }
+/* The ring: still, and masked so it fades out above and below the pointer;
+   the dashes inside turn under the mask on the compositor. Only drawn — it
+   never takes the pointer from what lies beneath. */
+.dial__ring {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent calc(50% - var(--reach, 50%)), #000 50%, transparent calc(50% + var(--reach, 50%)));
+  mask-image: linear-gradient(to bottom, transparent calc(50% - var(--reach, 50%)), #000 50%, transparent calc(50% + var(--reach, 50%)));
+}
+.dial__ticks { display: block; width: 100%; height: 100%; max-width: none; overflow: visible; will-change: transform; }
 .dial__ticks line { stroke: var(--ink); stroke-opacity: 0.2; stroke-width: 2; stroke-linecap: round; }
 .dial__ticks line.is-major { stroke-opacity: 0.42; }
 
@@ -87,7 +96,10 @@
    about the end that meets the rim. */
 .dial__item {
   position: absolute;
+  top: 0;
+  left: 0;
   width: max-content;
+  will-change: transform, opacity;
   transform-origin: 0 50%;
 }
 .dial--right .dial__item { transform-origin: 100% 50%; }

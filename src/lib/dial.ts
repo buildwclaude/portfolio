@@ -20,8 +20,12 @@ const TICK = 3;
 const GAP = 18;
 /** Length of the ring's dashes, px. */
 const DASH = 18;
-const SETTLE_MS = 380;
-let dials = 0;
+/** How briskly the dial glides to where it's headed, per second: it closes
+ *  this share of the gap continuously (frame-rate independent), so it
+ *  eases in and comes to rest without a seam, like the art room. */
+const GLIDE = 11;
+/** Under a dragging hand it keeps closer. */
+const GLIDE_HELD = 26;
 
 export interface DialOptions {
   /** Which edge the wheel comes in from. */
@@ -45,6 +49,7 @@ export interface DialOptions {
 }
 
 export function createDial(root: HTMLElement, opts: DialOptions) {
+  const ring = root.querySelector<HTMLElement>('[data-dial-ring]')!;
   const ticks = root.querySelector<SVGSVGElement>('[data-dial-ticks]')!;
   const pointerMark = root.querySelector<HTMLElement>('[data-dial-pointer]')!;
   const items = Array.from(root.querySelectorAll<HTMLElement>('[data-dial-item]'));
@@ -52,18 +57,16 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
   const last = items.length - 1;
   const left = opts.side === 'left';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fadeId = `dial-fade-${++dials}`;
   root.classList.add(`dial--${opts.side}`);
 
   let radius = 0;
   let cx = 0;
   let cy = 0;
+  /** Where the dial is now, in pages, and where it's gliding to. */
   let frac = 0;
-  let settling = 0;
+  let aimed = 0;
   /** How far past the rim its pages reach, px. */
   let reachOut = 0;
-  /** The page the dial is turning to, or resting on. */
-  let aimed = 0;
 
   const nearest = () => Math.max(0, Math.min(last, Math.round(frac)));
   const clamp = (v: number) => Math.max(-0.35, Math.min(last + 0.35, v));
@@ -82,9 +85,12 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
 
     const size = radius * 2 + 40;
     ticks.setAttribute('viewBox', `${-size / 2} ${-size / 2} ${size} ${size}`);
-    ticks.style.width = ticks.style.height = `${size}px`;
-    ticks.style.left = `${cx}px`;
-    ticks.style.top = `${cy}px`;
+    ring.style.width = ring.style.height = `${size}px`;
+    ring.style.left = `${cx}px`;
+    ring.style.top = `${cy}px`;
+    // The ring fades out above and below the pointer (a mask on the still
+    // ring, so the dashes can turn under it on the compositor).
+    ring.style.setProperty('--reach', `${Math.min(radius, h / 2)}px`);
     // A ring of even dashes, no rim line; the ones at the pages a shade darker.
     let marks = '';
     for (let a = -180; a < 180; a += TICK) {
@@ -95,13 +101,7 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
       const s = Math.sin(t);
       marks += `<line x1="${(r0 * c).toFixed(1)}" y1="${(r0 * s).toFixed(1)}" x2="${(radius * c).toFixed(1)}" y2="${(radius * s).toFixed(1)}"${major ? ' class="is-major"' : ''}/>`;
     }
-    // The rim fades out above and below the pointer, so only its near arc shows.
-    const reach = Math.min(radius, h / 2);
-    const fade = `<defs><linearGradient id="${fadeId}" gradientUnits="userSpaceOnUse" x1="0" y1="${-reach}" x2="0" y2="${reach}">
-      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
-      </linearGradient><mask id="${fadeId}-m" maskUnits="userSpaceOnUse" x="${-size / 2}" y="${-size / 2}" width="${size}" height="${size}">
-      <rect x="${-size / 2}" y="${-size / 2}" width="${size}" height="${size}" fill="url(#${fadeId})"/></mask></defs>`;
-    ticks.innerHTML = `${fade}<g mask="url(#${fadeId}-m)"><g data-dial-spin>${marks}</g></g>`;
+    ticks.innerHTML = marks;
     reachOut = GAP + Math.max(...items.map((item) => item.offsetWidth)) + 16;
     render();
   }
@@ -114,45 +114,72 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
     return d > radius - DASH - 24 && d < radius + reachOut;
   }
 
+  // Transforms and opacity only, so each frame is the compositor's alone.
+  let shown = -1;
   function render() {
-    ticks.querySelector('[data-dial-spin]')?.setAttribute('transform', `rotate(${(left ? -1 : 1) * frac * STEP})`);
+    ticks.style.transform = `rotate(${(left ? -1 : 1) * frac * STEP}deg)`;
     const at = nearest();
     items.forEach((item, i) => {
       const a = (i - frac) * STEP;
       // On the rim, just outside it; a right-hand wheel's pages sit to its left.
       const phi = ((left ? a : 180 - a) * Math.PI) / 180;
-      item.style.left = `${cx + (radius + GAP) * Math.cos(phi)}px`;
-      item.style.top = `${cy + (radius + GAP) * Math.sin(phi)}px`;
+      const x = (cx + (radius + GAP) * Math.cos(phi)).toFixed(2);
+      const y = (cy + (radius + GAP) * Math.sin(phi)).toFixed(2);
       // Each page reads along its spoke, toward the rim on the right-hand wheel.
-      item.style.transform = left ? `translateY(-50%) rotate(${a}deg)` : `translate(-100%, -50%) rotate(${-a}deg)`;
+      item.style.transform = left
+        ? `translate3d(${x}px, ${y}px, 0) translateY(-50%) rotate(${a}deg)`
+        : `translate3d(${x}px, ${y}px, 0) translate(-100%, -50%) rotate(${-a}deg)`;
       item.style.opacity = String(Math.max(0, 1 - Math.abs(i - frac) * 0.3));
       item.style.visibility = Math.abs(a) > 80 ? 'hidden' : '';
-      item.classList.toggle('is-selected', i === at);
     });
+    if (at !== shown) {
+      shown = at;
+      items.forEach((item, i) => item.classList.toggle('is-selected', i === at));
+    }
   }
 
-  /** Turns the dial smoothly to a page. */
-  function settleTo(target: number, then?: () => void) {
-    cancelAnimationFrame(settling);
+  // --- Motion: always gliding toward `aimed`, a frame at a time -------------
+  let frame = 0;
+  let lastFrame = 0;
+  let glide = GLIDE;
+  let arrived: (() => void) | null = null;
+  function tick(now: number) {
+    const dt = Math.min(0.05, (now - lastFrame) / 1000);
+    lastFrame = now;
+    frac += (aimed - frac) * (1 - Math.exp(-dt * glide));
+    const gap = Math.abs(aimed - frac);
+    if (gap < 0.0006) frac = aimed;
+    render();
+    // There to the eye: hand over, and let the last sliver finish on its own.
+    if (arrived && gap < 0.02) {
+      const then = arrived;
+      arrived = null;
+      then();
+    }
+    frame = frac === aimed ? 0 : requestAnimationFrame(tick);
+  }
+  /** Sends the dial gliding to a turn (in pages); `then` once it's there. */
+  function glideTo(target: number, then?: () => void, briskness = GLIDE) {
     aimed = target;
-    const from = frac;
-    if (reduced || Math.abs(from - target) < 0.001) {
+    glide = briskness;
+    arrived = then ?? null;
+    if (reduced) {
+      cancelAnimationFrame(frame);
+      frame = 0;
       frac = target;
       render();
+      arrived = null;
       then?.();
       return;
     }
-    const start = performance.now();
-    const step = (now: number) => {
-      const t = Math.min(1, (now - start) / SETTLE_MS);
-      frac = from + (target - from) * (1 - Math.pow(1 - t, 3));
-      render();
-      if (t < 1) settling = requestAnimationFrame(step);
-      else then?.();
-    };
-    settling = requestAnimationFrame(step);
+    if (!frame) {
+      lastFrame = performance.now();
+      frame = requestAnimationFrame(tick);
+    }
   }
-  const snap = () => settleTo(nearest());
+  /** Turns the dial smoothly to a page. */
+  const settleTo = (page: number, then?: () => void) => glideTo(page, then);
+  const snap = () => settleTo(Math.max(0, Math.min(last, Math.round(aimed))));
 
   // --- Scrolling over it turns it, where asked ------------------------------
   // A page at a time, like the clicks of a bezel: a wheel's notch or a
@@ -220,7 +247,7 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
     if (opts.inPage && !inReach(e.clientX, e.clientY)) return;
     pointer = e.pointerId;
     startY = e.clientY;
-    startFrac = frac;
+    startFrac = aimed;
     dragged = false;
   });
   root.addEventListener('pointermove', (e) => {
@@ -231,7 +258,6 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
     if (!dragged && Math.abs(dy) < 8) return;
     if (!dragged) {
       dragged = true;
-      cancelAnimationFrame(settling);
       root.classList.add('is-turning');
       try {
         root.setPointerCapture(e.pointerId);
@@ -241,8 +267,7 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
     }
     // One page per stretch of rim the pointer travels along.
     const perPage = (radius * STEP * Math.PI) / 180;
-    frac = clamp(startFrac - dy / perPage);
-    render();
+    glideTo(clamp(startFrac - dy / perPage), undefined, GLIDE_HELD);
   });
   function end(e: PointerEvent) {
     if (e.pointerId !== pointer) return;
@@ -272,7 +297,7 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
         opts.onChoose(i, link);
       });
     });
-    link.addEventListener('focus', () => !choosing && Math.round(frac) !== i && settleTo(i));
+    link.addEventListener('focus', () => !choosing && aimed !== i && settleTo(i));
   });
 
   return {
@@ -282,7 +307,9 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
     nearest,
     /** Jumps straight to a page, unanimated. */
     set(i: number) {
-      cancelAnimationFrame(settling);
+      cancelAnimationFrame(frame);
+      frame = 0;
+      arrived = null;
       frac = aimed = i;
       render();
     },

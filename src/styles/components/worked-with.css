@@ -36,9 +36,14 @@
 .worked__name--sans { font-weight: 400; letter-spacing: -0.02em; }
 .worked__name--serif { font-family: Georgia, 'Times New Roman', serif; font-style: italic; letter-spacing: -0.01em; }
 .worked__name--caps { font-weight: 700; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; }
-/* Reversed out of a grey block, which darkens like the others' lettering. */
+/* Reversed out of a grey block, which darkens like the others' lettering.
+   Capitals have no descenders, so the letters are centred on themselves
+   (cap height to baseline), not on the line box, which sits them high. */
 .worked__name--boxed span {
-  padding: 5px 7px 4px;
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 1px 7px 0;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -48,5 +53,8 @@
   transition: background-color var(--dur-mid) var(--ease-out);
 }
 .worked__name--boxed:hover span { background: var(--ink-secondary); }
+@supports (text-box: trim-both cap alphabetic) {
+  .worked__name--boxed span { padding-top: 0; text-box: trim-both cap alphabetic; }
+}
 .worked__name--icon { font-weight: 500; letter-spacing: -0.02em; }
 .worked__name svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
