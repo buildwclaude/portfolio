@@ -41,7 +41,7 @@ export function initWarpDetail() {
   const closeBtn = root.querySelector<HTMLElement>('.detail__close')!;
   const content = root.querySelector<HTMLElement>('#detail-rich-content')!;
   const sectionList = root.querySelector<HTMLElement>('#detail-sections')!;
-  // The project cards, and anything else that opens a study (the landing's frames).
+  // The project cards, and anything else that opens a study.
   const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-case]'));
   const inertTargets = ['.header', '#main', '.footer', 'header', 'footer']
     .map((s) => document.querySelector<HTMLElement>(s))

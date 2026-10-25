@@ -58,24 +58,29 @@
   --reveal-delay: 200ms;
 }
 
-/* Areal's buttons: a black pill and a pale one. */
-.pill {
+/* The address as a chip: a click copies it, and it says so. */
+.copy-mail {
   display: inline-flex;
   align-items: center;
-  height: 36px;
-  padding: 0 14px;
+  gap: 9px;
+  height: 38px;
+  padding: 0 14px 0 12px;
   border-radius: 999px;
-  background: #f0f0ee;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 6px 18px -12px rgba(0, 0, 0, 0.3);
   font-family: 'Inter', var(--font-sans);
-  font-size: 15px;
-  letter-spacing: -0.04em;
-  color: #000;
-  text-decoration: none;
-  transition: transform var(--dur-mid) var(--ease-out), background-color var(--dur-mid) var(--ease-out);
+  font-size: 14px;
+  letter-spacing: -0.03em;
+  color: #111;
+  cursor: pointer;
+  transition: box-shadow var(--dur-mid) var(--ease-out), transform var(--dur-mid) var(--ease-out);
 }
-.pill:hover { background: #e6e6e3; transform: translateY(-1px); }
-.pill--dark { background: #111; color: #fff; }
-.pill--dark:hover { background: #2a2a2a; }
+.copy-mail:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14), 0 10px 22px -12px rgba(0, 0, 0, 0.35); }
+.copy-mail:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
+.copy-mail__dot { width: 7px; height: 7px; border-radius: 50%; background: #2f9e57; box-shadow: 0 0 0 3px rgba(47, 158, 87, 0.16); }
+.copy-mail__icon { width: 14px; height: 14px; fill: none; stroke: rgba(0, 0, 0, 0.45); stroke-width: 1.4; transition: stroke 0.2s; }
+.copy-mail:hover .copy-mail__icon { stroke: #111; }
+.copy-mail.is-copied .copy-mail__text { color: #2f9e57; }
 
 /* The places worked with: under the buttons, centred, a size smaller. */
 .hero__center .worked { margin-top: clamp(3rem, 8vh, 4.5rem); max-width: 34rem; --reveal-delay: 280ms; }

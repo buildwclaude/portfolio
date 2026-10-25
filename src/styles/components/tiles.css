@@ -1,0 +1,267 @@
+/* ==========================================================================
+   Tiles — four soft-coloured tiles under the landing text (site/tiles,
+   lib/tiles). The Hello tile is the big one at the left; Playground and
+   the battery sit side by side at the right, Currently under them. Each a
+   colour of its own, all of them quiet: butter, mint, lilac, sky.
+   ========================================================================== */
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, clamp(200px, 19vw, 236px));
+  gap: 12px;
+  max-width: 1080px;
+  margin: 0 auto clamp(5rem, 10vw, 8rem);
+  padding-inline: 24px;
+  font-family: 'Inter', var(--font-sans);
+  letter-spacing: -0.03em;
+}
+
+.tile-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 18px;
+  border-radius: 22px;
+  color: #111;
+  text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s var(--ease-out);
+}
+a.tile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03), 0 22px 40px -28px rgba(40, 40, 20, 0.45);
+}
+a.tile-card:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
+
+.tile-card__kicker { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(0, 0, 0, 0.55); }
+
+.tile-card__foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  font-size: 15px;
+  font-weight: 500;
+}
+.tile-card__foot small { display: block; font-size: 12px; font-weight: 400; color: rgba(0, 0, 0, 0.5); }
+.tile-card__arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  transition: transform 0.4s var(--ease-out);
+}
+a.tile-card:hover .tile-card__arrow { transform: translateX(3px); }
+
+/* --- Hello: the portrait, the greeting over it ----------------------------- */
+
+.tile-card--hello {
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+  background: #ffe3a6;
+}
+.tile-card__photo {
+  position: absolute;
+  inset: 12px 12px 64px;
+  width: calc(100% - 24px);
+  height: calc(100% - 76px);
+  border-radius: 14px;
+  object-fit: cover;
+  object-position: 50% 30%;
+  transition: transform 0.9s var(--ease-out);
+}
+a.tile-card--hello:hover .tile-card__photo { transform: scale(1.02); }
+.tile-card--hello .tile-card__foot { padding-inline: 4px; }
+
+/* The greeting, on a pale label over the photo; each word leaves upward
+   and the next one rises in. */
+.hello {
+  position: absolute;
+  z-index: 2;
+  top: 26px;
+  left: 26px;
+  overflow: hidden;
+  padding: 8px 14px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  font-size: clamp(22px, 2.2vw, 28px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+.hello__word {
+  display: block;
+  transition: transform 0.26s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.26s;
+}
+.hello__word.is-leaving { transform: translateY(-110%); opacity: 0; }
+.hello__word.is-arriving { transform: translateY(110%); opacity: 0; transition: none; }
+
+/* --- Playground: a stack of art that shuffles on hover ---------------------- */
+
+.tile-card--art { grid-column: 3; grid-row: 1; background: #cfeadc; }
+.riffle {
+  position: relative;
+  flex: 1;
+  margin: 4px 8px 14px;
+}
+.riffle img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Sized by the stack's height, so it fits however wide the tile is. */
+  height: 92%;
+  width: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid #fff;
+  box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.35);
+  /* --n is the place in the stack: 0 in front, each one further back
+     smaller, turned the other way and set to one side. */
+  z-index: calc(10 - var(--n));
+  transform:
+    translate(-50%, -50%)
+    translateX(calc((var(--n) - 1.5) * 14%))
+    rotate(calc((var(--n) - 1.5) * 7deg))
+    scale(calc(1 - var(--n) * 0.06));
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* --- Social battery: Socialux, to play with --------------------------------- */
+
+.tile-card--battery {
+  --level: 0.62;
+  grid-column: 4;
+  grid-row: 1;
+  gap: 12px;
+  background: #e5dbfb;
+}
+.charge {
+  position: relative;
+  display: block;
+  height: 46px;
+  margin: 6px 10px 0 0;
+  padding: 4px;
+  border: 2px solid rgba(17, 17, 17, 0.75);
+  border-radius: 12px;
+}
+.charge__fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--level) * 100%);
+  min-width: 6px;
+  border-radius: 7px;
+  /* From a machine violet with little human talk, to green with a lot. */
+  background: color-mix(in oklab, #43c463 calc(var(--level) * 100%), #8c72f0);
+  transition: width 0.2s ease-out;
+}
+.charge__tip {
+  position: absolute;
+  top: 50%;
+  right: -9px;
+  width: 5px;
+  height: 16px;
+  border-radius: 0 3px 3px 0;
+  background: rgba(17, 17, 17, 0.75);
+  transform: translateY(-50%);
+}
+.charge__label { display: block; }
+.charge__range {
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: transparent;
+  cursor: grab;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.charge__range:active { cursor: grabbing; }
+.charge__range::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: rgba(17, 17, 17, 0.15); }
+.charge__range::-moz-range-track { height: 4px; border-radius: 2px; background: rgba(17, 17, 17, 0.15); }
+.charge__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px #111, 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+.charge__range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px #111, 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+.charge__range:focus-visible { outline: 2px solid #111; outline-offset: 4px; border-radius: 6px; }
+.charge__scale { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: rgba(0, 0, 0, 0.5); }
+.charge__scale b { font-size: 13px; font-weight: 500; color: #111; }
+.tile-card__more { margin-top: auto; font-size: 13px; color: #111; text-decoration: none; }
+.tile-card__more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* --- Currently: now, and the focus as chips ----------------------------------- */
+
+.tile-card--now { grid-column: 3 / span 2; grid-row: 2; background: #d6e4fb; }
+.tile-card__now { margin-top: 12px; max-width: 26rem; font-size: clamp(18px, 1.7vw, 22px); line-height: 1.25; letter-spacing: -0.04em; }
+.now-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f9e57;
+}
+.now-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: #2f9e57;
+  opacity: 0.25;
+  animation: now-breathe 2.4s ease-in-out infinite;
+}
+@keyframes now-breathe {
+  0%, 100% { transform: scale(0.6); opacity: 0.35; }
+  50% { transform: scale(1.4); opacity: 0; }
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.chip {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  transition: background-color 0.3s, transform 0.3s var(--ease-out);
+}
+.chip::first-letter { text-transform: uppercase; }
+.tile-card--now:hover .chip { background: #fff; }
+.tile-card--now:hover .chip:nth-child(2) { transform: translateY(-2px); }
+
+/* --- Smaller screens --------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .tile-card--hello { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 1 / 1; max-height: 480px; }
+  .tile-card--art,
+  .tile-card--battery { grid-column: auto; grid-row: auto; min-height: 220px; }
+  .tile-card--now { grid-column: 1 / -1; grid-row: auto; min-height: 200px; }
+}
+@media (max-width: 520px) {
+  .tiles { grid-template-columns: minmax(0, 1fr); padding-inline: 16px; }
+  .tile-card--art,
+  .tile-card--battery { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-card, .tile-card__photo, .riffle img, .hello__word, .charge__fill { transition: none; }
+  .now-dot::after { animation: none; }
+}

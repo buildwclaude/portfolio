@@ -173,18 +173,14 @@ export const site = {
     ],
   },
 
-  /* ---------------------------------------------------------------- frames
-     The fan of tilted frames under the landing text (site/frames). Each is
-     a picture in a coloured mount with a line under it, and goes somewhere:
-     `href` a page or section, or `case` a case study. The middle one sits
-     in front. Keep the colours soft. */
-  frames: [
-    { title: 'Playground', label: 'Art & sketches', image: '/art/art-13.webp', color: '#cdeadb', href: '#playground' },
-    { title: 'Yatri Hub', label: 'Product design', image: '/work/cards/yatri-hub.webp', color: '#d3e2fb', case: 'yatri-hub' },
-    { title: 'Hello, I’m Sony', label: 'About', image: '/me/portrait.webp', color: '#ffdf8f', href: 'about/' },
-    { title: 'AR Head-Up Display', label: 'Research', image: '/work/cards/ar-hud.webp', color: '#e3d8fb', case: 'ar-hud' },
-    { title: 'Experiments', label: 'Personal projects', image: '/art/art-16.webp', color: '#d9f1ad', href: 'experiments/' },
-  ] as { title: string; label: string; image: string; color: string; href?: string; case?: string }[],
+  /* ----------------------------------------------------------------- tiles
+     The four tiles under the landing text (site/tiles). `hello` is the
+     word the first tile turns through; `art` the pieces the Playground
+     tile shuffles through on hover. */
+  tiles: {
+    hello: ['Hello', 'Namaste', 'Bonjour', 'Hola', 'Ciao', 'こんにちは'],
+    art: ['/art/art-13.webp', '/art/art-12.webp', '/art/art-16.webp', '/art/art-14.webp'],
+  },
 
   /* ------------------------------------------------------------------ work */
   work: {

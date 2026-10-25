@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Top bar — on every page, the way Caspia sets its own: the name at the
-   left, the pages in the middle, Contact at the right, all small capitals.
-   Hovering a page closes brackets in around it and rolls its letters. The
+   Top bar — on every page: the name at the left, every page in the
+   middle in small capitals, the résumé at the right. Brackets close in
+   around the page you're on; hovering a page scrambles its letters. The
    name is set exactly as the playground names itself (playground.css .hud).
    ========================================================================== */
 
@@ -50,39 +50,43 @@
   color: var(--ink);
   text-decoration: none;
 }
-.topbar__contact { justify-self: end; }
-.topbar__arrow { margin-left: 6px; transition: transform var(--dur-mid) var(--ease-out); }
-.topbar__contact:hover .topbar__arrow { transform: translateX(3px); }
 
-/* The brackets wait just outside the word, and close in on hover. */
-.roll__br {
+/* The brackets show only around the page you're on (or the section
+   you're reading), closing in as it becomes current. */
+.topbar__br {
   display: inline-block;
   opacity: 0;
   transition: opacity 0.25s var(--ease-out), transform 0.35s var(--ease-out);
 }
-.roll__br:first-child { margin-right: 4px; transform: translateX(6px); }
-.roll__br:last-of-type { margin-left: 4px; transform: translateX(-6px); }
-.topbar__link:hover .roll__br,
-.topbar__link:focus-visible .roll__br,
-.topbar__link[aria-current] .roll__br { opacity: 1; transform: none; }
+.topbar__br:first-child { margin-right: 4px; transform: translateX(6px); }
+.topbar__br:last-of-type { margin-left: 4px; transform: translateX(-6px); }
+.topbar__link[aria-current] .topbar__br { opacity: 1; transform: none; }
 
-/* Each letter rolls up to the copy of itself underneath, a beat after the last. */
-.roll { display: inline-block; overflow: hidden; height: 1em; line-height: 1; }
-.roll > span { display: inline-flex; }
-.roll__ch {
-  position: relative;
-  display: inline-block;
-  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
-  transition-delay: calc(var(--i) * 18ms);
+/* Hover scrambles the letters (lib/topbar); each one keeps its width while
+   it flickers, so the word never jumps. Scrambled letters show in grey. */
+.scramble > span { display: inline-flex; }
+.scramble__ch { display: inline-block; text-align: center; }
+.scramble__ch.is-noise { color: var(--ink-muted); }
+
+/* The résumé, at the right: a small outlined pill. */
+.topbar__resume {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  font-family: 'Switzer', 'Inter', var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 0.25s var(--ease-out), color 0.25s, border-color 0.25s;
 }
-.roll__ch::after {
-  content: attr(data-ch);
-  position: absolute;
-  left: 0;
-  top: 100%;
-}
-.topbar__link:hover .roll__ch,
-.topbar__link:focus-visible .roll__ch { transform: translateY(-100%); }
+.topbar__resume:hover { background: #111; border-color: #111; color: #fff; }
 
 /* --- Phones: a Menu button and the pages as a full-screen list -------------- */
 
@@ -136,7 +140,7 @@
 @media (max-width: 760px) {
   .topbar { grid-template-columns: 1fr auto; padding-inline: 20px; }
   .topbar__nav,
-  .topbar__contact { display: none; }
+  .topbar__resume { display: none; }
   .topbar__toggle { display: block; }
 }
 @media (min-width: 761px) {

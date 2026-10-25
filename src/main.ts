@@ -5,7 +5,9 @@ import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
 import { initTrail } from './lib/trail';
 import { initStream } from './lib/stream';
-import { initFrames } from './lib/frames';
+import { initTiles } from './lib/tiles';
+import { initCopy } from './lib/copy';
+import { initTopbar } from './lib/topbar';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -15,7 +17,9 @@ root.dataset.booted = '';
 import type { Sketchbook } from './components/sketchbook';
 
 initNav();
-initFrames(reducedMotion);
+initTiles(reducedMotion);
+initCopy();
+initTopbar(reducedMotion);
 
 mountHeroScene();
 initTrail(reducedMotion);

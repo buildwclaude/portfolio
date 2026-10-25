@@ -1,13 +1,12 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
-import { pageHref } from './paths';
 import { workedWith } from './worked-with';
-import { frames } from './frames';
+import { tiles } from './tiles';
 
 /**
  * The landing screen, set the way Areal opens: everything small and in the
- * middle — a portrait, the name over the role, one quiet line, two buttons
- * and the places worked with. Under it, the fan of frames (site/frames).
+ * middle — a portrait, the name over the role, one quiet line, the address
+ * (a click copies it) and the places worked with. Under it, four small tiles (site/tiles).
  * Copy comes from `content/site.ts`.
  *
  * Set aside, ready to swap back in: the dial (site/dial, lib/hero-dial), the
@@ -32,13 +31,16 @@ export function hero() {
         </h1>
         <p class="hero__intro" data-reveal>${intro}</p>
         <p class="hero__actions" data-reveal>
-          <a class="pill pill--dark" href="${pageHref.contact}">Get in touch</a>
-          <a class="pill" href="#warp-work">Works</a>
+          <button class="copy-mail" type="button" data-copy="${site.contact.email}">
+            <span class="copy-mail__dot" aria-hidden="true"></span>
+            <span class="copy-mail__text" data-copy-label>${site.contact.email}</span>
+            <svg class="copy-mail__icon" viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" /><path d="M3 10.5V4a1.5 1.5 0 0 1 1.5-1.5H10" /></svg>
+          </button>
         </p>
         ${workedWith()}
       </div>
 
-      ${frames()}
+      ${tiles()}
     </section>
   `;
 }
