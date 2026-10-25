@@ -7,7 +7,6 @@ import { initTrail } from './lib/trail';
 import { initStream } from './lib/stream';
 import { initTiles } from './lib/tiles';
 import { initCopy } from './lib/copy';
-import { initTopbar } from './lib/topbar';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -19,7 +18,6 @@ import type { Sketchbook } from './components/sketchbook';
 initNav();
 initTiles(reducedMotion);
 initCopy();
-initTopbar(reducedMotion);
 
 mountHeroScene();
 initTrail(reducedMotion);

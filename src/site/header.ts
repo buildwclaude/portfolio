@@ -3,14 +3,13 @@ import { site } from '../content/site';
 import { pageHref, resolveHref, type Page } from './paths';
 
 /**
- * A word in the top bar: one span per letter, so lib/topbar can scramble
- * them on hover; brackets either side that show on the page you're on.
+ * A word in the top bar, with brackets either side that show on the page
+ * you're on. On hover a slash slips in before it (header.css).
  */
 function word(label: string) {
-  const letters = [...label].map((ch) => html`<span class="scramble__ch">${ch === ' ' ? raw('&nbsp;') : ch}</span>`);
   return html`
     <span class="topbar__br" aria-hidden="true">[</span>
-    <span class="scramble" aria-label="${label}" data-scramble><span aria-hidden="true">${letters}</span></span>
+    <span class="topbar__word">${label}</span>
     <span class="topbar__br" aria-hidden="true">]</span>
   `;
 }
