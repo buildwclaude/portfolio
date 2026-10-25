@@ -12,12 +12,6 @@
   padding-inline: var(--shell-margin);
 }
 
-/* Where the ivy climbs down the left edge (components/rail), the page
-   steps in a little further on that side to give it room. */
-@media (min-width: 861px) {
-  .shell { padding-left: calc(var(--shell-margin) + 20px); }
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));

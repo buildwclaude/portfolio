@@ -1,114 +1,93 @@
 /* ==========================================================================
-   Hero
-   Three things on one quiet screen: a hairline strip, the statement, and a
-   foot line with what I do and the way into the work.
+   Hero — the landing, the way Areal opens: everything small and in the
+   middle, Inter at two sizes, black and a soft grey. Under it, the fan of
+   frames (components/frames.css).
    ========================================================================== */
 
 .hero {
-  --doodle-ink: #3d42c8;
+  padding-top: var(--header-height);
+  overflow-x: clip;
+}
+
+.hero__center {
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
-  padding-top: calc(var(--header-height) + var(--space-8));
-  padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
+  align-items: center;
+  min-height: min(82svh, 760px);
+  justify-content: center;
+  padding: clamp(3rem, 8vh, 5rem) 24px clamp(2rem, 5vh, 3rem);
+  font-family: 'Inter', var(--font-sans);
+  letter-spacing: -0.04em;
+  text-align: center;
 }
 
-/* --- Statement ------------------------------------------------------------ */
-
-/* The statement and its credentials, together between the two rules. */
-.hero__body {
-  margin-block: auto;
-  padding-block: clamp(2rem, 6vh, 4rem);
+.hero__avatar {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 4px rgba(0, 0, 0, 0.06);
 }
 
-.hero__display {
-  margin: 0 0 clamp(1.5rem, 4vh, 2.5rem);
-  /* Figtree: a broad, plain sans, steady without shouting. */
-  font-family: 'Figtree', var(--font-display);
-  font-size: var(--text-display);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-display);
+/* The name over the role, both at 24px: the role a step quieter. */
+.hero__title {
+  display: grid;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #000;
 }
+.hero__role { color: rgba(0, 0, 0, 0.42); }
 
-/* Each line is masked so the statement rises into place on load. */
-.hero__line {
-  display: block;
-  overflow: hidden;
-  padding: 0.04em 0 0.1em;
-  margin-bottom: -0.1em;
-}
-
-.hero__line-inner {
-  position: relative;
-  display: inline-block;
-  animation: hero-line 1000ms var(--ease-out) backwards;
-  animation-delay: calc(var(--line-index) * 90ms + 180ms);
-}
-
-/* The name in light over the role in medium. */
-.hero__line--light { font-weight: 300; letter-spacing: -0.025em; }
-.hero__line--bold { font-weight: 500; letter-spacing: -0.025em; }
-
-@keyframes hero-line {
-  from { transform: translateY(105%); }
-  to { transform: none; }
-}
-
-@keyframes hero-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* The one-line intro: close under the statement, as its caption, with the
-   statement's full gap moved below it, before the wordmarks. */
 .hero__intro {
-  max-width: 38rem;
-  margin: calc(-1 * clamp(0.5rem, 1.5vh, 1rem)) 0 clamp(1.5rem, 4vh, 2.5rem);
-  font-size: var(--text-body);
-  line-height: 1.55;
-  color: var(--ink-secondary);
-  text-wrap: pretty;
+  max-width: 17rem;
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.52);
+  text-wrap: balance;
+  --reveal-delay: 120ms;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 8px;
+  margin: 28px 0 0;
   --reveal-delay: 200ms;
 }
 
-/* --- Foot line ------------------------------------------------------------ */
-
-.hero__foot {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: var(--space-24);
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--rule);
-  --reveal-delay: 300ms;
-}
-
-/* Credentials: muted lines, with the names in ink. */
-.hero__creds {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-body);
-  line-height: 1.75;
-  color: var(--ink-muted);
-}
-.hero__creds strong { font-weight: 500; color: var(--ink); }
-
-.hero__cta {
+/* Areal's buttons: a black pill and a pale one. */
+.pill {
   display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-8);
-  flex-shrink: 0;
-  color: var(--ink);
+  align-items: center;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #f0f0ee;
+  font-family: 'Inter', var(--font-sans);
+  font-size: 15px;
+  letter-spacing: -0.04em;
+  color: #000;
   text-decoration: none;
+  transition: transform var(--dur-mid) var(--ease-out), background-color var(--dur-mid) var(--ease-out);
 }
-.hero__cta-arrow { transition: transform var(--dur-mid) var(--ease-out); }
-.hero__cta:hover .hero__cta-arrow,
-.hero__cta:focus-visible .hero__cta-arrow { transform: translateY(3px); }
+.pill:hover { background: #e6e6e3; transform: translateY(-1px); }
+.pill--dark { background: #111; color: #fff; }
+.pill--dark:hover { background: #2a2a2a; }
 
-@media (max-width: 860px) {
-  .hero__foot { flex-direction: column; gap: var(--space-16); }
+/* The places worked with: under the buttons, centred, a size smaller. */
+.hero__center .worked { margin-top: clamp(3rem, 8vh, 4.5rem); max-width: 34rem; --reveal-delay: 280ms; }
+.hero__center .worked__label {
+  margin-bottom: 14px;
+  font-family: 'Inter', var(--font-sans);
+  font-size: 13px;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  color: rgba(0, 0, 0, 0.52);
 }
+.hero__center .worked__names { justify-content: center; }
 
 /* ==========================================================================
    Scene — a line drawing behind the type, in WebGL: the console on the

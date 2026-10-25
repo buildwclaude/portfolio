@@ -45,6 +45,11 @@ export function initNav(root: ParentNode = document) {
     for (const section of sections) observer.observe(section);
   }
 
+  /* --- The bar, once the page has moved ---------------------------------- */
+  const markScrolled = () => document.documentElement.toggleAttribute('data-scrolled', window.scrollY > 8);
+  markScrolled();
+  window.addEventListener('scroll', markScrolled, { passive: true });
+
   /* --- Mobile menu ------------------------------------------------------ */
   if (!toggle || !menu) return;
 
@@ -70,7 +75,7 @@ export function initNav(root: ParentNode = document) {
   });
 
   // Leaving the mobile breakpoint should never strand the panel open.
-  matchMedia('(min-width: 861px)').addEventListener('change', (event) => {
+  matchMedia('(min-width: 761px)').addEventListener('change', (event) => {
     if (event.matches) setOpen(false);
   });
 }

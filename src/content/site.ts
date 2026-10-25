@@ -84,10 +84,10 @@ export const site = {
   /* ------------------------------------------------------------ navigation */
   /** A section of the home page as '#id'; another page as its path ('about/'). */
   nav: [
-    { label: 'Playground', href: '#playground' },
     { label: 'Work', href: '#warp-work' },
     { label: 'About', href: 'about/' },
     { label: 'Experiments', href: 'experiments/' },
+    { label: 'Playground', href: '#playground' },
     { label: 'Contact', href: 'contact/' },
   ],
 
@@ -172,6 +172,19 @@ export const site = {
       { label: 'Located', value: '' },
     ],
   },
+
+  /* ---------------------------------------------------------------- frames
+     The fan of tilted frames under the landing text (site/frames). Each is
+     a picture in a coloured mount with a line under it, and goes somewhere:
+     `href` a page or section, or `case` a case study. The middle one sits
+     in front. Keep the colours soft. */
+  frames: [
+    { title: 'Playground', label: 'Art & sketches', image: '/art/art-13.webp', color: '#cdeadb', href: '#playground' },
+    { title: 'Yatri Hub', label: 'Product design', image: '/work/cards/yatri-hub.webp', color: '#d3e2fb', case: 'yatri-hub' },
+    { title: 'Hello, I’m Sony', label: 'About', image: '/me/portrait.webp', color: '#ffdf8f', href: 'about/' },
+    { title: 'AR Head-Up Display', label: 'Research', image: '/work/cards/ar-hud.webp', color: '#e3d8fb', case: 'ar-hud' },
+    { title: 'Experiments', label: 'Personal projects', image: '/art/art-16.webp', color: '#d9f1ad', href: 'experiments/' },
+  ] as { title: string; label: string; image: string; color: string; href?: string; case?: string }[],
 
   /* ------------------------------------------------------------------ work */
   work: {

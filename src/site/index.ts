@@ -38,23 +38,6 @@ export function renderPage(page: Page = 'home'): string {
     ${header()}
 
     <main class="page" id="main" tabindex="-1">
-      <!-- where you are: an ivy that climbs down as the page scrolls, one big
-           leaf per section (grown by lib/rail). Its colours: "default" (the
-           walker's greens) or "black" (the page's ink), from lib/ivy. -->
-      <div class="rail" aria-hidden="true" data-ivy-theme="black">
-        <svg class="rail__ivy" viewBox="0 0 90 440"></svg>
-        ${[
-          { href: '#intro', label: 'Intro' },
-          { href: '#warp-work', label: 'Featured projects' },
-          { href: '#contact', label: 'Thanks' },
-        ].map(
-          (s) => html`
-            <a class="rail__tick" href="${s.href}" tabindex="-1">
-              <span class="rail__name">${s.label}</span>
-            </a>
-          `,
-        )}
-      </div>
       ${hero()}
       ${warp()}
     </main>

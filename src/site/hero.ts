@@ -1,55 +1,44 @@
 import { html, raw } from '../lib/html';
 import { site } from '../content/site';
-import { dialParts } from './dial';
+import { pageHref } from './paths';
 import { workedWith } from './worked-with';
+import { frames } from './frames';
 
 /**
- * The landing screen: the statement, a one-line intro, the places worked
- * with under it (site/worked-with), and the way into the work along the foot. The right
- * side holds a dial of the pages, its wheel coming in from the right edge
- * (site/dial, lib/hero-dial). The portfolio description (credential lines)
- * and the overgrown walker (site/overgrown) are set aside.
- * Set aside, ready to swap back in: the arm (site/arm, lib/arm), the tunnel (site/tunnel, lib/tunnel), the orbit (site/orbit, lib/orbit), the palace (site/palace, lib/palace),
- * the temple (site/temple), the glass
- * grid (site/glass-grid), the
- * courses folder (site/courses-folder),
- * the interaction loop (site/interaction),
- * the vine (site/vine) and the WebGL scenes (components/ribbon,
- * components/console, via data-scene).
+ * The landing screen, set the way Areal opens: everything small and in the
+ * middle — a portrait, the name over the role, one quiet line, two buttons
+ * and the places worked with. Under it, the fan of frames (site/frames).
  * Copy comes from `content/site.ts`.
+ *
+ * Set aside, ready to swap back in: the dial (site/dial, lib/hero-dial), the
+ * arm (site/arm, lib/arm), the tunnel (site/tunnel, lib/tunnel), the orbit
+ * (site/orbit, lib/orbit), the palace (site/palace, lib/palace), the temple
+ * (site/temple), the glass grid (site/glass-grid), the courses folder
+ * (site/courses-folder), the interaction loop (site/interaction), the vine
+ * (site/vine) and the WebGL scenes (components/ribbon, components/console,
+ * via data-scene).
  */
 export function hero() {
-  const { lines, intro } = site.hero;
+  const { intro } = site.hero;
+  const { portrait } = site.me;
 
   return html`
-    <section class="hero shell" id="intro" aria-labelledby="hero-title">
-
-      <div class="hero__body">
-        <h1 class="hero__display" id="hero-title">
-          ${lines.map(
-            (line, i) => html`
-              <span class="hero__line hero__line--${i === 0 ? 'light' : 'bold'}" data-reveal-line style="--line-index:${i}">
-                <span class="hero__line-inner">${line}</span>
-              </span>
-            `,
-          )}
+    <section class="hero" id="intro" aria-labelledby="hero-title">
+      <div class="hero__center">
+        <img class="hero__avatar" src="${portrait.src}" alt="${portrait.alt}" width="1000" height="1000" decoding="async" data-reveal />
+        <h1 class="hero__title" id="hero-title" data-reveal>
+          <span>${site.meta.name}</span>
+          <span class="hero__role">${site.meta.role}</span>
         </h1>
-
         <p class="hero__intro" data-reveal>${intro}</p>
-
+        <p class="hero__actions" data-reveal>
+          <a class="pill pill--dark" href="${pageHref.contact}">Get in touch</a>
+          <a class="pill" href="#warp-work">Works</a>
+        </p>
         ${workedWith()}
       </div>
 
-      <div class="hero-dial dial" data-hero-dial>
-        ${dialParts()}
-        <p class="dial__hint" aria-hidden="true">Scroll to turn · click to go</p>
-      </div>
-
-      <div class="hero__foot" data-reveal>
-        <a class="hero__cta meta" href="#warp-work">
-          <span>Featured projects</span><span class="hero__cta-arrow" aria-hidden="true">↓</span>
-        </a>
-      </div>
+      ${frames()}
     </section>
   `;
 }

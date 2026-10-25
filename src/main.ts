@@ -5,21 +5,17 @@ import { initKodama } from './lib/kodama';
 import { initReveals, initScrollMotion } from './lib/motion';
 import { initTrail } from './lib/trail';
 import { initStream } from './lib/stream';
+import { initFrames } from './lib/frames';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 root.dataset.booted = '';
 
-import { initRail } from './lib/rail';
-import { initDialMenu } from './lib/dial-menu';
-import { initHeroDial } from './lib/hero-dial';
 import type { Sketchbook } from './components/sketchbook';
 
 initNav();
-initDialMenu();
-initHeroDial();
-initRail();
+initFrames(reducedMotion);
 
 mountHeroScene();
 initTrail(reducedMotion);

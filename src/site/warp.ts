@@ -93,33 +93,34 @@ function gauge() {
     </span>`;
 }
 
-function card(w: Work, i: number, speed: string) {
+function card(w: Work) {
+  const chip = w.disciplines.split(' · ')[0];
   return html`
-    <a class="warp-card" href="#" data-speed="${speed}" data-case="${w.key}">
-      <figure class="media media--${w.shape} tile tile--${w.key}">${mark(w)}</figure>
-      <div class="meta"><span class="title">${w.title}</span><span class="idx">${pad2(i + 1)}</span></div>
-      <div class="meta"><span>${w.disciplines}</span><span>${w.year}</span></div>
+    <a class="warp-card" href="#" data-case="${w.key}" data-reveal>
+      <figure class="media media--card tile tile--${w.key}">
+        ${mark(w)}
+        <span class="warp-card__chip">${chip}</span>
+        <span class="warp-card__go" aria-hidden="true">↗</span>
+      </figure>
+      <span class="warp-card__title">${w.title}</span>
+      <span class="warp-card__blurb">${w.blurb}</span>
     </a>
   `;
 }
 
+/**
+ * Featured projects: a centred heading, then the work two to a row, each a
+ * tile with its discipline on a chip and a way in at the corner, its title
+ * and one line under it.
+ */
 export function warp() {
-  // Three down the left, the rest in the offset column on the right.
-  const left = selectedWork.slice(0, 3);
-  const right = selectedWork.slice(3);
   return html`
-    <section class="section warp-work" id="warp-work" aria-labelledby="work-title">
-      <div class="shell grid">
-        <div class="section__head">
-          <h2 class="section__title" id="work-title">Featured projects</h2>
-          <span class="section__index">${pad2(selectedWork.length)} pieces</span>
-        </div>
-        <div class="section__rule" aria-hidden="true"></div>
-      </div>
-      <div class="shell warp-grid">
-        <div class="warp-col">${left.map((w, i) => card(w, i, '0.06'))}</div>
-        <div class="warp-col warp-col--offset">${right.map((w, i) => card(w, i + left.length, '-0.05'))}</div>
-      </div>
+    <section class="warp-work" id="warp-work" aria-labelledby="work-title">
+      <header class="warp-head" data-reveal>
+        <h2 class="warp-head__title" id="work-title">Featured projects</h2>
+        <p class="warp-head__sub">Selected case studies · ${pad2(selectedWork.length)}</p>
+      </header>
+      <div class="shell warp-grid">${selectedWork.map(card)}</div>
     </section>
   `;
 }
