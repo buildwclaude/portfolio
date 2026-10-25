@@ -4,7 +4,7 @@ import { pageHref, resolveHref, type Page } from './paths';
 
 /**
  * A word in the top bar, with brackets either side that show on the page
- * you're on. On hover a slash slips in before it (header.css).
+ * you're on. On hover a small dot grows in before it (header.css).
  */
 function word(label: string) {
   return html`

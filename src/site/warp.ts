@@ -1,4 +1,6 @@
 import { html } from '../lib/html';
+import { clip } from './clip';
+import { scatter } from './gloss';
 
 /**
  * The selected work, in order. The hero's featured stage and the grid below
@@ -93,34 +95,58 @@ function gauge() {
     </span>`;
 }
 
-function card(w: Work) {
+/**
+ * Each card's clip colour, the soft tint behind its tile to match, and its
+ * tilt, in turn: never two alike side by side.
+ */
+const CLIPS = ['#7aa7f0', '#ef9ab5', '#8fd1a8', '#f2b84b', '#b9a4f2'];
+const TINTS = ['#dde9ff', '#ffe1ee', '#dbf4e4', '#fff0c4', '#e9e1ff'];
+const TILTS = [-1.6, 1.2, 1.4, -1.1, -1.3];
+
+function card(w: Work, i: number) {
   const chip = w.disciplines.split(' · ')[0];
   return html`
-    <a class="warp-card" href="#" data-case="${w.key}" data-reveal>
-      <figure class="media media--card tile tile--${w.key}">
-        ${mark(w)}
-        <span class="warp-card__chip">${chip}</span>
-        <span class="warp-card__go" aria-hidden="true">↗</span>
-      </figure>
-      <span class="warp-card__title">${w.title}</span>
-      <span class="warp-card__blurb">${w.blurb}</span>
+    <a class="paper-card paper-card--${w.shape}" href="#" data-case="${w.key}" data-title="${w.title}" style="--tilt:${TILTS[i % TILTS.length]}deg; --tint:${TINTS[i % TINTS.length]}; --order:${i}" data-reveal>
+      ${clip(CLIPS[i % CLIPS.length]!, 'paper-card__clip')}
+      <figure class="media tile tile--${w.key}">${mark(w)}</figure>
+      <span class="paper-card__cap">
+        <b>${w.title}</b>
+        <span>${chip}</span>
+      </span>
     </a>
   `;
 }
 
 /**
- * Featured projects: a centred heading, then the work two to a row, each a
- * tile with its discipline on a chip and a way in at the corner, its title
- * and one line under it.
+ * Selected work: a plain heading with its count on a small badge, then the
+ * work as paper cards clipped up in two staggered columns, each a little
+ * askew, its name and discipline on a slim line under the tile. A card
+ * straightens and lifts under the pointer.
  */
 export function warp() {
+  const left = selectedWork.filter((_, i) => i % 2 === 0);
+  const right = selectedWork.filter((_, i) => i % 2 === 1);
+  const at = (w: Work) => selectedWork.indexOf(w);
   return html`
     <section class="warp-work" id="warp-work" aria-labelledby="work-title">
+      ${scatter([
+        { shape: 'pill', color: 'pink', x: 'calc(50% - 250px)', y: '0px', size: 58, turn: -24, phone: true },
+        { shape: 'star', color: 'butter', x: 'calc(50% + 190px)', y: '60px', size: 26, turn: 14 },
+        { shape: 'ring', color: 'lilac', x: 'calc(50% - 34px)', y: '38%', size: 64, turn: 0 },
+        { shape: 'heart', color: 'lime', x: '3%', y: '72%', size: 30, turn: -18 },
+        { shape: 'flower', color: 'peach', x: 'calc(100% - 70px)', y: '18%', size: 40, turn: 22 },
+        { shape: 'star', color: 'lilac', x: 'calc(50% + 20px)', y: '86%', size: 52, turn: -8 },
+      ])}
       <header class="warp-head" data-reveal>
-        <h2 class="warp-head__title" id="work-title">Featured projects</h2>
-        <p class="warp-head__sub">Selected case studies · ${pad2(selectedWork.length)}</p>
+        <h2 class="warp-head__title" id="work-title">
+          Selected work <span class="warp-head__count">${pad2(selectedWork.length)}</span>
+        </h2>
+        <p class="warp-head__sub">Selected case studies</p>
       </header>
-      <div class="shell warp-grid">${selectedWork.map(card)}</div>
+      <div class="shell paper-grid">
+        <div class="paper-col">${left.map((w) => card(w, at(w)))}</div>
+        <div class="paper-col paper-col--low">${right.map((w) => card(w, at(w)))}</div>
+      </div>
     </section>
   `;
 }

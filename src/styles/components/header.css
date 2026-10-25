@@ -1,7 +1,7 @@
 /* ==========================================================================
    Top bar — on every page: the name at the left, every page in the
    middle in small capitals, the résumé at the right. Brackets close in
-   around the page you're on; hovering a page slips a slash in before it. The
+   around the page you're on; hovering a page grows a small dot before it. The
    name is set exactly as the playground names itself (playground.css .hud).
    ========================================================================== */
 
@@ -62,26 +62,32 @@
 .topbar__br:last-of-type { margin-left: 4px; transform: translateX(-6px); }
 .topbar__link[aria-current] .topbar__br { opacity: 1; transform: none; }
 
-/* Hover slips a slash in before the word, which steps aside for it. */
+/* Hover grows a small green dot in before the word, which steps aside
+   for it: the same green as the live dots on the email chip and the
+   Currently tile. The page you're on keeps only its brackets. */
 .topbar__word {
   position: relative;
   display: inline-block;
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .topbar__word::before {
-  content: '/';
+  content: '';
   position: absolute;
-  left: -9px;
-  color: var(--ink-muted);
+  top: 50%;
+  left: -11px;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #2f9e57;
   opacity: 0;
-  transform: translateX(4px);
-  transition: opacity 0.2s, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: scale(0);
+  transition: opacity 0.2s, transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 .topbar__link:hover .topbar__word,
-.topbar__link:focus-visible .topbar__word { transform: translateX(3px); }
+.topbar__link:focus-visible .topbar__word { transform: translateX(4px); }
 .topbar__link:hover .topbar__word::before,
 .topbar__link:focus-visible .topbar__word::before { opacity: 1; transform: none; }
-/* The page you're on already has its brackets; it needs no slash. */
 .topbar__link[aria-current] .topbar__word { transform: none; }
 .topbar__link[aria-current] .topbar__word::before { content: none; }
 

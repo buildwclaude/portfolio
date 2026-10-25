@@ -1,12 +1,15 @@
 import { html } from '../lib/html';
 import { site } from '../content/site';
 import { pageHref } from './paths';
+import { clip } from './clip';
+import { scatter } from './gloss';
 
 /**
  * Under the landing text: four soft-coloured tiles, each a small toy made of
  * something of mine (lib/tiles plays them).
  *
- *   - Hello: the portrait, the greeting turning through languages I love.
+ *   - Hello: the portrait, clipped on, the greeting turning through
+ *     languages I love.
  *   - Playground: a stack of my art that shuffles while the pointer is on it.
  *   - Social battery: Socialux in miniature — slide between AI and human
  *     conversations and the battery fills and changes colour.
@@ -23,7 +26,13 @@ export function tiles() {
 
   return html`
     <section class="tiles" aria-label="A little about me" data-tiles>
+      ${scatter([
+        { shape: 'flower', color: 'butter', x: 'calc(100% - 78px)', y: '-30px', size: 66, turn: -10, phone: true },
+        { shape: 'star', color: 'lime', x: '-6px', y: 'calc(100% - 26px)', size: 44, turn: 16 },
+        { shape: 'ring', color: 'sky', x: '48%', y: '-18px', size: 28, turn: 0 },
+      ])}
       <a class="tile-card tile-card--hello" href="${pageHref.about}" data-reveal>
+        ${clip('#7aa7f0', 'tile-card__clip')}
         <img class="tile-card__photo" src="${portrait.src}" alt="${portrait.alt}" width="1000" height="1000" loading="lazy" decoding="async" />
         <span class="hello" aria-hidden="true">
           <span class="hello__word" data-hello='${JSON.stringify(hello)}'>${hello[0]}</span>

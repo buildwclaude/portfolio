@@ -71,48 +71,81 @@
   letter-spacing: var(--tracking-body);
   color: var(--ink-secondary);
 }
-/* The way back and the study's sections, pinned at the left. */
+/* The way back and the section being read: two small pills at the top
+   left. The second opens the list of sections as a dropdown. */
 .detail__rail {
   position: fixed;
-  top: clamp(1.25rem, 6vh, 4rem);
-  left: clamp(1rem, 2.5vw, 2.5rem);
+  top: clamp(1rem, 3vh, 1.75rem);
+  left: clamp(1rem, 2.5vw, 2rem);
   z-index: 99;
-  display: grid;
-  gap: 14px;
-  max-width: 200px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   font-family: 'Inter', var(--font-display);
-  font-size: 14px;
-  letter-spacing: -0.04em;
+  font-size: 13px;
+  letter-spacing: -0.03em;
   line-height: 1.15;
 }
-.detail__close {
-  justify-self: start;
-  padding: 0;
+.detail__close,
+.detail__toc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
   border: 0;
-  background: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 6px 16px -10px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
   font: inherit;
-  color: var(--ink-muted);
+  color: #111;
   cursor: pointer;
-  transition: color 0.25s;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
-.detail__close:hover { color: var(--ink); }
-.detail__close:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-.detail__sections { position: relative; display: grid; gap: 6px; margin: 0; padding: 0 0 0 12px; list-style: none; }
-/* A small, thin arrow beside the section being read; it slides as the reader moves on. */
-.detail__marker {
+.detail__close:hover,
+.detail__toc-btn:hover { background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14), 0 8px 18px -10px rgba(0, 0, 0, 0.3); }
+.detail__close:focus-visible,
+.detail__toc-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.detail__toc { position: relative; }
+.detail__toc-count { color: rgba(0, 0, 0, 0.45); font-variant-numeric: tabular-nums; }
+.detail__toc-now { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail__toc-btn svg { width: 10px; height: 6px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.25s; }
+.detail__toc.is-open .detail__toc-btn svg { transform: rotate(180deg); }
+
+.detail__sections {
   position: absolute;
-  top: 0;
+  top: calc(100% + 8px);
   left: 0;
   display: grid;
-  place-items: center;
-  width: 6px;
-  height: 1.15em;
-  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  min-width: 220px;
+  margin: 0;
+  padding: 6px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 18px 40px -16px rgba(0, 0, 0, 0.3);
+  list-style: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.2s, transform 0.25s var(--ease-out), visibility 0.2s;
 }
-.detail__marker svg { width: 6px; height: 6px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-.detail__sections a { color: var(--ink-muted); text-decoration: none; transition: color 0.25s; }
-.detail__sections a:hover,
-.detail__sections a.is-active { color: var(--ink); }
+.detail__toc.is-open .detail__sections { opacity: 1; visibility: visible; transform: none; }
+.detail__sections a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: rgba(0, 0, 0, 0.55);
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+.detail__sections a::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: transparent; }
+.detail__sections a:hover { background: #f4f4f2; color: #111; }
+.detail__sections a.is-active { color: #111; }
+.detail__sections a.is-active::before { background: #2f9e57; }
 
 /* ── the case study ──────────────────────────────────────────────────────
    One narrow column in Inter: a tag and a headline, the cover in a soft
@@ -240,10 +273,9 @@
 
 /* ── narrow screens ─────────────────────────────────────────────────────── */
 
-/* Without room beside the column, the rail keeps only the way back. */
+/* On narrow screens the two pills sit in a strip across the top. */
 @media (max-width: 1100px) {
-  .detail__sections { display: none; }
-  .detail--study .detail__rail { top: 0; left: 0; right: 0; max-width: none; padding: 14px 16px; background: rgb(255 255 255 / 0.9); backdrop-filter: blur(8px); }
+  .detail--study .detail__rail { top: 0; left: 0; right: 0; padding: 12px 16px; background: rgb(255 255 255 / 0.9); backdrop-filter: blur(8px); }
 }
 
 @media (max-width: 860px) {

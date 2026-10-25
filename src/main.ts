@@ -6,7 +6,7 @@ import { initReveals, initScrollMotion } from './lib/motion';
 import { initTrail } from './lib/trail';
 import { initStream } from './lib/stream';
 import { initTiles } from './lib/tiles';
-import { initCopy } from './lib/copy';
+import { initNotes } from './lib/notes';
 
 const root = document.documentElement;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,7 +17,7 @@ import type { Sketchbook } from './components/sketchbook';
 
 initNav();
 initTiles(reducedMotion);
-initCopy();
+initNotes(reducedMotion);
 
 mountHeroScene();
 initTrail(reducedMotion);

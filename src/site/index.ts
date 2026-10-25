@@ -37,7 +37,7 @@ export function renderPage(page: Page = 'home'): string {
     <span id="top" class="visually-hidden"></span>
     ${header()}
 
-    <main class="page" id="main" tabindex="-1">
+    <main class="page page--paper" id="main" tabindex="-1">
       ${hero()}
       ${warp()}
     </main>
@@ -94,12 +94,19 @@ function overlays() {
     <div class="detail" id="warp-detail" hidden>
       <div class="detail__scrim" data-detail-close></div>
       <div class="detail__panel" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="detail-title">
-        <!-- the way back, and the study's sections -->
+        <!-- the way back, and the section being read, which opens the list of them -->
         <nav class="detail__rail" aria-label="Case study">
           <button class="detail__close" type="button" data-detail-close>
             <span aria-hidden="true">←</span> Back
           </button>
-          <ol class="detail__sections" id="detail-sections"></ol>
+          <div class="detail__toc" data-toc>
+            <button class="detail__toc-btn" type="button" aria-expanded="false" aria-controls="detail-sections" data-toc-toggle>
+              <span class="detail__toc-count" id="detail-count"></span>
+              <span class="detail__toc-now" id="detail-now"></span>
+              <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" /></svg>
+            </button>
+            <ol class="detail__sections" id="detail-sections"></ol>
+          </div>
         </nav>
 
         <figure class="detail__figure">

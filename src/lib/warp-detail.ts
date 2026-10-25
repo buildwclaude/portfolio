@@ -41,6 +41,14 @@ export function initWarpDetail() {
   const closeBtn = root.querySelector<HTMLElement>('.detail__close')!;
   const content = root.querySelector<HTMLElement>('#detail-rich-content')!;
   const sectionList = root.querySelector<HTMLElement>('#detail-sections')!;
+  const toc = root.querySelector<HTMLElement>('[data-toc]')!;
+  const tocToggle = root.querySelector<HTMLButtonElement>('[data-toc-toggle]')!;
+  const tocCount = root.querySelector<HTMLElement>('#detail-count')!;
+  const tocNow = root.querySelector<HTMLElement>('#detail-now')!;
+  const setToc = (open: boolean) => {
+    toc.classList.toggle('is-open', open);
+    tocToggle.setAttribute('aria-expanded', String(open));
+  };
   // The project cards, and anything else that opens a study.
   const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-case]'));
   const inertTargets = ['.header', '#main', '.footer', 'header', 'footer']
@@ -71,12 +79,18 @@ export function initWarpDetail() {
     el.addEventListener('click', () => closeCard());
   });
 
-  // The rail's section links and the foot's neighbouring projects.
+  // The rail's section list, its links, and the foot's neighbouring projects.
   root.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    if (target.closest('[data-toc-toggle]')) {
+      setToc(!toc.classList.contains('is-open'));
+      return;
+    }
+    if (!target.closest('[data-toc]')) setToc(false);
     const jump = target.closest<HTMLAnchorElement>('[data-cs-jump]');
     if (jump) {
       e.preventDefault();
+      setToc(false);
       const section = content.querySelector<HTMLElement>(`#${jump.dataset.csJump}`);
       section?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
       return;
@@ -112,7 +126,11 @@ export function initWarpDetail() {
     if (e.key === 'Escape') {
       e.preventDefault();
       e.stopImmediatePropagation();
-      closeCard();
+      // An open list of sections closes first; then the study.
+      if (toc.classList.contains('is-open')) {
+        setToc(false);
+        tocToggle.focus();
+      } else closeCard();
     }
     if (e.key === 'Tab') trapFocus(e);
   });
@@ -154,24 +172,24 @@ export function initWarpDetail() {
   }
 
   /**
-   * The rail: one link per section, the one being read set in ink, with a
-   * small arrow beside it that slides along as the reader moves on.
+   * The rail: a pill naming the section being read ("2/6 · Research"), which
+   * opens the list of every section; the one being read is marked in it.
    */
   function buildRail() {
     spy?.disconnect();
+    setToc(false);
     const sections = Array.from(content.querySelectorAll<HTMLElement>('.cs-section[data-cs-title]'));
-    sectionList.innerHTML =
-      `<li class="detail__marker" aria-hidden="true"><svg viewBox="0 0 6 6"><path d="M1.5 0.5 4 3 1.5 5.5" /></svg></li>` +
-      sections.map((s) => `<li><a href="#${s.id}" data-cs-jump="${s.id}">${s.dataset.csTitle}</a></li>`).join('');
-    const marker = sectionList.querySelector<HTMLElement>('.detail__marker')!;
+    toc.hidden = sections.length === 0;
+    sectionList.innerHTML = sections
+      .map((s) => `<li><a href="#${s.id}" data-cs-jump="${s.id}">${s.dataset.csTitle}</a></li>`)
+      .join('');
     const links = new Map(
       sections.map((s) => [s, sectionList.querySelector<HTMLElement>(`[data-cs-jump="${s.id}"]`)!]),
     );
     const setActive = (section: HTMLElement) => {
       links.forEach((link, s) => link.classList.toggle('is-active', s === section));
-      // Level with the first line of the active link.
-      const item = links.get(section)?.parentElement;
-      if (item) marker.style.transform = `translateY(${item.offsetTop}px)`;
+      tocCount.textContent = `${sections.indexOf(section) + 1}/${sections.length}`;
+      tocNow.textContent = section.dataset.csTitle || '';
     };
     if (sections[0]) setActive(sections[0]);
     // A section is "being read" once its top passes the upper third.
@@ -189,7 +207,7 @@ export function initWarpDetail() {
     const keys = cards.map((c) => c.dataset.case || '').filter((k) => STUDIES[k]);
     const at = keys.indexOf(key);
     const titleOf = (k: string) =>
-      cards.find((c) => c.dataset.case === k)?.querySelector('.title')?.textContent?.trim() || '';
+      cards.find((c) => c.dataset.case === k)?.dataset.title || '';
     const link = (k: string | undefined, label: string, side: string) =>
       k
         ? `<a href="#" class="cs-next__link cs-next__link--${side}" data-cs-go="${k}"><span>${label}</span><b>${titleOf(k)}</b></a>`

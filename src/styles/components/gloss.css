@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Gloss — the jelly shapes (site/gloss): the pink star from its image, and
+   the heart, ring, pill and flower drawn to match. A few, here and there,
+   each floating slowly and turned a little (--r). Placed where they are
+   used, below; never in the way of a click.
+   ========================================================================== */
+
+.gloss {
+  --r: 0deg;
+  position: absolute;
+  z-index: 2;
+  display: block;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 14px rgba(214, 90, 160, 0.26));
+  rotate: var(--r);
+  animation: gloss-float 9s ease-in-out infinite;
+}
+@keyframes gloss-float {
+  50% { translate: 0 -10px; rotate: calc(var(--r) + 6deg); }
+}
+
+/* Strewn over a section (site/gloss scatter): each one's place, size and
+   turn come from the markup. The section it's in holds the frame. */
+.gloss--strewn { left: var(--x); top: var(--y); width: var(--s); }
+.tiles,
+.warp-work,
+.m-footer__mark { position: relative; }
+.m-footer__mark { display: inline-block; }
+
+/* The star is a picture, so its colours are tinted from the pink. */
+.gloss--star.gloss--butter { filter: hue-rotate(58deg) saturate(1.25) brightness(1.06) drop-shadow(0 12px 14px rgba(214, 150, 40, 0.28)); }
+.gloss--star.gloss--lime { filter: hue-rotate(110deg) saturate(1.1) brightness(1.05) drop-shadow(0 12px 14px rgba(90, 180, 60, 0.26)); }
+.gloss--star.gloss--sky { filter: hue-rotate(205deg) saturate(1.1) drop-shadow(0 12px 14px rgba(70, 110, 220, 0.26)); }
+.gloss--star.gloss--lilac { filter: hue-rotate(-40deg) saturate(1.05) drop-shadow(0 12px 14px rgba(140, 90, 220, 0.26)); }
+.gloss--star.gloss--peach { filter: hue-rotate(22deg) saturate(1.15) drop-shadow(0 12px 14px rgba(230, 110, 80, 0.26)); }
+
+/* On smaller screens only the ones marked for a phone stay, a size smaller. */
+@media (max-width: 900px) {
+  .gloss--wide-only { display: none; }
+  .gloss--strewn { width: calc(var(--s) * 0.75); }
+  .desk .gloss--strewn { left: auto; right: 6%; }
+  .desk .gloss--pill { right: auto; left: 8%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gloss { animation: none; }
+}

@@ -1,25 +1,86 @@
-/* Featured projects: a centred heading, then the work two to a row. */
+/* Selected work: a plain heading with its count on a small badge, then
+   paper cards clipped up in two staggered columns, each a little askew (--tilt). */
 .warp-work { position: relative; z-index: 2; }
-.warp-head { margin-bottom: clamp(2.5rem, 5vw, 3.5rem); padding-inline: 24px; text-align: center; font-family: 'Inter', var(--font-sans); letter-spacing: -0.04em; }
-.warp-head__title { margin: 0; font-size: clamp(28px, 2.6vw, 36px); font-weight: 500; line-height: 1.1; color: #000; }
-.warp-head__sub { margin: 10px 0 0; font-size: 15px; color: rgba(0, 0, 0, 0.5); }
+.warp-head { margin-bottom: clamp(3.5rem, 7vw, 5rem); padding-inline: 24px; text-align: center; font-family: 'Inter', var(--font-sans); letter-spacing: -0.04em; }
+.warp-head__title {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  font-size: clamp(32px, 3.4vw, 44px);
+  font-weight: 500;
+  line-height: 1.05;
+  color: #111;
+}
+.warp-head__count {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #ff9fcb;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #5a1634;
+  transform: rotate(6deg);
+}
+.warp-head__sub { margin: 12px 0 0; font-size: 15px; color: rgba(0, 0, 0, 0.5); }
 
-.warp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(40px, 5vw, 64px) clamp(16px, 2vw, 24px); max-width: 1280px; }
-.warp-card { display: block; text-decoration: none; color: inherit; font-family: 'Inter', var(--font-sans); letter-spacing: -0.03em; }
-.warp-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 20px; }
+.paper-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 4vw, 56px); max-width: 1180px; }
+.paper-col { display: flex; flex-direction: column; gap: clamp(60px, 7vw, 96px); }
+.paper-col--low { padding-top: clamp(64px, 10vw, 150px); }
+
+.paper-card {
+  position: relative;
+  display: block;
+  padding: 10px 10px 0;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  text-decoration: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 20px 40px -26px rgba(30, 30, 20, 0.45);
+  transform: rotate(var(--tilt));
+  transition: transform 0.55s cubic-bezier(0.3, 1.3, 0.5, 1), box-shadow 0.4s var(--ease-out);
+}
+.paper-card:hover,
+.paper-card:focus-visible {
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 30px 50px -28px rgba(30, 30, 20, 0.5);
+}
+.paper-card:focus-visible { outline: 2px solid #111; outline-offset: 6px; }
+
+/* The clip over the card's top edge: at the left in one column, the right in the other. */
+.paper-card__clip { top: -24px; left: 30px; height: 54px; transform: rotate(-8deg); }
+.paper-col--low .paper-card__clip { left: auto; right: 30px; transform: rotate(8deg); }
+
+.paper-card .media { border: 0; border-radius: 3px; }
+/* The tile's ground: its card's tint, a soft light in the middle and faint
+   grid paper, so each logo sits on the same desk as the rest of the page.
+   The logo itself is untouched. */
+.paper-card .tile {
+  background:
+    radial-gradient(60% 52% at 50% 46%, rgba(255, 255, 255, 0.75), transparent 72%),
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px) 0 0 / 22px 22px,
+    var(--tint);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+.paper-card--tall .media { aspect-ratio: 4 / 5; }
+.paper-card--square .media { aspect-ratio: 1 / 1; }
 .media { position: relative; background: var(--paper-raised); border: 1px solid var(--rule); overflow: hidden; }
-.media--card { aspect-ratio: 4 / 3; }
 .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* On the tile: the discipline on a dark chip, the way in at the corner. */
-.warp-card__chip,
-.warp-card__go { position: absolute; z-index: 4; top: 14px; }
-.warp-card__chip { left: 14px; padding: 6px 10px; border-radius: 8px; background: rgba(28, 28, 28, 0.78); color: #fff; font-size: 12px; backdrop-filter: blur(6px); }
-.warp-card__go { right: 14px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); color: #111; font-size: 15px; box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.25); transition: transform 0.4s var(--ease-out), background-color 0.3s; }
-.warp-card:hover .warp-card__go { transform: rotate(45deg); background: #fff; }
-
-.warp-card__title { display: block; margin-top: 16px; font-size: 20px; font-weight: 500; color: #000; }
-.warp-card__blurb { display: block; margin-top: 4px; font-size: 15px; line-height: 1.4; color: rgba(0, 0, 0, 0.52); text-wrap: pretty; }
+/* The caption: the name in bold capitals, the discipline beside it. */
+.paper-card__cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 4px 15px;
+  font-family: 'Inter', var(--font-sans);
+  font-size: 13px;
+  letter-spacing: -0.01em;
+}
+.paper-card__cap b { font-weight: 600; text-transform: uppercase; letter-spacing: 0.01em; }
+.paper-card__cap span { color: rgba(0, 0, 0, 0.5); }
 
 /* --- Tiles ----------------------------------------------------------------
    Each project as one thing on a soft, lit ground — an icon, a word, a
@@ -253,8 +314,80 @@
   .tile__charge-fill::before { animation: none; }
 }
 
+/* --- The marks as stickers, on the paper cards ------------------------------
+   The same five marks, redrawn for the desk: flat bright colours, a crisp
+   ink outline and a small offset shadow, each set a little askew. They
+   straighten and wiggle up when the card is hovered. */
+.paper-card .tile {
+  --line: #1d1b22;
+  --pop: 3px 3px 0 var(--line);
+}
+.paper-card .tile > * { transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.paper-card:hover .tile > *,
+.paper-card:focus-visible .tile > * { transform: rotate(0deg) scale(1.05); }
+
+/* Yatri Hub: an outlined battery, lime charge, a yellow bolt, a sparkle. */
+.paper-card .tile__battery { position: relative; transform: rotate(-4deg); }
+.paper-card .tile__battery::before { content: '✦'; position: absolute; top: -26px; left: -18px; font-size: 22px; color: #ffb703; }
+.paper-card .tile__battery-cell { background: #fff; border: 2.5px solid var(--line); border-radius: 12px; box-shadow: var(--pop); }
+.paper-card .tile__battery-cell::after { right: -8px; width: 5px; background: var(--line); }
+.paper-card .tile__battery-fill { border-radius: 9px 0 0 9px; background: #b8f05a; border-right: 2.5px solid var(--line); }
+.paper-card .tile__battery-cell svg { fill: #ffd84a; stroke: var(--line); stroke-width: 1.4; }
+.paper-card .tile__battery-read b { font-family: 'Inter', var(--font-sans); font-weight: 600; letter-spacing: -0.05em; color: var(--line); }
+.paper-card .tile__battery-read span { justify-self: start; padding: 2px 9px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; font-size: 12px; color: var(--line); }
+
+/* AR HUD: the visor's pane as a cobalt card, taped on. */
+.paper-card .tile__glass {
+  position: relative;
+  background: #3f57f2;
+  backdrop-filter: none;
+  border: 2.5px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--pop);
+  color: #fff;
+  transform: rotate(3deg);
+}
+.paper-card .tile__glass::before { content: ''; position: absolute; top: -11px; left: 50%; width: 58px; height: 18px; background: rgba(255, 216, 74, 0.9); translate: -50% 0; rotate: -5deg; }
+.paper-card .tile__glass-head,
+.paper-card .tile__glass-foot { color: rgba(255, 255, 255, 0.72); }
+.paper-card .tile__glass-main svg { fill: #ff9fcb; }
+.paper-card .tile__glass-main b { font-family: 'Inter', var(--font-sans); font-weight: 600; letter-spacing: -0.05em; }
+.paper-card .tile__glass-main small,
+.paper-card .tile__glass-sub { color: rgba(255, 255, 255, 0.8); }
+.paper-card .tile__glass-bar { height: 6px; background: rgba(255, 255, 255, 0.25); }
+.paper-card .tile__glass-bar span { background: #c8f36b; }
+
+/* Yatri Energy: an outlined widget with a candy-coloured charge. */
+.paper-card .tile__widget { background: #fff; border: 2.5px solid var(--line); border-radius: 18px; box-shadow: var(--pop); transform: rotate(-3deg); }
+.paper-card .tile__widget-head { color: var(--line); }
+.paper-card .tile__widget-dot { background: #b8f05a; box-shadow: 0 0 0 1.5px var(--line); }
+.paper-card .tile__charge { background: #fff; border: 2px solid var(--line); box-shadow: none; }
+.paper-card .tile__charge-fill { background: linear-gradient(90deg, #ff9fcb, #ffd84a 55%, #c8f36b); box-shadow: none; }
+.paper-card .tile__charge-knob { border: 2px solid var(--line); box-shadow: none; }
+.paper-card .tile__charge-knob svg { fill: var(--line); }
+.paper-card .tile__widget-foot b { font-family: 'Inter', var(--font-sans); font-weight: 600; color: var(--line); }
+
+/* EduQuest: comic bubbles, each a little askew, with a heart. */
+.paper-card .tile__chat { position: relative; }
+.paper-card .tile__chat::after { content: '♥'; position: absolute; right: 2%; top: -30px; font-size: 22px; color: #ff6fae; rotate: 12deg; }
+.paper-card .tile__bubble { border: 2.5px solid var(--line); box-shadow: var(--pop); }
+.paper-card .tile__bubble--ask { background: #fff; color: var(--line); transform: rotate(-3deg); }
+.paper-card .tile__bubble--reply { background: #7b61ff; transform: rotate(2deg); }
+
+/* Dynamic Dashboard: the ring on a round sticker, the bolt in yellow. */
+.paper-card .tile__charge-ring svg { padding: 8px; border: 2.5px solid var(--line); border-radius: 50%; background: #fff; box-shadow: var(--pop); transform: rotate(-6deg); }
+.paper-card .tile__charge-ring .track { stroke: #efe9ff; stroke-width: 10; }
+.paper-card .tile__charge-ring .arc { stroke-width: 10; filter: none; }
+.paper-card .tile__charge-ring .bolt { fill: #ffd84a; stroke: var(--line); stroke-width: 2; stroke-linejoin: round; filter: none; }
+.paper-card .tile__charge-ring-read b { font-family: 'Inter', var(--font-sans); font-weight: 600; letter-spacing: -0.05em; color: var(--line); }
+.paper-card .tile__charge-ring-read span { justify-self: start; padding: 3px 9px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--line); }
+
 @media (max-width: 820px) {
-  .warp-grid { grid-template-columns: 1fr; gap: 48px; }
+  /* One column: the two fold together and the cards take their own order. */
+  .paper-grid { grid-template-columns: minmax(0, 1fr); gap: 60px; }
+  .paper-col { display: contents; }
+  .paper-card { order: var(--order); }
+  .paper-col--low .paper-card__clip { left: 30px; right: auto; transform: rotate(-8deg); }
 }
 @media (prefers-reduced-motion: reduce) {
   #gl { display: none; }

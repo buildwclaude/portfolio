@@ -58,29 +58,180 @@
   --reveal-delay: 200ms;
 }
 
-/* The address as a chip: a click copies it, and it says so. */
-.copy-mail {
+/* The way to Contact: a small paper tag, clipped on, a little askew. */
+.clip-tag {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  height: 38px;
-  padding: 0 14px 0 12px;
-  border-radius: 999px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px 0 22px;
+  border-radius: 6px;
   background: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 6px 18px -12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 10px 20px -14px rgba(0, 0, 0, 0.35);
   font-family: 'Inter', var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
   letter-spacing: -0.03em;
   color: #111;
-  cursor: pointer;
-  transition: box-shadow var(--dur-mid) var(--ease-out), transform var(--dur-mid) var(--ease-out);
+  text-decoration: none;
+  transform: rotate(-2deg);
+  transition: transform 0.45s cubic-bezier(0.3, 1.4, 0.5, 1), box-shadow 0.3s;
 }
-.copy-mail:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14), 0 10px 22px -12px rgba(0, 0, 0, 0.35); }
-.copy-mail:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
-.copy-mail__dot { width: 7px; height: 7px; border-radius: 50%; background: #2f9e57; box-shadow: 0 0 0 3px rgba(47, 158, 87, 0.16); }
-.copy-mail__icon { width: 14px; height: 14px; fill: none; stroke: rgba(0, 0, 0, 0.45); stroke-width: 1.4; transition: stroke 0.2s; }
-.copy-mail:hover .copy-mail__icon { stroke: #111; }
-.copy-mail.is-copied .copy-mail__text { color: #2f9e57; }
+.clip-tag .clip { top: -16px; left: 6px; height: 34px; transform: rotate(-12deg); }
+.clip-tag:hover { transform: rotate(0deg) translateY(-2px); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 14px 24px -14px rgba(0, 0, 0, 0.4); }
+.clip-tag:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
+
+/* Things left on the desk around the intro, each a little askew and
+   drifting slightly: a taped polaroid and a pinned tag (the sticky notes,
+   which can be peeled, follow). */
+.hero__center { position: relative; }
+.desk { position: absolute; inset: 0; pointer-events: none; }
+.desk > * { position: absolute; animation: desk-drift 8s ease-in-out infinite; }
+
+/* The sticky notes: a stack, the top one pulled up by its folded corner
+   (lib/notes sets --pull, 0–1, while it's dragged) and peeled away to the
+   back. The ones underneath peek out, each turned its own way. */
+.notes {
+  position: absolute;
+  z-index: 3;
+  top: 16%;
+  left: calc(50% - 340px);
+  display: grid;
+  width: 124px;
+  text-align: left;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.note {
+  --pull: 0;
+  position: relative;
+  grid-area: 1 / 1;
+  z-index: var(--z);
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-height: 112px;
+  padding: 13px 12px 22px;
+  filter: drop-shadow(0 8px 8px rgba(60, 40, 0, 0.22));
+  font-family: 'Inter', var(--font-sans);
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  transform-origin: 0 0;
+  transform:
+    rotate(calc(var(--tilt) - var(--pull) * 10deg))
+    translate(calc(var(--pull) * -10px), calc(var(--pull) * -14px));
+  transition: transform 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+/* The paper, its corner cut where it folds; on a layer of its own so the
+   cut never takes the corner's handle with it. */
+.note::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--c);
+  clip-path: polygon(0 0, 100% 0, 100% calc(80% - var(--pull) * 30%), calc(80% - var(--pull) * 30%) 100%, 0 100%);
+  transition: clip-path 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.note.is-pulling,
+.note.is-pulling::before { transition: none; }
+.note b { font-weight: 600; }
+.note:not(.is-top) { pointer-events: none; }
+/* Only the top note's words show; the ones under it are just paper. */
+.note > b,
+.note > span { transition: opacity 0.3s 0.15s; }
+.note:not(.is-top) > b,
+.note:not(.is-top) > span { opacity: 0; transition-delay: 0s; }
+
+/* The folded corner, which is the handle: it grows as the note is pulled. */
+.note__corner {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: calc(20% + var(--pull) * 30%);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 72%, #8a6a00) 50%, transparent 50%);
+  cursor: grab;
+  touch-action: none;
+  transition: width 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.note.is-pulling .note__corner { cursor: grabbing; transition: none; }
+.note.is-top .note__corner:hover { width: 26%; }
+.note__corner:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Peeled away: up and off to the left, then back under the stack. */
+.note.is-peeling {
+  transition: transform 0.45s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.45s;
+  transform: rotate(calc(var(--tilt) - 24deg)) translate(-60px, -90px);
+  opacity: 0;
+}
+
+.desk__polaroid {
+  top: 24%;
+  left: calc(50% + 220px);
+  width: 104px;
+  padding: 6px 6px 22px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 14px 24px -14px rgba(0, 0, 0, 0.45);
+  rotate: 8deg;
+  animation-delay: -3s;
+}
+.desk__polaroid img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; background: #f6c9d4; }
+.desk__tape {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 46px;
+  height: 16px;
+  background: rgba(255, 159, 203, 0.75);
+  translate: -50% 0;
+  rotate: -6deg;
+}
+
+.desk__tag {
+  top: 62%;
+  left: calc(50% - 300px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px 7px 22px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 18px -12px rgba(0, 0, 0, 0.4);
+  font-family: 'Inter', var(--font-sans);
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  color: #111;
+  rotate: 5deg;
+  animation-delay: -5s;
+}
+.desk__pin {
+  position: absolute;
+  top: -6px;
+  left: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffb19c, #e0563a 60%);
+  box-shadow: 0 3px 4px -1px rgba(120, 30, 10, 0.5);
+}
+.desk__dot { width: 6px; height: 6px; border-radius: 50%; background: #2f9e57; }
+
+@keyframes desk-drift { 50% { translate: 0 -6px; } }
+@media (max-width: 900px) {
+  .notes { left: 4%; top: 6%; width: 104px; }
+  .desk__polaroid { left: auto; right: 4%; top: 8%; width: 84px; }
+  .desk__tag { display: none; }
+}
+@media (max-width: 560px) {
+  .notes { display: none; }
+  .desk__polaroid { top: 2%; width: 70px; }
+}
+@media (prefers-reduced-motion: reduce) { .desk > * { animation: none; } }
 
 /* The places worked with: under the buttons, centred, a size smaller. */
 .hero__center .worked { margin-top: clamp(3rem, 8vh, 4.5rem); max-width: 34rem; --reveal-delay: 280ms; }
