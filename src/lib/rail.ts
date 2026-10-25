@@ -6,7 +6,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /** The ivy is drawn on a 90 × 440 canvas; each section's big leaf sits at one of these heights. */
 const H = 440;
-const LEAF_Y = [70, 170, 270, 370];
+const LEAF_Y = [80, 220, 360];
 const VINE = 'M45 0 C36 40 54 80 45 120 C36 160 54 200 45 240 C36 280 54 320 45 360 C40 390 48 420 45 440';
 
 /**

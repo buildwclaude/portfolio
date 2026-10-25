@@ -1,23 +1,41 @@
 import { html } from '../lib/html';
 import { site } from '../content/site';
 import { header } from './header';
-import { kodama } from './kodama';
 import { hero } from './hero';
 import { warp } from './warp';
-import { about } from './about';
-import { experiments } from './experiments';
 import { footer } from './footer';
+import { aboutPage } from './about-page';
+import { experimentsPage } from './experiments';
+import { contactPage } from './contact-page';
+import type { Page } from './paths';
 
 /**
- * The whole page, assembled once at build time and written into
- * index.html. Nothing here runs in the browser.
+ * A page, assembled once at build time and written into its HTML file
+ * (index.html, about/index.html, contact/index.html). Nothing here runs in
+ * the browser.
+ *
+ * The home page is short: the landing screen, the featured work and the
+ * sign-off. About, Experiments and Contact are pages of their own, all
+ * reached from the dial.
  */
-export function renderPage(): string {
+export function renderPage(page: Page = 'home'): string {
+  if (page !== 'home') {
+    return html`
+      <a class="skip-link" href="#main">Skip to content</a>
+      ${header(page)}
+      <main class="page" id="main" tabindex="-1">
+        ${{ about: aboutPage, experiments: experimentsPage, contact: contactPage }[page]()}
+      </main>
+      ${footer()}
+      ${overlays()}
+    `.__html;
+  }
+
   return html`
     <a class="skip-link" href="#main">Skip to content</a>
 
     <span id="top" class="visually-hidden"></span>
-    ${header()} 
+    ${header()}
 
     <main class="page" id="main" tabindex="-1">
       <!-- where you are: an ivy that climbs down as the page scrolls, one big
@@ -28,8 +46,7 @@ export function renderPage(): string {
         ${[
           { href: '#intro', label: 'Intro' },
           { href: '#warp-work', label: 'Featured projects' },
-          { href: '#about', label: 'About' },
-          { href: '#experiments', label: 'Experiments' },
+          { href: '#contact', label: 'Thanks' },
         ].map(
           (s) => html`
             <a class="rail__tick" href="${s.href}" tabindex="-1">
@@ -40,12 +57,21 @@ export function renderPage(): string {
       </div>
       ${hero()}
       ${warp()}
-      ${about()}
-      ${experiments()}
     </main>
 
     ${footer()}
 
+    ${overlays()}
+  `.__html;
+}
+
+/**
+ * What opens over any page: the playground (lib/playground), its detail
+ * panel and the case study (lib/warp-detail). Hidden until called, and on
+ * every page, since the scripts that drive them run on every page.
+ */
+function overlays() {
+  return html`
     <div class="pg" id="pg" aria-hidden="true">
       <canvas id="gl"></canvas>
       <div class="hud tl pg-only">
@@ -109,5 +135,5 @@ export function renderPage(): string {
     </div>
 
     <div class="scrim" id="scrim"></div>
-  `.__html;
+  `;
 }

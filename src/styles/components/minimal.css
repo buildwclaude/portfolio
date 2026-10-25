@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Minimal — everything after the featured work, and the About and Contact
+   pages. One narrow column down the middle; each block a quiet label on
+   the left and its content on the right. Inter at three sizes, black and a
+   grey for the rest, and plenty of room between blocks.
+   ========================================================================== */
+
+.m-section,
+.m-page,
+.m-footer {
+  --m-ink: #000;
+  --m-muted: rgba(0, 0, 0, 0.52);
+  --m-line: rgba(0, 0, 0, 0.08);
+  --m-label-w: 9rem;
+  --m-gap: clamp(1.5rem, 4vw, 3rem);
+  font-family: 'Inter', var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.04em;
+  color: var(--m-ink);
+}
+
+/* --- The column ------------------------------------------------------------ */
+
+.m-col,
+.m-block {
+  display: grid;
+  grid-template-columns: var(--m-label-w) minmax(0, 1fr);
+  column-gap: var(--m-gap);
+  width: 100%;
+  max-width: calc(var(--m-label-w) + var(--m-gap) + 34rem);
+  margin-inline: auto;
+  padding-inline: var(--shell-margin);
+}
+.m-col > .m-body,
+.m-block > .m-body { grid-column: 2; }
+
+.m-section { padding-top: clamp(7rem, 14vw, 11rem); }
+
+/* --- Type ------------------------------------------------------------------ */
+
+.m-label {
+  margin: 0;
+  padding-top: 0.15em;
+  font: inherit;
+  font-size: 14px;
+  color: var(--m-muted);
+}
+
+.m-lead {
+  margin: 0 0 0.75rem;
+  font: inherit;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.m-text { margin: 0 0 1rem; text-wrap: pretty; }
+.m-text--muted { color: var(--m-muted); }
+
+.m-link {
+  display: inline-flex;
+  gap: 0.35em;
+  color: var(--m-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--m-line);
+  transition: border-color var(--dur-mid) var(--ease-out);
+}
+.m-link:hover { border-color: var(--m-ink); }
+
+.m-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin: 1.5rem 0 0;
+}
+
+/* The address as a soft pill, the way Areal sets its own. */
+.m-chip {
+  display: inline-block;
+  padding: 0.45em 0.9em;
+  border-radius: 999px;
+  background: #f2f2f0;
+  color: var(--m-ink);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color var(--dur-mid) var(--ease-out);
+}
+.m-chip:hover { background: #e8e8e5; }
+
+/* --- Pictures -------------------------------------------------------------- */
+
+.m-avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.25rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.m-portrait {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.m-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 1.5rem;
+}
+.m-photos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #f2f2f0;
+}
+
+/* --- Rows: a title and its tag, a note under them --------------------------- */
+
+.m-rows { margin: 1.5rem 0 0; padding: 0; list-style: none; border-top: 1px solid var(--m-line); }
+.m-rows--flush { margin-top: 0; }
+.m-row { border-bottom: 1px solid var(--m-line); }
+.m-row__link {
+  display: block;
+  padding: 0.9rem 0;
+  color: inherit;
+  text-decoration: none;
+}
+.m-row__head { display: flex; justify-content: space-between; gap: 1rem; }
+.m-row__meta { flex-shrink: 0; font-size: 14px; color: var(--m-muted); }
+.m-row__note { display: block; margin-top: 0.25rem; font-size: 14px; color: var(--m-muted); }
+a.m-row__link:hover .m-row__title { color: var(--m-muted); }
+.m-row__title { transition: color var(--dur-mid) var(--ease-out); }
+
+/* --- The About and Contact pages ------------------------------------------- */
+
+.m-page { padding-top: clamp(8rem, 20vh, 12rem); }
+.m-intro { margin-bottom: clamp(5rem, 10vw, 8rem); }
+.m-label--page { margin-bottom: 0.75rem; }
+
+.m-blocks { display: grid; row-gap: clamp(4rem, 8vw, 6rem); }
+
+.m-entries { margin: 0; padding: 0; list-style: none; display: grid; row-gap: 1.75rem; }
+.m-entry__title { display: block; color: var(--m-ink); text-decoration: none; }
+a.m-entry__title:hover { color: var(--m-muted); }
+.m-entry__meta { display: block; font-size: 14px; color: var(--m-muted); }
+.m-entry__desc { margin: 0.5rem 0 0; text-wrap: pretty; }
+
+.m-skills { margin: 0; display: grid; row-gap: 0.75rem; }
+.m-skills__row { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; }
+.m-skills dt { font-size: 14px; color: var(--m-muted); padding-top: 0.1em; }
+.m-skills dd { margin: 0; }
+
+/* --- The sign-off, at the foot of every page ------------------------------- */
+
+/* Centred on the page the way Areal closes its own: the line at 24px, then
+   the small print in a lighter grey. */
+.m-footer {
+  padding: clamp(7rem, 14vw, 11rem) var(--shell-margin) 5rem;
+  text-align: center;
+}
+.m-footer__tree { display: block; width: 32px; height: auto; margin: 0 auto 1rem; }
+.m-footer .m-lead { margin: 0; }
+.m-footer__small {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.4);
+}
+.m-footer .m-lead + .m-footer__small { margin-top: 1.5rem; }
+
+/* --- Phones: the label goes above its content ------------------------------- */
+
+@media (max-width: 640px) {
+  .m-col,
+  .m-block { grid-template-columns: minmax(0, 1fr); row-gap: 0.75rem; }
+  .m-col > .m-body,
+  .m-block > .m-body { grid-column: 1; }
+  .m-photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

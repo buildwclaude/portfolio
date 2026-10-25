@@ -9,9 +9,19 @@ export function initNav(root: ParentNode = document) {
   const menu = root.querySelector<HTMLElement>('[data-menu]');
   const links = Array.from(root.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
 
-  /* --- Current section -------------------------------------------------- */
+  /* --- Current page and section ----------------------------------------- */
+  // A link to another page is current while you are on that page.
+  for (const link of links) {
+    if (link.hash || link.pathname !== location.pathname) continue;
+    link.toggleAttribute('data-current', true);
+    link.setAttribute('aria-current', 'page');
+  }
+
+  // Only a bare '#id' names a section on this page.
   const sections = links
-    .map((link) => document.querySelector<HTMLElement>(link.getAttribute('href') ?? ''))
+    .map((link) => link.getAttribute('href') ?? '')
+    .filter((href) => /^#[\w-]+$/.test(href))
+    .map((href) => document.querySelector<HTMLElement>(href))
     .filter((section): section is HTMLElement => section !== null);
 
   if (sections.length > 0) {

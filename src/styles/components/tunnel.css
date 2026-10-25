@@ -1,0 +1,51 @@
+/* ==========================================================================
+   Tunnel — the right of the landing screen.
+   A dark stage beside the statement, looking down a well of screens; the
+   scene is drawn by lib/tunnel, and fades in once its first frame is ready.
+   ========================================================================== */
+
+.hero .tunnel {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--header-height) + var(--space-64));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  /* Inside the page margin, flush with the rules above and below. */
+  right: var(--shell-margin);
+  /* Clear of the credentials beside it. */
+  width: min(42%, 640px);
+  overflow: hidden;
+  border-radius: 20px;
+  background: #03040B;
+  /* A hairline, as the project thumbnails have. */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 60px -30px rgba(20, 34, 107, 0.45);
+  /* The canvas only reads the pointer; it never takes it. */
+  pointer-events: none;
+}
+
+.tunnel__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-reveal);
+}
+
+.tunnel__canvas.is-drawn { opacity: 1; }
+
+/* --- Narrower desktops: less room beside the credentials ------------------ */
+
+@media (max-width: 1280px) {
+  .hero .tunnel { width: min(38%, 560px); }
+}
+
+/* --- Small screens: the well joins the flow under the statement ----------- */
+
+@media (max-width: 860px) {
+  .hero .tunnel {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(110vw, 520px);
+    margin-block: var(--space-16) var(--space-32);
+  }
+}

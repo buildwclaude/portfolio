@@ -13,14 +13,19 @@
   color: var(--ink);
 }
 
-/* Four sub-columns over twelve: the items land on columns 1, 4, 7 and 10. */
+/* Two to a row, each with room for its note; four once the page is wide
+   enough that the notes don't squeeze into narrow strips. */
 .experiments__list {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: var(--grid-gutter);
-  row-gap: var(--space-48);
+  row-gap: var(--space-64);
 }
+@media (min-width: 1400px) {
+  .experiments__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.xp__note { max-width: 32em; }
 
 .xp {
   border-top: 1px solid var(--ink);

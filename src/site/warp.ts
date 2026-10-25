@@ -108,8 +108,14 @@ export function warp() {
   const left = selectedWork.slice(0, 3);
   const right = selectedWork.slice(3);
   return html`
-    <section class="warp-work" id="warp-work">
-      <div class="shell sectionbar"><b>Featured projects</b><span>${pad2(selectedWork.length)} pieces</span></div>
+    <section class="section warp-work" id="warp-work" aria-labelledby="work-title">
+      <div class="shell grid">
+        <div class="section__head">
+          <h2 class="section__title" id="work-title">Featured projects</h2>
+          <span class="section__index">${pad2(selectedWork.length)} pieces</span>
+        </div>
+        <div class="section__rule" aria-hidden="true"></div>
+      </div>
       <div class="shell warp-grid">
         <div class="warp-col">${left.map((w, i) => card(w, i, '0.06'))}</div>
         <div class="warp-col warp-col--offset">${right.map((w, i) => card(w, i + left.length, '-0.05'))}</div>

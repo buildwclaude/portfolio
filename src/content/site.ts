@@ -82,12 +82,13 @@ export const site = {
   },
 
   /* ------------------------------------------------------------ navigation */
+  /** A section of the home page as '#id'; another page as its path ('about/'). */
   nav: [
     { label: 'Playground', href: '#playground' },
     { label: 'Work', href: '#warp-work' },
-    { label: 'About', href: '#about' },
-    { label: 'Experiments', href: '#experiments' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'About', href: 'about/' },
+    { label: 'Experiments', href: 'experiments/' },
+    { label: 'Contact', href: 'contact/' },
   ],
 
   /* ------------------------------------------------------------------ hero */
@@ -98,6 +99,11 @@ export const site = {
      * control the line breaks. Keep it to three or four lines.
      */
     lines: ['Sony,', 'Product', 'Builder'],
+    /**
+     * One line under the statement: how the work is done, not where (the
+     * wordmarks below say where). Keep it to a single short sentence.
+     */
+    intro: 'I research how people really use technology, then design products that fit.',
     /**
      * Portfolio description: credential lines, one each. **Names** are set
      * in ink against the muted line, so the eye lands on who and where.
@@ -118,11 +124,11 @@ export const site = {
      * logo instead, give `logo` a file in public/logos.
      */
     workedWith: {
-      label: 'Worked with',
+      label: 'Experience and recognition',
       names: [
         { name: 'Open XR Lab', mark: 'icon', glyph: 'cube' },
         { name: 'Wichita State', mark: 'serif' },
-        { name: 'Yatri', mark: 'caps' },
+        { name: 'Yatri Motorcycles', mark: 'caps' },
         { name: 'Girls in Tech', mark: 'boxed' },
         { name: 'Hult Prize', mark: 'sans' },
         { name: 'EntrepreneurHer', mark: 'icon', glyph: 'spark' },
@@ -492,6 +498,8 @@ export const site = {
     title: 'Contact',
     line: 'Thanks for stopping by!',
     email: 'thakurisony111@gmail.com',
+    /** The small line under the sign-off at the foot of every page. */
+    madeWith: 'Made with love ❤️',
     links: [
       { label: 'Résumé', href: 'https://sonythakuri.cv' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sony-thakuri/' },

@@ -20,12 +20,24 @@
 .nav__toggle,
 .nav .dial { pointer-events: auto; }
 
-/* Just the button, at the right. */
+/* Just the button, at the right; on the other pages, the way home at the left. */
 .header__inner {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
+.header__home {
+  margin-right: auto;
+  pointer-events: auto;
+  font-family: 'Inter', var(--font-sans);
+  font-size: 14px;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.header__home:hover { color: var(--ink-muted); }
+/* With a name in it, the strip is solid, so the page never runs under the name. */
+.header:has(.header__home) { background: var(--paper); }
 
 /* --- The button --------------------------------------------------------- */
 

@@ -1,0 +1,46 @@
+/* ==========================================================================
+   Orbit — the right of the landing screen.
+   A canvas the size of the room beside the statement; the ring of tiles is
+   drawn by lib/orbit, and fades in once its first frame is ready.
+   ========================================================================== */
+
+.hero .orbit {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--header-height) + var(--space-16));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  /* Inside the page margin, flush with the rules above and below. */
+  right: var(--shell-margin);
+  /* Clear of the credentials beside it. */
+  width: min(46%, 700px);
+  /* The canvas only reads the pointer; it never takes it. */
+  pointer-events: none;
+}
+
+.orbit__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-reveal);
+}
+
+.orbit__canvas.is-drawn { opacity: 1; }
+
+/* --- Narrower desktops: less room beside the credentials ------------------ */
+
+@media (max-width: 1280px) {
+  .hero .orbit { width: min(41%, 620px); }
+}
+
+/* --- Small screens: the ring joins the flow under the statement ----------- */
+
+@media (max-width: 860px) {
+  .hero .orbit {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(95vw, 420px);
+    margin-block: var(--space-16) var(--space-32);
+  }
+}

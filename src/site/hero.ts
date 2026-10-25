@@ -4,12 +4,12 @@ import { dialParts } from './dial';
 import { workedWith } from './worked-with';
 
 /**
- * The landing screen: the statement with the places worked with under it
- * (site/worked-with), and the way into the work along the foot. The right
+ * The landing screen: the statement, a one-line intro, the places worked
+ * with under it (site/worked-with), and the way into the work along the foot. The right
  * side holds a dial of the pages, its wheel coming in from the right edge
  * (site/dial, lib/hero-dial). The portfolio description (credential lines)
  * and the overgrown walker (site/overgrown) are set aside.
- * Set aside, ready to swap back in: the palace (site/palace, lib/palace),
+ * Set aside, ready to swap back in: the arm (site/arm, lib/arm), the tunnel (site/tunnel, lib/tunnel), the orbit (site/orbit, lib/orbit), the palace (site/palace, lib/palace),
  * the temple (site/temple), the glass
  * grid (site/glass-grid), the
  * courses folder (site/courses-folder),
@@ -19,7 +19,7 @@ import { workedWith } from './worked-with';
  * Copy comes from `content/site.ts`.
  */
 export function hero() {
-  const { lines } = site.hero;
+  const { lines, intro } = site.hero;
 
   return html`
     <section class="hero shell" id="intro" aria-labelledby="hero-title">
@@ -34,6 +34,8 @@ export function hero() {
             `,
           )}
         </h1>
+
+        <p class="hero__intro" data-reveal>${intro}</p>
 
         ${workedWith()}
       </div>

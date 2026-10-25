@@ -28,11 +28,7 @@ export function shelf() {
   const { title, books } = site.shelf;
 
   return html`
-    <nav class="toc" aria-labelledby="shelf-title">
-      <div class="toc__head">
-        <h3 class="kicker" id="shelf-title">${title}</h3>
-        <span class="kicker">Chapter · Entries</span>
-      </div>
+    <nav class="toc" aria-label="${title}">
       <ol class="toc__list" data-reveal-stagger>${books.map(chapter)}</ol>
     </nav>
   `;

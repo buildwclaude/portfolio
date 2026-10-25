@@ -1,5 +1,7 @@
 import { html } from '../lib/html';
+import { site } from '../content/site';
 import { dialParts } from './dial';
+import { pageHref, type Page } from './paths';
 
 /**
  * The header: a Menu button, which opens the menu as a dial — the pages
@@ -7,13 +9,14 @@ import { dialParts } from './dial';
  * landing screen the same dial is already in view, so the button waits until
  * it has scrolled away (lib/hero-dial).
  */
-export function header() {
+export function header(page: Page = 'home') {
   return html`
     <header class="header" data-header>
       <div class="shell header__inner">
+        ${page !== 'home' && html`<a class="header__home" href="${pageHref.home}">${site.meta.shortName}</a>`}
         <nav class="nav" aria-label="Primary">
           <div class="dial" id="primary-menu" data-menu>
-            ${dialParts({ navLinks: true })}
+            ${dialParts({ navLinks: true, page })}
             <p class="dial__hint" aria-hidden="true">Scroll or drag to turn · click to go</p>
           </div>
         </nav>

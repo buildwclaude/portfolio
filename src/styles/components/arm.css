@@ -1,0 +1,50 @@
+/* ==========================================================================
+   Arm — the right of the landing screen.
+   The arm stands on the page itself at the right, drawn by lib/arm. Its
+   canvas runs under the statement too, so the arm can reach across it and
+   pass behind the words. It fades in once its first frame is ready.
+   ========================================================================== */
+
+.hero .arm {
+  position: absolute;
+  /* Under the statement, which keeps z-index 1. */
+  z-index: 0;
+  top: calc(var(--header-height) + var(--space-16));
+  bottom: clamp(3.5rem, 8vh, 5rem);
+  /* Inside the page margins, flush with the rules above and below. */
+  left: var(--shell-margin);
+  right: var(--shell-margin);
+  /* The canvas only reads the pointer; the hero takes it, so the arm can
+     follow it across the whole screen. */
+  pointer-events: none;
+}
+
+.arm__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-reveal);
+}
+
+.arm__canvas.is-drawn { opacity: 1; }
+
+.arm__hint {
+  position: absolute;
+  right: 0;
+  bottom: var(--space-8);
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+/* --- Small screens: the arm joins the flow under the statement ------------ */
+
+@media (max-width: 860px) {
+  .hero .arm {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(110vw, 480px);
+    margin-block: var(--space-16) var(--space-32);
+  }
+}

@@ -183,14 +183,18 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
 
   // --- Scrolling over it turns it, where asked ------------------------------
   // A page at a time, like the clicks of a bezel: a wheel's notch or a
-  // trackpad's swipe moves one page, and a swipe's long glide afterwards
-  // doesn't carry it on round.
+  // trackpad's swipe moves one page, and however long a swipe and its glide
+  // run on, they don't carry it on round.
   if (opts.turnByWheel) {
     let travel = 0;
     let lastEvent = 0;
     let lastStep = 0;
     /** Whether the gesture under way turns the dial (or scrolls the page). */
     let turning = true;
+    /** Whether this swipe has already moved its one page. */
+    let stepped = false;
+    /** The last event's size, to tell a fresh push from a fading glide. */
+    let lastSize = 0;
 
     // Intent: the mouse has moved into the dial's reach (a page sliding
     // under a still cursor doesn't count). Moving in starts afresh, so a
@@ -217,18 +221,30 @@ export function createDial(root: HTMLElement, opts: DialOptions) {
       (e) => {
         const now = performance.now();
         const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        const size = Math.abs(delta);
         if (now - lastEvent > 160) {
           // A new gesture: whose is it?
           travel = 0;
+          stepped = false;
           turning = intent;
+        } else if (stepped && size >= 10 && size > lastSize * 2) {
+          // A second swipe on top of the first one's glide.
+          travel = 0;
+          stepped = false;
         }
         lastEvent = now;
+        lastSize = size;
         if (!turning) return;
         e.preventDefault();
         e.stopPropagation(); // not the page's smooth scroll, either
+        // A mouse wheel's notches each turn a page; a trackpad swipe, however
+        // long it runs on, turns just one.
+        const notch = e.deltaMode !== 0 || (size >= 100 && (size % 100 === 0 || size % 120 === 0));
+        if (stepped && !notch) return;
         travel += delta;
         if (Math.abs(travel) < 40 || now - lastStep < 420) return;
         lastStep = now;
+        stepped = true;
         const next = Math.max(0, Math.min(last, aimed + Math.sign(travel)));
         travel = 0;
         if (next !== aimed) settleTo(next);

@@ -8,9 +8,9 @@ const GLYPHS: Record<string, string> = {
 };
 
 /**
- * "Worked with": a row of the places worked with, as quiet grey wordmarks
- * (content: site.hero.workedWith). Under the statement on the landing
- * screen.
+ * "Experience and recognition": the places worked with and the honours, as
+ * quiet grey wordmarks (content: site.hero.workedWith). Under the statement
+ * on the landing screen.
  */
 export function workedWith() {
   const { label, names } = site.hero.workedWith;
