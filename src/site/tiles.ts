@@ -27,9 +27,7 @@ export function tiles() {
   return html`
     <section class="tiles" aria-label="A little about me" data-tiles>
       ${scatter([
-        { shape: 'flower', color: 'butter', x: 'calc(100% - 78px)', y: '-30px', size: 66, turn: -10, phone: true },
-        { shape: 'star', color: 'lime', x: '-6px', y: 'calc(100% - 26px)', size: 44, turn: 16 },
-        { shape: 'ring', color: 'sky', x: '48%', y: '-18px', size: 28, turn: 0 },
+        { shape: 'flower', color: 'butter', x: 'calc(100% - 74px)', y: '-28px', size: 56, turn: -10, phone: true },
       ])}
       <a class="tile-card tile-card--hello" href="${pageHref.about}" data-reveal>
         ${clip('#7aa7f0', 'tile-card__clip')}

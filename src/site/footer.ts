@@ -18,8 +18,7 @@ export function footer() {
         <span class="m-footer__mark">
           <img class="m-footer__tree" src="${site.me.signoff}" alt="" width="294" height="370" loading="lazy" decoding="async" />
           ${scatter([
-            { shape: 'heart', color: 'pink', x: 'calc(100% + 4px)', y: '-8px', size: 24, turn: 16, phone: true },
-            { shape: 'star', color: 'butter', x: '-30px', y: '20px', size: 18, turn: -12, phone: true },
+            { shape: 'heart', color: 'pink', x: 'calc(100% + 4px)', y: '-8px', size: 22, turn: 16, phone: true },
           ])}
         </span>
         <p class="m-lead">${line}</p>

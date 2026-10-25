@@ -130,12 +130,8 @@ export function warp() {
   return html`
     <section class="warp-work" id="warp-work" aria-labelledby="work-title">
       ${scatter([
-        { shape: 'pill', color: 'pink', x: 'calc(50% - 250px)', y: '0px', size: 58, turn: -24, phone: true },
-        { shape: 'star', color: 'butter', x: 'calc(50% + 190px)', y: '60px', size: 26, turn: 14 },
-        { shape: 'ring', color: 'lilac', x: 'calc(50% - 34px)', y: '38%', size: 64, turn: 0 },
-        { shape: 'heart', color: 'lime', x: '3%', y: '72%', size: 30, turn: -18 },
-        { shape: 'flower', color: 'peach', x: 'calc(100% - 70px)', y: '18%', size: 40, turn: 22 },
-        { shape: 'star', color: 'lilac', x: 'calc(50% + 20px)', y: '86%', size: 52, turn: -8 },
+        { shape: 'pill', color: 'pink', x: 'calc(50% - 250px)', y: '0px', size: 54, turn: -24, phone: true },
+        { shape: 'star', color: 'butter', x: 'calc(50% - 30px)', y: '46%', size: 46, turn: -8 },
       ])}
       <header class="warp-head" data-reveal>
         <h2 class="warp-head__title" id="work-title">

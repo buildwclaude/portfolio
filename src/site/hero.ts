@@ -35,13 +35,9 @@ export function hero() {
           <span class="desk__polaroid"><span class="desk__tape"></span><img src="${site.tiles.art[3]}" alt="" width="1200" height="1200" loading="lazy" decoding="async" /></span>
           <span class="desk__tag"><span class="desk__pin"></span><span class="desk__dot"></span>Open XR Lab</span>
           ${scatter([
-            { shape: 'star', color: 'pink', x: 'calc(50% + 250px)', y: '58%', size: 86, turn: 12, phone: true },
-            { shape: 'heart', color: 'lilac', x: 'calc(50% - 205px)', y: '3%', size: 34, turn: -14 },
-            { shape: 'ring', color: 'lime', x: 'calc(50% + 135px)', y: '2%', size: 50, turn: 18 },
-            { shape: 'flower', color: 'butter', x: 'calc(50% - 395px)', y: '46%', size: 28, turn: 10 },
-            { shape: 'star', color: 'sky', x: 'calc(50% + 372px)', y: '9%', size: 30, turn: -22 },
-            { shape: 'pill', color: 'peach', x: 'calc(50% - 150px)', y: '86%', size: 46, turn: 32, phone: true },
-            { shape: 'heart', color: 'butter', x: 'calc(50% + 420px)', y: '78%', size: 22, turn: 20 },
+            { shape: 'star', color: 'pink', x: 'calc(50% + 250px)', y: '58%', size: 78, turn: 12, phone: true },
+            { shape: 'ring', color: 'lime', x: 'calc(50% + 140px)', y: '3%', size: 40, turn: 18 },
+            { shape: 'heart', color: 'lilac', x: 'calc(50% - 170px)', y: '84%', size: 28, turn: -14 },
           ])}
         </span>
         ${notes()}
@@ -86,7 +82,7 @@ function notes() {
           <div class="note" style="--c:${note.color}; --ink:${note.ink}; --z:${list.length - i}; --tilt:${[-7, 4, -3, 6][i % 4]}deg" data-note>
             <b>${note.label}</b>
             <span>${note.text}</span>
-            <button class="note__corner" type="button" aria-label="Next note" data-note-peel></button>
+            <button class="note__corner" type="button" aria-label="Next note" data-note-peel><span class="note__flap"></span></button>
           </div>
         `,
       )}
